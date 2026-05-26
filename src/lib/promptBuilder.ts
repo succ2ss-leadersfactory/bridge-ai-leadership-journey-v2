@@ -49,6 +49,8 @@ function getDevelopmentDirection(round: Round, draft: PromptDraft) {
 }
 
 export function buildKacAiPrompt(round: Round, draft: PromptDraft) {
+  const finalOutputName = round.finalOutput || '2주 미니 육성 플랜';
+
   return [
     '[역할]',
     '당신은 공공기관 중간관리자의 후배 육성을 돕는 리더십 코치입니다.',
@@ -92,7 +94,7 @@ export function buildKacAiPrompt(round: Round, draft: PromptDraft) {
     '',
     '[요청 결과물]',
     `아래 두 가지 결과물을 ${round.juniorName} ${round.juniorRole}에게 실제로 사용할 수 있는 현장 언어로 작성해 주세요.`,
-    '1. 2주 미니 육성 플랜',
+    `1. ${finalOutputName}`,
     '2. 5줄 현장 실행문',
     '',
     '[제약조건]',
@@ -100,6 +102,7 @@ export function buildKacAiPrompt(round: Round, draft: PromptDraft) {
     '- 정답을 단정하지 말고 선택의 장점과 비용을 함께 고려하세요.',
     '- 과장급 중간관리자가 실제로 할 수 있는 지원 수준으로 작성하세요.',
     '- 거창한 제도 개선보다 2주 안에 가능한 작은 행동으로 작성하세요.',
+    '- 라운드별 최종 산출물의 이름과 성격을 유지해 주세요. 예를 들어 최종 산출물이 기준 점검 루틴이면 단순 육성 플랜이 아니라 점검 루틴으로 작성해야 합니다.',
     '- AI가 대신 판단하지 말고, 리더가 확인해야 할 지점을 남겨 주세요.',
     '- 표 형식은 사용하지 말고 모바일에서 읽기 쉬운 목록과 짧은 문장으로 작성하세요.',
     '',
@@ -107,7 +110,7 @@ export function buildKacAiPrompt(round: Round, draft: PromptDraft) {
     '아래 블록명을 반드시 그대로 사용해 주세요.',
     '',
     '<FINAL_ARTIFACT>',
-    '1. 2주 미니 육성 플랜',
+    `1. ${finalOutputName}`,
     '- 성장 목표:',
     '- 작은 과제:',
     '- 과장의 지원:',
