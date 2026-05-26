@@ -4,9 +4,9 @@ import { rounds } from '../data/rounds';
 import { copyTextToClipboard } from '../lib/clipboard';
 import { parseAiResult } from '../lib/aiResultParser';
 import { buildKacAiPrompt } from '../lib/promptBuilder';
-import { clearLearnerDraft, loadLearnerDraft, saveLearnerDraft } from '../lib/localDraft';
+import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
 import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
-import type { FlowStepId, Round } from '../types';
+import type { FlowStepId, Round, RoundId } from '../types';
 import { ChoiceCard } from './ChoiceCard';
 import { AiAnswerReviewStep } from './learner/AiAnswerReviewStep';
 import { AiPromptStep } from './learner/AiPromptStep';
@@ -37,6 +37,7 @@ export function LearnerShell() {
   const [draft, setDraft] = useState<LearnerDraft>(() => ({ ...initialLearnerDraft, ...(savedDraft?.draft ?? {}) }));
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(() => savedDraft?.savedAt ?? null);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'fail'>('idle');
+  const [completedRoundIds, setCompletedRoundIds] = useState<RoundId[]>(() => loadCompletedRoundIds());
 
   const stepIndex = stepOrder.indexOf(currentStep);
 
@@ -83,6 +84,8 @@ export function LearnerShell() {
   }
 
   function returnToRoundMap() {
+    markRoundCompleted(selectedRound.id);
+    setCompletedRoundIds(loadCompletedRoundIds());
     setDraft((prev) => createFreshRoundDraft(prev));
     setCopyStatus('idle');
     setCurrentStep('roundMap');
@@ -104,6 +107,8 @@ export function LearnerShell() {
 
   function handleResetParticipant() {
     clearLearnerDraft();
+    clearCompletedRoundIds();
+    setCompletedRoundIds([]);
     setSelectedRound(rounds[0]);
     setCurrentStep('intro');
     setDraft(initialLearnerDraft);
@@ -139,6 +144,7 @@ export function LearnerShell() {
           <RoundMapStep
             rounds={rounds}
             selectedRound={selectedRound}
+            completedRoundIds={completedRoundIds}
             canGoNext={isNextEnabled}
             onBack={handleResetParticipant}
             onNext={goNext}
