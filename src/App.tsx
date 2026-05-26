@@ -1,18 +1,13 @@
+import { flowSteps } from './data/flowSteps';
+import { rounds } from './data/rounds';
+
 const setupItems = [
-  'React + Vite + TypeScript 기본 세팅',
+  'React + Vite + TypeScript 기본 세팅 완료',
+  'v2.0 라운드 데이터 구조 연결',
   '모바일·태블릿 우선 교육생 화면 구조',
   'PC 기반 강사용 대시보드 확장 준비',
-  'Google Sheets 저장 연동 확장 준비',
+  'Google Sheets 저장 컬럼 매핑 준비',
   'AI 프롬프트 복사형 Lab 흐름 준비',
-];
-
-const rounds = [
-  'R1. 계속 묻는 김민재 사원, 답보다 기준이 필요하다',
-  'R2. 빠르게 한 이서연 주임, 기준은 어디서 빠졌을까',
-  'R3. 정하늘 사원의 한마디, “저는 안 맞는 것 같습니다”',
-  'R4. 최도윤 주임의 AI 초안, 빠르지만 그대로 쓸 수는 없다',
-  'R5. 김민재 사원의 도전 요청, 어디까지 맡길 것인가',
-  'Boss Round. 보고, 민원, AI 오류가 동시에 터졌을 때도 후배를 키울 수 있을까',
 ];
 
 function App() {
@@ -26,8 +21,8 @@ function App() {
           AI를 활용해 2주 미니 육성 플랜과 현장 실행문을 완성하는 모바일 기반 시뮬레이션입니다.
         </p>
         <div className="status-card" aria-label="프로젝트 세팅 상태">
-          <strong>PR #1 기본 프로젝트 세팅 진행 중</strong>
-          <span>다음 단계: v2.0 데이터 타입과 라운드 데이터 구조 생성</span>
+          <strong>PR #2 데이터 구조 세팅 진행 중</strong>
+          <span>{rounds.length}개 라운드 · {flowSteps.length}개 학습 단계 연결</span>
         </div>
       </section>
 
@@ -42,10 +37,15 @@ function App() {
         </article>
 
         <article className="panel">
-          <h2>v2.0 라운드 초안</h2>
+          <h2>v2.0 라운드 데이터</h2>
           <ol>
             {rounds.map((round) => (
-              <li key={round}>{round}</li>
+              <li key={round.id}>
+                <strong>{round.title}</strong>
+                <span className="round-meta">
+                  {round.juniorName} {round.juniorRole} · {round.developmentTask}
+                </span>
+              </li>
             ))}
           </ol>
         </article>
