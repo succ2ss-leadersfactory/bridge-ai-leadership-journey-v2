@@ -1,22 +1,31 @@
-import type { Round } from '../../types';
+import type { Round, RoundId } from '../../types';
 import { RoundCard } from '../RoundCard';
 import { StepLayout } from '../StepLayout';
 
 interface RoundMapStepProps {
   rounds: Round[];
   selectedRound: Round;
+  completedRoundIds: RoundId[];
   canGoNext: boolean;
   onBack: () => void;
   onNext: () => void;
   onSelectRound: (round: Round) => void;
 }
 
-export function RoundMapStep({ rounds, selectedRound, canGoNext, onBack, onNext, onSelectRound }: RoundMapStepProps) {
+export function RoundMapStep({
+  rounds,
+  selectedRound,
+  completedRoundIds,
+  canGoNext,
+  onBack,
+  onNext,
+  onSelectRound,
+}: RoundMapStepProps) {
   return (
     <StepLayout
       eyebrow="라운드 Map"
       title="오늘 해볼 장면을 고르세요"
-      description="한 라운드를 저장한 뒤에도 이 화면으로 돌아와 다른 장면을 이어서 할 수 있습니다."
+      description="완료한 장면은 카드에 표시됩니다. 다른 장면도 이어서 선택할 수 있습니다."
       canGoBack
       canGoNext={canGoNext}
       onBack={onBack}
@@ -25,7 +34,13 @@ export function RoundMapStep({ rounds, selectedRound, canGoNext, onBack, onNext,
     >
       <div className="round-list">
         {rounds.map((round) => (
-          <RoundCard key={round.id} round={round} isSelected={round.id === selectedRound.id} onSelect={onSelectRound} />
+          <RoundCard
+            key={round.id}
+            round={round}
+            isSelected={round.id === selectedRound.id}
+            isCompleted={completedRoundIds.includes(round.id)}
+            onSelect={onSelectRound}
+          />
         ))}
       </div>
     </StepLayout>

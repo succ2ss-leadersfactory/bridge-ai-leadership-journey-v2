@@ -1,0 +1,23 @@
+.round-card {
+  position: relative;
+}
+
+.round-card.completed {
+  border-color: #bfe4ce;
+  background: #fbfffd;
+}
+
+.round-completed-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: #e5f7ed;
+  color: #237148;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
