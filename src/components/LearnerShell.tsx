@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { flowSteps } from '../data/flowSteps';
 import { rounds } from '../data/normalizedRounds';
+import { sessions } from '../data/sessions';
 import { copyTextToClipboard } from '../lib/clipboard';
 import { parseAiResult } from '../lib/aiResultParser';
 import { buildKacAiPrompt } from '../lib/promptBuilder';
 import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
 import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
-import type { FlowStepId, Round, RoundId } from '../types';
+import type { FlowStepId, LearningSession, Round, RoundId } from '../types';
 import { ChoiceCard } from './ChoiceCard';
 import { AiAnswerReviewStep } from './learner/AiAnswerReviewStep';
 import { AiPromptStep } from './learner/AiPromptStep';
@@ -15,6 +16,7 @@ import { IntroStep } from './learner/IntroStep';
 import { ProgressHeader } from './ProgressHeader';
 import { RoundMapStep } from './learner/RoundMapStep';
 import { SaveResultPanel } from './SaveResultPanel';
+import { SessionMapStep } from './learner/SessionMapStep';
 import { StepLayout } from './StepLayout';
 import { StoryStep } from './learner/StoryStep';
 import { TextInputPanel } from './TextInputPanel';
@@ -30,8 +32,17 @@ function findRoundById(roundId: string | undefined) {
   return rounds.find((round) => round.id === roundId) ?? rounds[0];
 }
 
+function findSessionByRoundId(roundId: string | undefined) {
+  return sessions.find((session) => session.roundIds.includes(roundId as RoundId)) ?? sessions[0];
+}
+
+function getFirstRoundInSession(session: LearningSession) {
+  return rounds.find((round) => round.id === session.roundIds[0]) ?? rounds[0];
+}
+
 export function LearnerShell() {
   const savedDraft = getInitialSavedDraft();
+  const [selectedSession, setSelectedSession] = useState<LearningSession>(() => findSessionByRoundId(savedDraft?.selectedRoundId));
   const [selectedRound, setSelectedRound] = useState<Round>(() => findRoundById(savedDraft?.selectedRoundId));
   const [currentStep, setCurrentStep] = useState<FlowStepId>(() => savedDraft?.currentStep ?? 'intro');
   const [draft, setDraft] = useState<LearnerDraft>(() => ({ ...initialLearnerDraft, ...(savedDraft?.draft ?? {}) }));
@@ -40,13 +51,19 @@ export function LearnerShell() {
   const [completedRoundIds, setCompletedRoundIds] = useState<RoundId[]>(() => loadCompletedRoundIds());
 
   const stepIndex = stepOrder.indexOf(currentStep);
+  const sessionRounds = useMemo(
+    () => rounds.filter((round) => selectedSession.roundIds.includes(round.id)),
+    [selectedSession],
+  );
 
   const generatedPrompt = useMemo(() => buildKacAiPrompt(selectedRound, draft), [draft, selectedRound]);
   const promptText = draft.editedPrompt || generatedPrompt;
   const parsedAiResult = useMemo(() => parseAiResult(draft.aiRawResult), [draft.aiRawResult]);
   const finalArtifact = draft.aiFinalArtifact || parsedAiResult.finalArtifact;
   const reviewNotes = draft.aiReviewNotes || parsedAiResult.reviewNotes;
-  const isNextEnabled = canMoveNext({ currentStep, draft, hasSelectedRound: Boolean(selectedRound), promptText });
+  const isNextEnabled = currentStep === 'sessionMap'
+    ? Boolean(selectedSession)
+    : canMoveNext({ currentStep, draft, hasSelectedRound: Boolean(selectedRound), promptText });
 
   useEffect(() => {
     saveLearnerDraft({ selectedRoundId: selectedRound.id, currentStep, draft });
@@ -75,6 +92,13 @@ export function LearnerShell() {
   function goBack() {
     setCurrentStep(stepOrder[Math.max(stepIndex - 1, 0)]);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function selectSession(nextSession: LearningSession) {
+    setSelectedSession(nextSession);
+    setSelectedRound(getFirstRoundInSession(nextSession));
+    setDraft((prev) => createFreshRoundDraft(prev));
+    setCopyStatus('idle');
   }
 
   function selectRound(nextRound: Round) {
@@ -112,6 +136,7 @@ export function LearnerShell() {
     clearLearnerDraft();
     clearCompletedRoundIds();
     setCompletedRoundIds([]);
+    setSelectedSession(sessions[0]);
     setSelectedRound(rounds[0]);
     setCurrentStep('intro');
     setDraft(initialLearnerDraft);
@@ -142,14 +167,25 @@ export function LearnerShell() {
             onNicknameChange={(value) => updateDraft('nickname', value)}
           />
         );
+      case 'sessionMap':
+        return (
+          <SessionMapStep
+            sessions={sessions}
+            selectedSession={selectedSession}
+            canGoNext={isNextEnabled}
+            onBack={handleResetParticipant}
+            onNext={goNext}
+            onSelectSession={selectSession}
+          />
+        );
       case 'roundMap':
         return (
           <RoundMapStep
-            rounds={rounds}
+            rounds={sessionRounds}
             selectedRound={selectedRound}
             completedRoundIds={completedRoundIds}
             canGoNext={isNextEnabled}
-            onBack={handleResetParticipant}
+            onBack={goBack}
             onNext={goNext}
             onSelectRound={selectRound}
           />
@@ -269,7 +305,7 @@ export function LearnerShell() {
 
   return (
     <div className="mobile-learner-shell">
-      <ProgressHeader currentStep={currentStep} roundTitle={currentStep === 'intro' || currentStep === 'roundMap' ? undefined : selectedRound.title} />
+      <ProgressHeader currentStep={currentStep} roundTitle={currentStep === 'intro' || currentStep === 'sessionMap' || currentStep === 'roundMap' ? undefined : selectedRound.title} />
       {renderSaveIndicator()}
       {renderStep()}
     </div>
