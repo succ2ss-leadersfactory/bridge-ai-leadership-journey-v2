@@ -1,6 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { flowSteps } from '../data/flowSteps';
 import { rounds } from '../data/rounds';
+import { copyTextToClipboard } from '../lib/clipboard';
+import { clearLearnerDraft, loadLearnerDraft, saveLearnerDraft } from '../lib/localDraft';
 import type { ChoiceId, FlowStepId, Round } from '../types';
 import { ChoiceCard } from './ChoiceCard';
 import { ProgressHeader } from './ProgressHeader';
@@ -52,10 +54,21 @@ const initialDraft: DraftState = {
   finalLines: ['', '', '', '', ''],
 };
 
+function getInitialSavedDraft() {
+  return loadLearnerDraft<DraftState>();
+}
+
+function findRoundById(roundId: string | undefined) {
+  return rounds.find((round) => round.id === roundId) ?? rounds[0];
+}
+
 export function LearnerShell() {
-  const [selectedRound, setSelectedRound] = useState<Round>(rounds[0]);
-  const [currentStep, setCurrentStep] = useState<FlowStepId>('intro');
-  const [draft, setDraft] = useState<DraftState>(initialDraft);
+  const savedDraft = getInitialSavedDraft();
+  const [selectedRound, setSelectedRound] = useState<Round>(() => findRoundById(savedDraft?.selectedRoundId));
+  const [currentStep, setCurrentStep] = useState<FlowStepId>(() => savedDraft?.currentStep ?? 'intro');
+  const [draft, setDraft] = useState<DraftState>(() => savedDraft?.draft ?? initialDraft);
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(() => savedDraft?.savedAt ?? null);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'fail'>('idle');
 
   const stepIndex = stepOrder.indexOf(currentStep);
   const selectedChoice = selectedRound.firstChoices.find((choice) => choice.id === draft.firstChoice);
@@ -70,6 +83,17 @@ export function LearnerShell() {
       : '';
     return `${selectedRound.aiPromptTemplate}${firstChoiceText}${directionText}`;
   }, [draft.firstReason, selectedChoice, selectedDirection, selectedRound]);
+
+  const promptText = draft.editedPrompt || generatedPrompt;
+
+  useEffect(() => {
+    saveLearnerDraft({
+      selectedRoundId: selectedRound.id,
+      currentStep,
+      draft,
+    });
+    setLastSavedAt(new Date().toISOString());
+  }, [currentStep, draft, selectedRound.id]);
 
   function updateDraft<K extends keyof DraftState>(key: K, value: DraftState[K]) {
     setDraft((prev) => ({ ...prev, [key]: value }));
@@ -94,7 +118,7 @@ export function LearnerShell() {
     if (currentStep === 'dilemmaAnalysis') return draft.dilemma.trim().length > 0;
     if (currentStep === 'secondDecision') return draft.secondChoice !== '';
     if (currentStep === 'developmentDirection') return draft.directionId !== '';
-    if (currentStep === 'aiPrompt') return draft.editedPrompt.trim().length > 0;
+    if (currentStep === 'aiPrompt') return promptText.trim().length > 0;
     if (currentStep === 'aiAnswerReview') {
       return draft.aiUseAsIs.trim().length > 0 || draft.aiRevise.trim().length > 0 || draft.aiRisky.trim().length > 0;
     }
@@ -115,6 +139,31 @@ export function LearnerShell() {
     });
   }
 
+  async function handleCopyPrompt() {
+    const copied = await copyTextToClipboard(promptText);
+    setCopyStatus(copied ? 'success' : 'fail');
+  }
+
+  function handleStartOver() {
+    clearLearnerDraft();
+    setSelectedRound(rounds[0]);
+    setCurrentStep('intro');
+    setDraft(initialDraft);
+    setCopyStatus('idle');
+    setLastSavedAt(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderSaveIndicator() {
+    if (!lastSavedAt) return null;
+
+    return (
+      <p className="save-indicator">
+        임시 저장됨 · {new Date(lastSavedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+      </p>
+    );
+  }
+
   function renderStep() {
     switch (currentStep) {
       case 'intro':
@@ -122,7 +171,7 @@ export function LearnerShell() {
           <StepLayout
             eyebrow="입장"
             title="스마트폰으로 후배 육성 Lab을 시작합니다"
-            description="팀명과 닉네임을 입력한 뒤, 오늘 다룰 라운드를 선택해 주세요. 입력한 내용은 이후 저장 연동 단계에서 Google Sheets로 전송됩니다."
+            description="팀명과 닉네임을 입력한 뒤, 오늘 다룰 라운드를 선택해 주세요. 입력 내용은 스마트폰에 먼저 임시 저장됩니다."
             canGoBack={false}
             canGoNext={canGoNext()}
             onBack={goBack}
@@ -153,7 +202,10 @@ export function LearnerShell() {
                   key={round.id}
                   round={round}
                   isSelected={round.id === selectedRound.id}
-                  onSelect={setSelectedRound}
+                  onSelect={(nextRound) => {
+                    setSelectedRound(nextRound);
+                    setCopyStatus('idle');
+                  }}
                 />
               ))}
             </div>
@@ -334,6 +386,7 @@ export function LearnerShell() {
             onBack={goBack}
             onNext={() => {
               if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt);
+              setCopyStatus('idle');
               goNext();
             }}
           >
@@ -358,20 +411,31 @@ export function LearnerShell() {
           <StepLayout
             eyebrow="AI 프롬프트 수정 후 복사"
             title="AI에게 그대로 맡기지 말고, 먼저 내가 고칩니다"
-            description="자동 생성된 프롬프트를 읽고 현장 맥락에 맞게 수정해 주세요."
+            description="자동 생성된 프롬프트를 읽고 현장 맥락에 맞게 수정한 뒤 복사해 외부 AI에 붙여 넣습니다."
             canGoBack
             canGoNext={canGoNext()}
             onBack={goBack}
             onNext={goNext}
             nextLabel="AI 답변 검토로 이동"
           >
+            <div className="copy-panel">
+              <p>수정한 프롬프트를 복사한 뒤 GPT, Gemini, Claude 등에 붙여 넣어 답변을 받아보세요.</p>
+              <button type="button" className="copy-button" onClick={handleCopyPrompt}>
+                프롬프트 복사하기
+              </button>
+              {copyStatus === 'success' ? <span className="copy-status success">복사되었습니다.</span> : null}
+              {copyStatus === 'fail' ? <span className="copy-status fail">복사에 실패했습니다. 길게 눌러 직접 복사해 주세요.</span> : null}
+            </div>
             <TextInputPanel
               label="수정 가능한 AI 프롬프트"
-              helper="복사 기능은 다음 PR에서 붙입니다. 지금은 수정 흐름을 먼저 구현합니다."
-              value={draft.editedPrompt || generatedPrompt}
+              helper="민감 정보, 실명 고객 정보, 내부 전략 수치가 들어가지 않았는지 확인해 주세요."
+              value={promptText}
               placeholder="AI 프롬프트를 수정해 주세요."
               minRows={10}
-              onChange={(value) => updateDraft('editedPrompt', value)}
+              onChange={(value) => {
+                updateDraft('editedPrompt', value);
+                setCopyStatus('idle');
+              }}
             />
           </StepLayout>
         );
@@ -458,7 +522,7 @@ export function LearnerShell() {
           <StepLayout
             eyebrow="결과"
             title="작성한 육성 플랜이 준비되었습니다"
-            description="저장 연동은 다음 단계에서 Google Sheets와 연결합니다."
+            description="현재 내용은 스마트폰에 임시 저장되어 있습니다. 다음 단계에서 Google Sheets 저장과 연결합니다."
             canGoBack
             canGoNext={false}
             onBack={goBack}
@@ -476,6 +540,9 @@ export function LearnerShell() {
                   <li key={`${line}-${index}`}>{line}</li>
                 ))}
               </ol>
+              <button type="button" className="restart-button" onClick={handleStartOver}>
+                새 라운드로 다시 시작
+              </button>
             </article>
           </StepLayout>
         );
@@ -485,6 +552,7 @@ export function LearnerShell() {
   return (
     <div className="mobile-learner-shell">
       <ProgressHeader currentStep={currentStep} roundTitle={currentStep === 'intro' ? undefined : selectedRound.title} />
+      {renderSaveIndicator()}
       {renderStep()}
     </div>
   );
