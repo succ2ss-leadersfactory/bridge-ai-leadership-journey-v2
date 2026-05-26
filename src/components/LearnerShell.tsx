@@ -8,6 +8,8 @@ import { clearLearnerDraft, loadLearnerDraft, saveLearnerDraft } from '../lib/lo
 import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
 import type { FlowStepId, Round } from '../types';
 import { ChoiceCard } from './ChoiceCard';
+import { AiAnswerReviewStep } from './learner/AiAnswerReviewStep';
+import { AiPromptStep } from './learner/AiPromptStep';
 import { IntroStep } from './learner/IntroStep';
 import { ProgressHeader } from './ProgressHeader';
 import { RoundMapStep } from './learner/RoundMapStep';
@@ -183,21 +185,33 @@ export function LearnerShell() {
         );
       case 'aiPrompt':
         return (
-          <StepLayout eyebrow="AI에게 물어볼 말" title="AI에게 줄 질문을 먼저 다듬습니다" description="내 선택, 후배 반응, 다시 생각한 내용이 들어간 질문입니다. 그대로 복사하기 전에 우리 현장에 맞는지 한 번 봐 주세요." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext} nextLabel="AI 답변 가져오기">
-            <div className="copy-panel"><p>복사한 뒤 GPT, Gemini, Claude 같은 AI 도구에 붙여넣고 답변을 받아오면 됩니다.</p><button type="button" className="copy-button" onClick={handleCopyPrompt}>AI 질문 복사하기</button>{copyStatus === 'success' ? <span className="copy-status success">복사되었습니다.</span> : null}{copyStatus === 'fail' ? <span className="copy-status fail">복사에 실패했습니다. 길게 눌러 직접 복사해 주세요.</span> : null}</div>
-            <TextInputPanel label="AI에게 물어볼 내용" helper="민감한 고객 정보, 내부 수치, 실명 정보가 들어가지 않았는지 확인해 주세요." value={promptText} placeholder="AI에게 물어볼 말을 고쳐 주세요." minRows={12} onChange={(value) => { updateDraft('editedPrompt', value); setCopyStatus('idle'); }} />
-          </StepLayout>
+          <AiPromptStep
+            canGoNext={isNextEnabled}
+            promptText={promptText}
+            copyStatus={copyStatus}
+            onBack={goBack}
+            onNext={goNext}
+            onCopyPrompt={handleCopyPrompt}
+            onPromptChange={(value) => { updateDraft('editedPrompt', value); setCopyStatus('idle'); }}
+          />
         );
       case 'aiAnswerReview':
         return (
-          <StepLayout eyebrow="AI 답변 보기" title="AI 답변을 바로 쓰지 말고 골라봅니다" description="AI 도구에서 받은 답변을 붙여넣고, 쓸 말과 고칠 말을 나눠봅니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
-            <TextInputPanel label="AI 답변 전체 붙여넣기" helper="AI가 준 답변 전체를 그대로 붙여넣으세요. 결과물이 있으면 아래에 따로 보입니다." value={draft.aiRawResult} placeholder="AI 답변 전체를 붙여넣어 주세요." minRows={10} onChange={updateAiRawResult} />
-            {finalArtifact ? <article className="ai-artifact-card"><h3>AI가 써준 초안</h3><pre>{finalArtifact}</pre></article> : <article className="ai-artifact-card muted-card"><h3>아직 따로 보이는 결과물이 없습니다</h3><p>AI 답변을 붙여넣으면 여기에서 참고할 초안을 확인할 수 있습니다.</p></article>}
-            {reviewNotes ? <article className="ai-artifact-card review"><h3>한 번 더 생각해 볼 점</h3><pre>{reviewNotes}</pre></article> : null}
-            <TextInputPanel label="그대로 참고할 부분" helper="우리 현장에서도 쓸 만한 문장이나 흐름을 적습니다." value={draft.aiUseAsIs} placeholder="그대로 참고할 부분" onChange={(value) => updateDraft('aiUseAsIs', value)} />
-            <TextInputPanel label="고쳐야 할 부분" helper="말투, 강도, 타이밍을 우리 상황에 맞게 고칠 부분입니다." value={draft.aiRevise} placeholder="고쳐야 할 부분" onChange={(value) => updateDraft('aiRevise', value)} />
-            <TextInputPanel label="그대로 쓰면 위험한 부분" helper="후배를 단정하거나, 책임을 떠넘기거나, 우리 조직 분위기와 맞지 않는 부분입니다." value={draft.aiRisky} placeholder="조심할 부분" onChange={(value) => updateDraft('aiRisky', value)} />
-          </StepLayout>
+          <AiAnswerReviewStep
+            canGoNext={isNextEnabled}
+            aiRawResult={draft.aiRawResult}
+            finalArtifact={finalArtifact}
+            reviewNotes={reviewNotes}
+            aiUseAsIs={draft.aiUseAsIs}
+            aiRevise={draft.aiRevise}
+            aiRisky={draft.aiRisky}
+            onBack={goBack}
+            onNext={goNext}
+            onRawResultChange={updateAiRawResult}
+            onUseAsIsChange={(value) => updateDraft('aiUseAsIs', value)}
+            onReviseChange={(value) => updateDraft('aiRevise', value)}
+            onRiskyChange={(value) => updateDraft('aiRisky', value)}
+          />
         );
       case 'twoWeekPlan':
         return (
