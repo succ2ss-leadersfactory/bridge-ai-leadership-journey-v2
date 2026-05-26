@@ -8,7 +8,7 @@ import {
 } from '../lib/googleSheets';
 
 function getRoundTitle(roundId: string) {
-  return rounds.find((round) => round.id === roundId)?.title ?? roundId || '라운드 미입력';
+  return rounds.find((round) => round.id === roundId)?.title ?? (roundId || '라운드 미입력');
 }
 
 function isCompleted(response: DashboardResponseRow) {
