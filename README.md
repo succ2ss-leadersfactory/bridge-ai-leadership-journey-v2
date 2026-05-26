@@ -120,4 +120,4 @@ npm run build
 7. Final message uses one editable 3 to 5 line text area.
 8. Test learner result is saved to Google Sheets.
 9. Completed round badge appears after save success.
-10. Instructor dashboard loads saved data.
+10. Instructor dashboard shows team, session, and round response data.
