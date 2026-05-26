@@ -7,13 +7,14 @@ import {
   type DashboardLoadStatus,
   type DashboardResponseRow,
 } from '../lib/googleSheets';
+import type { RoundId } from '../types';
 
 function getRoundTitle(roundId: string) {
   return rounds.find((round) => round.id === roundId)?.title ?? (roundId || '라운드 미입력');
 }
 
 function getSessionTitle(roundId: string) {
-  return sessions.find((session) => session.roundIds.includes(roundId as never))?.title ?? '세션 미입력';
+  return sessions.find((session) => session.roundIds.includes(roundId as RoundId))?.title ?? '세션 미입력';
 }
 
 function isCompleted(response: DashboardResponseRow) {
