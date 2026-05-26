@@ -16,6 +16,7 @@ import { ProgressHeader } from './ProgressHeader';
 import { RoundMapStep } from './learner/RoundMapStep';
 import { SaveResultPanel } from './SaveResultPanel';
 import { StepLayout } from './StepLayout';
+import { StoryStep } from './learner/StoryStep';
 import { TextInputPanel } from './TextInputPanel';
 import { TwoWeekPlanStep } from './learner/TwoWeekPlanStep';
 
@@ -145,7 +146,7 @@ export function LearnerShell() {
           />
         );
       case 'situation':
-        return <StepLayout eyebrow="오늘의 장면" title={selectedRound.title} description={selectedRound.subtitle} canGoBack canGoNext onBack={goBack} onNext={goNext}><article className="story-card">{selectedRound.situation}</article></StepLayout>;
+        return <StoryStep eyebrow="오늘의 장면" title={selectedRound.title} description={selectedRound.subtitle} story={selectedRound.situation} onBack={goBack} onNext={goNext} />;
       case 'juniorReading':
         return (
           <StepLayout eyebrow="후배 보기" title={`${selectedRound.juniorName} ${selectedRound.juniorRole}, 어떻게 보이나요?`} description="성격을 단정하지 말고, 실제로 보인 말과 행동을 기준으로 적어봅니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
@@ -161,9 +162,9 @@ export function LearnerShell() {
           </StepLayout>
         );
       case 'firstResult':
-        return <StepLayout eyebrow="선택 뒤 장면" title="이 선택이 남긴 장면입니다" description="일은 조금 풀릴 수 있지만, 다른 부담이 남을 수도 있습니다." canGoBack canGoNext onBack={goBack} onNext={goNext}><article className="story-card emphasis">{draft.firstChoice ? selectedRound.firstResultByChoice[draft.firstChoice] : '아직 선택한 내용이 없습니다.'}</article></StepLayout>;
+        return <StoryStep eyebrow="선택 뒤 장면" title="이 선택이 남긴 장면입니다" description="일은 조금 풀릴 수 있지만, 다른 부담이 남을 수도 있습니다." story={draft.firstChoice ? selectedRound.firstResultByChoice[draft.firstChoice] : '아직 선택한 내용이 없습니다.'} isEmphasis onBack={goBack} onNext={goNext} />;
       case 'juniorReaction':
-        return <StepLayout eyebrow="후배의 다음 말" title="후배가 이렇게 받아들입니다" description="후배의 말 속에 다음에 도와줄 지점이 숨어 있습니다." canGoBack canGoNext onBack={goBack} onNext={goNext}><article className="story-card">{selectedRound.juniorReaction}</article></StepLayout>;
+        return <StoryStep eyebrow="후배의 다음 말" title="후배가 이렇게 받아들입니다" description="후배의 말 속에 다음에 도와줄 지점이 숨어 있습니다." story={selectedRound.juniorReaction} onBack={goBack} onNext={goNext} />;
       case 'dilemmaAnalysis':
         return (
           <StepLayout eyebrow="걸리는 지점" title="지금 어디서 막히나요?" description={selectedRound.dilemmaPrompt} canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
@@ -178,7 +179,7 @@ export function LearnerShell() {
           </StepLayout>
         );
       case 'additionalSituation':
-        return <StepLayout eyebrow="일이 한 번 더 꼬입니다" title="현장은 한 번 더 흔들립니다" description="새로 생긴 상황까지 보고, 앞으로 2주 동안 어떻게 도와줄지 정합니다." canGoBack canGoNext onBack={goBack} onNext={goNext}><article className="story-card">{selectedRound.additionalSituation}</article></StepLayout>;
+        return <StoryStep eyebrow="일이 한 번 더 꼬입니다" title="현장은 한 번 더 흔들립니다" description="새로 생긴 상황까지 보고, 앞으로 2주 동안 어떻게 도와줄지 정합니다." story={selectedRound.additionalSituation} onBack={goBack} onNext={goNext} />;
       case 'developmentDirection':
         return (
           <StepLayout eyebrow="2주 도움 고르기" title="앞으로 2주, 무엇을 도와줄까요?" description="후배가 조금 달라질 수 있는 작은 도움을 하나 골라봅니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
