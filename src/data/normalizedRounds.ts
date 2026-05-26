@@ -2,7 +2,7 @@ import type { Round } from '../types';
 import { rounds as sourceRounds } from './rounds';
 
 function normalizeRankText(value: string) {
-  return value.replaceAll('주임', '대리');
+  return value.split('주임').join('대리');
 }
 
 function normalizeObject<T>(value: T): T {
