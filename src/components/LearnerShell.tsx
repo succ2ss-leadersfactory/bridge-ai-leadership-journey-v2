@@ -8,8 +8,9 @@ import { clearLearnerDraft, loadLearnerDraft, saveLearnerDraft } from '../lib/lo
 import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
 import type { FlowStepId, Round } from '../types';
 import { ChoiceCard } from './ChoiceCard';
+import { IntroStep } from './learner/IntroStep';
 import { ProgressHeader } from './ProgressHeader';
-import { RoundCard } from './RoundCard';
+import { RoundMapStep } from './learner/RoundMapStep';
 import { SaveResultPanel } from './SaveResultPanel';
 import { StepLayout } from './StepLayout';
 import { TextInputPanel } from './TextInputPanel';
@@ -119,22 +120,25 @@ export function LearnerShell() {
     switch (currentStep) {
       case 'intro':
         return (
-          <StepLayout eyebrow="시작하기" title="먼저 팀명과 닉네임을 적어주세요" description="입장 정보는 처음 한 번만 적습니다. 이후에는 라운드 Map에서 다른 장면을 이어서 선택할 수 있습니다." canGoBack={false} canGoNext={isNextEnabled} onBack={goBack} onNext={goNext} nextLabel="라운드 Map 보기">
-            <div className="form-stack">
-              <TextInputPanel label="팀명" helper="강사용 화면에서 팀별로 보기 위한 이름입니다." value={draft.teamName} placeholder="예: 3팀" minRows={2} onChange={(value) => updateDraft('teamName', value)} />
-              <TextInputPanel label="닉네임" helper="실명 대신 교육장에서 쓸 이름을 적어 주세요." value={draft.nickname} placeholder="예: 브릿지과장" minRows={2} onChange={(value) => updateDraft('nickname', value)} />
-            </div>
-          </StepLayout>
+          <IntroStep
+            draft={draft}
+            canGoNext={isNextEnabled}
+            onBack={goBack}
+            onNext={goNext}
+            onTeamNameChange={(value) => updateDraft('teamName', value)}
+            onNicknameChange={(value) => updateDraft('nickname', value)}
+          />
         );
       case 'roundMap':
         return (
-          <StepLayout eyebrow="라운드 Map" title="오늘 해볼 장면을 고르세요" description="한 라운드를 저장한 뒤에도 이 화면으로 돌아와 다른 장면을 이어서 할 수 있습니다." canGoBack canGoNext={isNextEnabled} onBack={handleResetParticipant} onNext={goNext} nextLabel="선택한 장면 시작">
-            <div className="round-list">
-              {rounds.map((round) => (
-                <RoundCard key={round.id} round={round} isSelected={round.id === selectedRound.id} onSelect={selectRound} />
-              ))}
-            </div>
-          </StepLayout>
+          <RoundMapStep
+            rounds={rounds}
+            selectedRound={selectedRound}
+            canGoNext={isNextEnabled}
+            onBack={handleResetParticipant}
+            onNext={goNext}
+            onSelectRound={selectRound}
+          />
         );
       case 'situation':
         return <StepLayout eyebrow="오늘의 장면" title={selectedRound.title} description={selectedRound.subtitle} canGoBack canGoNext onBack={goBack} onNext={goNext}><article className="story-card">{selectedRound.situation}</article></StepLayout>;
