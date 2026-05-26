@@ -45,13 +45,27 @@ const RESPONSES_V2_COLUMNS = [
   'updated_at',
 ];
 
-function doGet() {
-  return jsonResponse({
-    ok: true,
-    app: 'Bridge AI Leadership Journey v2.0',
-    message: 'Apps Script endpoint is running.',
-    timestamp: new Date().toISOString(),
-  });
+function doGet(e) {
+  try {
+    const action = e && e.parameter ? e.parameter.action : '';
+
+    if (action === 'getDashboardDataV2') {
+      return getDashboardDataV2();
+    }
+
+    return jsonResponse({
+      ok: true,
+      app: 'Bridge AI Leadership Journey v2.0',
+      message: 'Apps Script endpoint is running.',
+      supportedActions: ['saveLearnerResultV2', 'getDashboardDataV2'],
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    return jsonResponse({
+      ok: false,
+      error: error && error.message ? error.message : String(error),
+    });
+  }
 }
 
 function doPost(e) {
