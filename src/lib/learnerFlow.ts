@@ -63,6 +63,10 @@ interface CanMoveNextInput {
   promptText: string;
 }
 
+function filledFinalLineCount(finalLines: string[]) {
+  return finalLines.filter((line) => line.trim().length > 0).length;
+}
+
 export function canMoveNext({ currentStep, draft, hasSelectedRound, promptText }: CanMoveNextInput) {
   switch (currentStep) {
     case 'intro':
@@ -86,11 +90,9 @@ export function canMoveNext({ currentStep, draft, hasSelectedRound, promptText }
         draft.aiUseAsIs.trim().length > 0 || draft.aiRevise.trim().length > 0 || draft.aiRisky.trim().length > 0
       );
     case 'twoWeekPlan':
-      return [draft.growthGoal, draft.twoWeekTask, draft.leaderSupport, draft.checkTiming, draft.watchOut].every(
-        (value) => value.trim().length > 0,
-      );
+      return [draft.growthGoal, draft.twoWeekTask, draft.leaderSupport].every((value) => value.trim().length > 0);
     case 'finalFiveLines':
-      return draft.finalLines.every((line) => line.trim().length > 0);
+      return filledFinalLineCount(draft.finalLines) >= 3;
     default:
       return true;
   }
