@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { rounds } from '../data/rounds';
+import { rounds } from '../data/normalizedRounds';
 import {
   fetchDashboardDataV2,
   type DashboardDataV2,
