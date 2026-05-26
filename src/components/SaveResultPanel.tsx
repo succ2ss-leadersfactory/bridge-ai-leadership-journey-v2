@@ -1,40 +1,15 @@
 import { useMemo, useState } from 'react';
 import { saveLearnerResultToGoogleSheets, type SaveStatus } from '../lib/googleSheets';
 import { createId } from '../lib/ids';
-import type { ChoiceId, LearnerResponseV2, Round, SecondChoiceId } from '../types';
-
-interface DraftLike {
-  teamName: string;
-  nickname: string;
-  juniorReading: string;
-  firstChoice: ChoiceId | '';
-  firstReason: string;
-  dilemma: string;
-  secondChoice: string;
-  directionId: string;
-  editedPrompt: string;
-  aiUseAsIs: string;
-  aiRevise: string;
-  aiRisky: string;
-  growthGoal: string;
-  twoWeekTask: string;
-  leaderSupport: string;
-  checkTiming: string;
-  watchOut: string;
-  finalLines: string[];
-}
+import { buildSavePayload, type ResultDraft } from '../lib/resultMapper';
+import type { Round } from '../types';
 
 interface SaveResultPanelProps {
   round: Round;
-  draft: DraftLike;
+  draft: ResultDraft;
   generatedPrompt: string;
   promptText: string;
   onStartOver: () => void;
-}
-
-function normalizeSecondChoice(value: string): SecondChoiceId | '' {
-  if (value === 'keep' || value === 'revise' || value === 'change') return value;
-  return '';
 }
 
 export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onStartOver }: SaveResultPanelProps) {
@@ -54,49 +29,17 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
     setSaveMessage('저장 중입니다. 잠시만 기다려 주세요.');
 
     const now = new Date().toISOString();
-    const participant = {
-      participantId: ids.participantId,
-      teamName: draft.teamName,
-      nickname: draft.nickname,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const response: LearnerResponseV2 = {
-      responseId: ids.responseId,
-      participantId: ids.participantId,
-      teamName: draft.teamName,
-      nickname: draft.nickname,
-      roundId: round.id,
-      currentStep: 'result',
-      juniorReading: draft.juniorReading,
-      firstChoice: draft.firstChoice,
-      firstReason: draft.firstReason,
-      developmentDilemma: draft.dilemma,
-      secondChoice: normalizeSecondChoice(draft.secondChoice),
-      finalActionId: draft.directionId,
-      developmentDirection: round.developmentDirections.find((item) => item.id === draft.directionId)?.title ?? '',
+    const payload = buildSavePayload({
+      round,
+      draft,
       generatedPrompt,
-      editedPrompt: promptText,
-      aiUseAsIs: draft.aiUseAsIs,
-      aiRevise: draft.aiRevise,
-      aiRisky: draft.aiRisky,
-      growthGoal: draft.growthGoal,
-      twoWeekTask: draft.twoWeekTask,
-      leaderSupport: draft.leaderSupport,
-      checkTiming: draft.checkTiming,
-      watchOut: draft.watchOut,
-      finalLine1: draft.finalLines[0] ?? '',
-      finalLine2: draft.finalLines[1] ?? '',
-      finalLine3: draft.finalLines[2] ?? '',
-      finalLine4: draft.finalLines[3] ?? '',
-      finalLine5: draft.finalLines[4] ?? '',
-      isCompleted: true,
-      createdAt: now,
-      updatedAt: now,
-    };
+      promptText,
+      participantId: ids.participantId,
+      responseId: ids.responseId,
+      now,
+    });
 
-    const result = await saveLearnerResultToGoogleSheets({ participant, response });
+    const result = await saveLearnerResultToGoogleSheets(payload);
     setSaveStatus(result.status);
     setSaveMessage(result.message);
   }
