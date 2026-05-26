@@ -26,6 +26,7 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
   );
 
   const hasSaved = saveStatus === 'success';
+  const finalLines = draft.finalLines.filter((line) => line.trim().length > 0);
 
   async function handleSave() {
     setSaveStatus('saving');
@@ -54,13 +55,12 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
   return (
     <article className="result-card">
       <h3>{round.finalOutput}</h3>
-      <p><strong>2주 뒤 달라졌으면 하는 모습</strong><br />{draft.growthGoal}</p>
-      <p><strong>이번 주에 맡겨볼 작은 일</strong><br />{draft.twoWeekTask}</p>
-      <p><strong>내가 옆에서 도와줄 일</strong><br />{draft.leaderSupport}</p>
-      <p><strong>언제 짧게 같이 볼지</strong><br />{draft.checkTiming}</p>
-      <p><strong>말할 때 조심할 표현</strong><br />{draft.watchOut}</p>
+      <p><strong>2주 뒤 보고 싶은 작은 변화</strong><br />{draft.growthGoal}</p>
+      <p><strong>이번 주 맡겨볼 작은 행동</strong><br />{draft.twoWeekTask}</p>
+      <p><strong>과장이 도와줄 방식</strong><br />{draft.leaderSupport}</p>
+      <p><strong>후배에게 할 말</strong></p>
       <ol>
-        {draft.finalLines.map((line, index) => (
+        {finalLines.map((line, index) => (
           <li key={`${line}-${index}`}>{line}</li>
         ))}
       </ol>

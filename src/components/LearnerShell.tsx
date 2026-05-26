@@ -119,12 +119,10 @@ export function LearnerShell() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function setFinalLine(index: number, value: string) {
-    setDraft((prev) => {
-      const nextLines = [...prev.finalLines];
-      nextLines[index] = value;
-      return { ...prev, finalLines: nextLines };
-    });
+  function setFinalLinesText(value: string) {
+    const nextLines = value.split('\n').map((line) => line.trim()).filter(Boolean).slice(0, 5);
+    const padded = [...nextLines, '', '', '', '', ''].slice(0, 5);
+    setDraft((prev) => ({ ...prev, finalLines: padded }));
   }
 
   async function handleCopyPrompt() {
@@ -270,15 +268,11 @@ export function LearnerShell() {
             growthGoal={draft.growthGoal}
             twoWeekTask={draft.twoWeekTask}
             leaderSupport={draft.leaderSupport}
-            checkTiming={draft.checkTiming}
-            watchOut={draft.watchOut}
             onBack={goBack}
             onNext={goNext}
             onGrowthGoalChange={(value) => updateDraft('growthGoal', value)}
             onTwoWeekTaskChange={(value) => updateDraft('twoWeekTask', value)}
             onLeaderSupportChange={(value) => updateDraft('leaderSupport', value)}
-            onCheckTimingChange={(value) => updateDraft('checkTiming', value)}
-            onWatchOutChange={(value) => updateDraft('watchOut', value)}
           />
         );
       case 'finalFiveLines':
@@ -290,7 +284,7 @@ export function LearnerShell() {
             finalLines={draft.finalLines}
             onBack={goBack}
             onNext={goNext}
-            onFinalLineChange={setFinalLine}
+            onFinalLinesChange={setFinalLinesText}
           />
         );
       case 'result':
