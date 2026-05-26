@@ -83,9 +83,12 @@ export function LearnerShell() {
     setCopyStatus('idle');
   }
 
-  function returnToRoundMap() {
+  function handleSaveSuccess() {
     markRoundCompleted(selectedRound.id);
     setCompletedRoundIds(loadCompletedRoundIds());
+  }
+
+  function returnToRoundMap() {
     setDraft((prev) => createFreshRoundDraft(prev));
     setCopyStatus('idle');
     setCurrentStep('roundMap');
@@ -258,7 +261,7 @@ export function LearnerShell() {
       default:
         return (
           <StepLayout eyebrow="저장" title="오늘 정리한 내용이 준비됐습니다" description="저장 버튼을 누르면 강사용 화면에서 함께 확인할 수 있습니다." canGoBack canGoNext={false} onBack={goBack} onNext={goNext}>
-            <SaveResultPanel round={selectedRound} draft={draft} generatedPrompt={generatedPrompt} promptText={promptText} onStartOver={returnToRoundMap} />
+            <SaveResultPanel round={selectedRound} draft={draft} generatedPrompt={generatedPrompt} promptText={promptText} onSaveSuccess={handleSaveSuccess} onStartOver={returnToRoundMap} />
           </StepLayout>
         );
     }
