@@ -20,7 +20,7 @@ export function ChoiceCard({ choice, isSelected, onSelect }: ChoiceCardProps) {
         <strong>좋은 점</strong> {choice.benefit}
       </span>
       <span className="choice-note">
-        <strong>주의할 점</strong> {choice.cost}
+        <strong>부담되는 점</strong> {choice.cost}
       </span>
     </button>
   );
