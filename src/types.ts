@@ -8,6 +8,7 @@ export type RoundId = 'R1' | 'R2' | 'R3' | 'R4' | 'R5' | 'BOSS';
 
 export type FlowStepId =
   | 'intro'
+  | 'roundMap'
   | 'situation'
   | 'juniorReading'
   | 'firstDecision'

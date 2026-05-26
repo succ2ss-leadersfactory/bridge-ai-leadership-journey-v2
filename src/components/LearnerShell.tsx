@@ -71,6 +71,14 @@ function findRoundById(roundId: string | undefined) {
   return rounds.find((round) => round.id === roundId) ?? rounds[0];
 }
 
+function freshRoundDraft(prev: DraftState): DraftState {
+  return {
+    ...initialDraft,
+    teamName: prev.teamName,
+    nickname: prev.nickname,
+  };
+}
+
 export function LearnerShell() {
   const savedDraft = getInitialSavedDraft();
   const [selectedRound, setSelectedRound] = useState<Round>(() => findRoundById(savedDraft?.selectedRoundId));
@@ -116,8 +124,22 @@ export function LearnerShell() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function selectRound(nextRound: Round) {
+    setSelectedRound(nextRound);
+    setDraft((prev) => freshRoundDraft(prev));
+    setCopyStatus('idle');
+  }
+
+  function returnToRoundMap() {
+    setDraft((prev) => freshRoundDraft(prev));
+    setCopyStatus('idle');
+    setCurrentStep('roundMap');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   function canGoNext() {
     if (currentStep === 'intro') return draft.teamName.trim().length > 0 && draft.nickname.trim().length > 0;
+    if (currentStep === 'roundMap') return Boolean(selectedRound);
     if (currentStep === 'juniorReading') return draft.juniorReading.trim().length > 0;
     if (currentStep === 'firstDecision') return draft.firstChoice !== '' && draft.firstReason.trim().length > 0;
     if (currentStep === 'dilemmaAnalysis') return draft.dilemma.trim().length > 0;
@@ -151,7 +173,7 @@ export function LearnerShell() {
     setCopyStatus(copied ? 'success' : 'fail');
   }
 
-  function handleStartOver() {
+  function handleResetParticipant() {
     clearLearnerDraft();
     setSelectedRound(rounds[0]);
     setCurrentStep('intro');
@@ -174,14 +196,19 @@ export function LearnerShell() {
     switch (currentStep) {
       case 'intro':
         return (
-          <StepLayout eyebrow="시작하기" title="오늘 다룰 후배 장면을 골라주세요" description="팀명과 닉네임을 적고, 오늘 실습할 장면을 선택합니다. 중간에 나가도 입력한 내용은 이 기기에 임시 저장됩니다." canGoBack={false} canGoNext={canGoNext()} onBack={goBack} onNext={goNext} nextLabel="시작하기">
+          <StepLayout eyebrow="시작하기" title="먼저 팀명과 닉네임을 적어주세요" description="입장 정보는 처음 한 번만 적습니다. 이후에는 라운드 Map에서 다른 장면을 이어서 선택할 수 있습니다." canGoBack={false} canGoNext={canGoNext()} onBack={goBack} onNext={goNext} nextLabel="라운드 Map 보기">
             <div className="form-stack">
               <TextInputPanel label="팀명" helper="강사용 화면에서 팀별로 보기 위한 이름입니다." value={draft.teamName} placeholder="예: 3팀" minRows={2} onChange={(value) => updateDraft('teamName', value)} />
               <TextInputPanel label="닉네임" helper="실명 대신 교육장에서 쓸 이름을 적어 주세요." value={draft.nickname} placeholder="예: 브릿지과장" minRows={2} onChange={(value) => updateDraft('nickname', value)} />
             </div>
+          </StepLayout>
+        );
+      case 'roundMap':
+        return (
+          <StepLayout eyebrow="라운드 Map" title="오늘 해볼 장면을 고르세요" description="한 라운드를 저장한 뒤에도 이 화면으로 돌아와 다른 장면을 이어서 할 수 있습니다." canGoBack canGoNext={canGoNext()} onBack={handleResetParticipant} onNext={goNext} nextLabel="선택한 장면 시작">
             <div className="round-list">
               {rounds.map((round) => (
-                <RoundCard key={round.id} round={round} isSelected={round.id === selectedRound.id} onSelect={(nextRound) => { setSelectedRound(nextRound); setCopyStatus('idle'); }} />
+                <RoundCard key={round.id} round={round} isSelected={round.id === selectedRound.id} onSelect={selectRound} />
               ))}
             </div>
           </StepLayout>
@@ -267,7 +294,7 @@ export function LearnerShell() {
       default:
         return (
           <StepLayout eyebrow="저장" title="오늘 정리한 내용이 준비됐습니다" description="저장 버튼을 누르면 강사용 화면에서 함께 확인할 수 있습니다." canGoBack canGoNext={false} onBack={goBack} onNext={goNext}>
-            <SaveResultPanel round={selectedRound} draft={draft} generatedPrompt={generatedPrompt} promptText={promptText} onStartOver={handleStartOver} />
+            <SaveResultPanel round={selectedRound} draft={draft} generatedPrompt={generatedPrompt} promptText={promptText} onStartOver={returnToRoundMap} />
           </StepLayout>
         );
     }
@@ -275,7 +302,7 @@ export function LearnerShell() {
 
   return (
     <div className="mobile-learner-shell">
-      <ProgressHeader currentStep={currentStep} roundTitle={currentStep === 'intro' ? undefined : selectedRound.title} />
+      <ProgressHeader currentStep={currentStep} roundTitle={currentStep === 'intro' || currentStep === 'roundMap' ? undefined : selectedRound.title} />
       {renderSaveIndicator()}
       {renderStep()}
     </div>

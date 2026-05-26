@@ -10,7 +10,12 @@ export const flowSteps: FlowStep[] = [
   {
     id: 'intro',
     label: '시작하기',
-    description: '팀명과 닉네임을 적고 오늘 다룰 장면을 고릅니다.',
+    description: '팀명과 닉네임을 적습니다.',
+  },
+  {
+    id: 'roundMap',
+    label: '라운드 Map',
+    description: '오늘 해볼 장면을 고릅니다.',
   },
   {
     id: 'situation',
