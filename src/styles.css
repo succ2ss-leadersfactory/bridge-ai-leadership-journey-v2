@@ -95,6 +95,20 @@ button:disabled {
   font-weight: 800;
 }
 
+.save-indicator {
+  position: sticky;
+  top: 78px;
+  z-index: 9;
+  margin: 0;
+  padding: 7px 16px;
+  background: #eef7f2;
+  border-bottom: 1px solid #d4eadc;
+  color: #2f7a4e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: right;
+}
+
 .step-layout {
   min-height: calc(100vh - 84px);
   padding-bottom: 96px;
@@ -271,6 +285,50 @@ button:disabled {
   outline: 3px solid rgba(23, 100, 168, 0.14);
 }
 
+.copy-panel {
+  display: grid;
+  gap: 10px;
+  border: 1px solid #b9dbff;
+  border-radius: 22px;
+  padding: 14px;
+  background: #edf7ff;
+}
+
+.copy-panel p {
+  margin: 0;
+  color: #2b4f72;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.copy-button,
+.restart-button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 16px;
+  background: #123a66;
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.copy-status {
+  display: block;
+  border-radius: 14px;
+  padding: 9px 10px;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.copy-status.success {
+  background: #e5f7ed;
+  color: #237148;
+}
+
+.copy-status.fail {
+  background: #fff0ee;
+  color: #b33a2f;
+}
+
 .result-card h3 {
   margin: 0 0 14px;
   color: #152033;
@@ -284,8 +342,13 @@ button:disabled {
 .result-card ol {
   display: grid;
   gap: 8px;
-  margin: 0;
+  margin: 0 0 18px;
   padding-left: 20px;
+}
+
+.restart-button {
+  width: 100%;
+  background: #1764a8;
 }
 
 .bottom-actions {
