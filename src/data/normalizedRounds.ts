@@ -12,7 +12,11 @@ const replacements: Array<[string, string]> = [
 ];
 
 function normalizeText(value: string) {
-  return replacements.reduce((current, [from, to]) => current.split(from).join(to), value);
+  const normalizedNames = replacements.reduce((current, [from, to]) => current.split(from).join(to), value);
+
+  return normalizedNames
+    .replaceAll('나는 한국공항공사 과장급 중간관리자입니다', '나는 한국공항공사 김원중 과장입니다')
+    .replace(/과장(?!급)/g, '김원중 과장');
 }
 
 function normalizeObject<T>(value: T): T {
