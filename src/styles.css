@@ -116,6 +116,13 @@ li {
   line-height: 1.55;
 }
 
+.round-meta {
+  display: block;
+  margin-top: 4px;
+  color: #607086;
+  font-size: 0.9rem;
+}
+
 @media (min-width: 860px) {
   .app-shell {
     padding: 44px 24px 64px;
