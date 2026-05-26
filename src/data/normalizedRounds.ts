@@ -1,13 +1,21 @@
 import type { Round } from '../types';
 import { rounds as sourceRounds } from './rounds';
 
-function normalizeRankText(value: string) {
-  return value.split('주임').join('대리');
+const replacements: Array<[string, string]> = [
+  ['김민재', '윤동희'],
+  ['이서연', '황성빈'],
+  ['정하늘', '전민재'],
+  ['최도윤', '고승민'],
+  ['주임', '대리'],
+];
+
+function normalizeText(value: string) {
+  return replacements.reduce((current, [from, to]) => current.split(from).join(to), value);
 }
 
 function normalizeObject<T>(value: T): T {
   if (typeof value === 'string') {
-    return normalizeRankText(value) as T;
+    return normalizeText(value) as T;
   }
 
   if (Array.isArray(value)) {
