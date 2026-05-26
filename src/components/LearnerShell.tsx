@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { flowSteps } from '../data/flowSteps';
 import { rounds } from '../data/rounds';
 import { copyTextToClipboard } from '../lib/clipboard';
+import { parseAiResult } from '../lib/aiResultParser';
+import { buildKacAiPrompt } from '../lib/promptBuilder';
 import { clearLearnerDraft, loadLearnerDraft, saveLearnerDraft } from '../lib/localDraft';
 import type { ChoiceId, FlowStepId, Round } from '../types';
 import { ChoiceCard } from './ChoiceCard';
@@ -23,6 +25,9 @@ type DraftState = {
   secondChoice: string;
   directionId: string;
   editedPrompt: string;
+  aiRawResult: string;
+  aiFinalArtifact: string;
+  aiReviewNotes: string;
   aiUseAsIs: string;
   aiRevise: string;
   aiRisky: string;
@@ -44,6 +49,9 @@ const initialDraft: DraftState = {
   secondChoice: '',
   directionId: '',
   editedPrompt: '',
+  aiRawResult: '',
+  aiFinalArtifact: '',
+  aiReviewNotes: '',
   aiUseAsIs: '',
   aiRevise: '',
   aiRisky: '',
@@ -67,25 +75,17 @@ export function LearnerShell() {
   const savedDraft = getInitialSavedDraft();
   const [selectedRound, setSelectedRound] = useState<Round>(() => findRoundById(savedDraft?.selectedRoundId));
   const [currentStep, setCurrentStep] = useState<FlowStepId>(() => savedDraft?.currentStep ?? 'intro');
-  const [draft, setDraft] = useState<DraftState>(() => savedDraft?.draft ?? initialDraft);
+  const [draft, setDraft] = useState<DraftState>(() => ({ ...initialDraft, ...(savedDraft?.draft ?? {}) }));
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(() => savedDraft?.savedAt ?? null);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'fail'>('idle');
 
   const stepIndex = stepOrder.indexOf(currentStep);
-  const selectedChoice = selectedRound.firstChoices.find((choice) => choice.id === draft.firstChoice);
-  const selectedDirection = selectedRound.developmentDirections.find((direction) => direction.id === draft.directionId);
 
-  const generatedPrompt = useMemo(() => {
-    const directionText = selectedDirection
-      ? `\n선택한 육성 방향: ${selectedDirection.title} - ${selectedDirection.description}`
-      : '';
-    const firstChoiceText = selectedChoice
-      ? `\n1차 판단: ${selectedChoice.label}\n선택 이유: ${draft.firstReason || '아직 작성하지 않음'}`
-      : '';
-    return `${selectedRound.aiPromptTemplate}${firstChoiceText}${directionText}`;
-  }, [draft.firstReason, selectedChoice, selectedDirection, selectedRound]);
-
+  const generatedPrompt = useMemo(() => buildKacAiPrompt(selectedRound, draft), [draft, selectedRound]);
   const promptText = draft.editedPrompt || generatedPrompt;
+  const parsedAiResult = useMemo(() => parseAiResult(draft.aiRawResult), [draft.aiRawResult]);
+  const finalArtifact = draft.aiFinalArtifact || parsedAiResult.finalArtifact;
+  const reviewNotes = draft.aiReviewNotes || parsedAiResult.reviewNotes;
 
   useEffect(() => {
     saveLearnerDraft({ selectedRoundId: selectedRound.id, currentStep, draft });
@@ -94,6 +94,16 @@ export function LearnerShell() {
 
   function updateDraft<K extends keyof DraftState>(key: K, value: DraftState[K]) {
     setDraft((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function updateAiRawResult(value: string) {
+    const parsed = parseAiResult(value);
+    setDraft((prev) => ({
+      ...prev,
+      aiRawResult: value,
+      aiFinalArtifact: parsed.finalArtifact,
+      aiReviewNotes: parsed.reviewNotes,
+    }));
   }
 
   function goNext() {
@@ -115,7 +125,9 @@ export function LearnerShell() {
     if (currentStep === 'developmentDirection') return draft.directionId !== '';
     if (currentStep === 'aiPrompt') return promptText.trim().length > 0;
     if (currentStep === 'aiAnswerReview') {
-      return draft.aiUseAsIs.trim().length > 0 || draft.aiRevise.trim().length > 0 || draft.aiRisky.trim().length > 0;
+      return draft.aiRawResult.trim().length > 0 && (
+        draft.aiUseAsIs.trim().length > 0 || draft.aiRevise.trim().length > 0 || draft.aiRisky.trim().length > 0
+      );
     }
     if (currentStep === 'twoWeekPlan') {
       return [draft.growthGoal, draft.twoWeekTask, draft.leaderSupport, draft.checkTiming, draft.watchOut].every(
@@ -217,22 +229,26 @@ export function LearnerShell() {
         );
       case 'aiPrompt':
         return (
-          <StepLayout eyebrow="AI 프롬프트 수정 후 복사" title="AI에게 그대로 맡기지 말고, 먼저 내가 고칩니다" description="자동 생성된 프롬프트를 읽고 현장 맥락에 맞게 수정한 뒤 복사해 외부 AI에 붙여 넣습니다." canGoBack canGoNext={canGoNext()} onBack={goBack} onNext={goNext} nextLabel="AI 답변 검토로 이동">
-            <div className="copy-panel"><p>수정한 프롬프트를 복사한 뒤 GPT, Gemini, Claude 등에 붙여 넣어 답변을 받아보세요.</p><button type="button" className="copy-button" onClick={handleCopyPrompt}>프롬프트 복사하기</button>{copyStatus === 'success' ? <span className="copy-status success">복사되었습니다.</span> : null}{copyStatus === 'fail' ? <span className="copy-status fail">복사에 실패했습니다. 길게 눌러 직접 복사해 주세요.</span> : null}</div>
-            <TextInputPanel label="수정 가능한 AI 프롬프트" helper="민감 정보, 실명 고객 정보, 내부 전략 수치가 들어가지 않았는지 확인해 주세요." value={promptText} placeholder="AI 프롬프트를 수정해 주세요." minRows={10} onChange={(value) => { updateDraft('editedPrompt', value); setCopyStatus('idle'); }} />
+          <StepLayout eyebrow="AI 프롬프트 수정 후 복사" title="선택과 판단 여정이 반영된 프롬프트입니다" description="1차 선택, 선택 결과, 후배 반응, 딜레마, 다시 판단, 육성 방향이 포함됩니다. 복사 후 외부 AI에 붙여 넣으세요." canGoBack canGoNext={canGoNext()} onBack={goBack} onNext={goNext} nextLabel="AI 결과 붙여넣기">
+            <div className="copy-panel"><p>AI가 결과물을 자동으로 분리할 수 있도록 FINAL_ARTIFACT와 REVIEW_NOTES 블록을 요청하는 프롬프트입니다.</p><button type="button" className="copy-button" onClick={handleCopyPrompt}>프롬프트 복사하기</button>{copyStatus === 'success' ? <span className="copy-status success">복사되었습니다.</span> : null}{copyStatus === 'fail' ? <span className="copy-status fail">복사에 실패했습니다. 길게 눌러 직접 복사해 주세요.</span> : null}</div>
+            <TextInputPanel label="수정 가능한 AI 프롬프트" helper="민감 정보, 실명 고객 정보, 내부 전략 수치가 들어가지 않았는지 확인해 주세요." value={promptText} placeholder="AI 프롬프트를 수정해 주세요." minRows={12} onChange={(value) => { updateDraft('editedPrompt', value); setCopyStatus('idle'); }} />
           </StepLayout>
         );
       case 'aiAnswerReview':
         return (
-          <StepLayout eyebrow="AI 답변 골라보기" title="AI 답변을 그대로 쓰지 않고 나눠 봅니다" description="AI 결과 중 참고할 것, 고칠 것, 조심할 것을 구분합니다." canGoBack canGoNext={canGoNext()} onBack={goBack} onNext={goNext}>
-            <TextInputPanel label="그대로 참고해도 되는 부분" helper="현장 맥락과 맞는 제안을 적습니다." value={draft.aiUseAsIs} placeholder="AI 답변 중 그대로 참고할 부분" onChange={(value) => updateDraft('aiUseAsIs', value)} />
+          <StepLayout eyebrow="AI 결과 붙여넣기와 골라보기" title="AI가 만든 결과물 중 쓸 부분을 고릅니다" description="AI 도구에서 받은 답변 전체를 붙여넣으면 요청 결과물과 검토 메모가 자동으로 분리됩니다." canGoBack canGoNext={canGoNext()} onBack={goBack} onNext={goNext}>
+            <TextInputPanel label="AI 답변 전체 붙여넣기" helper="외부 AI가 생성한 답변 전체를 그대로 붙여넣으세요. FINAL_ARTIFACT 블록이 있으면 아래에 결과물이 분리되어 보입니다." value={draft.aiRawResult} placeholder="AI 답변 전체를 붙여넣어 주세요." minRows={10} onChange={updateAiRawResult} />
+            {finalArtifact ? <article className="ai-artifact-card"><h3>AI가 생성한 요청 결과물</h3><pre>{finalArtifact}</pre></article> : <article className="ai-artifact-card muted-card"><h3>아직 분리된 결과물이 없습니다</h3><p>AI 답변에 FINAL_ARTIFACT 블록이 없으면 답변 전체를 보며 아래 항목을 작성해 주세요.</p></article>}
+            {reviewNotes ? <article className="ai-artifact-card review"><h3>AI가 남긴 확인 메모</h3><pre>{reviewNotes}</pre></article> : null}
+            <TextInputPanel label="그대로 참고해도 되는 부분" helper="AI 결과물 중 현장 맥락과 맞는 문장이나 구조를 적습니다." value={draft.aiUseAsIs} placeholder="그대로 참고할 부분" onChange={(value) => updateDraft('aiUseAsIs', value)} />
             <TextInputPanel label="고쳐야 하는 부분" helper="말투, 강도, 타이밍, 역할 범위를 조정할 부분입니다." value={draft.aiRevise} placeholder="현장에 맞게 수정할 부분" onChange={(value) => updateDraft('aiRevise', value)} />
             <TextInputPanel label="조심해야 하는 부분" helper="후배 낙인, 과도한 책임 전가, 조직 맥락과 맞지 않는 부분입니다." value={draft.aiRisky} placeholder="조심할 부분" onChange={(value) => updateDraft('aiRisky', value)} />
           </StepLayout>
         );
       case 'twoWeekPlan':
         return (
-          <StepLayout eyebrow="2주 미니 육성 플랜" title={selectedRound.finalOutput} description="거창한 계획보다 2주 안에 실제로 해볼 수 있는 작고 분명한 행동으로 씁니다." canGoBack canGoNext={canGoNext()} onBack={goBack} onNext={goNext}>
+          <StepLayout eyebrow="2주 미니 육성 플랜" title={selectedRound.finalOutput} description="AI 결과물 중 쓸 부분을 참고하되, 최종 계획은 과장님의 판단으로 완성합니다." canGoBack canGoNext={canGoNext()} onBack={goBack} onNext={goNext}>
+            {finalArtifact ? <article className="ai-artifact-card compact"><h3>참고할 AI 결과물</h3><pre>{finalArtifact}</pre></article> : null}
             <TextInputPanel label="성장 목표" helper="후배가 2주 뒤 무엇을 조금 더 잘하게 될까요?" value={draft.growthGoal} placeholder={selectedRound.twoWeekPlanGuide.growthGoalPlaceholder} onChange={(value) => updateDraft('growthGoal', value)} />
             <TextInputPanel label="작은 과제" helper="후배에게 맡길 작고 구체적인 과제입니다." value={draft.twoWeekTask} placeholder={selectedRound.twoWeekPlanGuide.taskPlaceholder} onChange={(value) => updateDraft('twoWeekTask', value)} />
             <TextInputPanel label="과장의 지원" helper="과장이 대신 해주는 것이 아니라, 성장하도록 받쳐주는 방식입니다." value={draft.leaderSupport} placeholder={selectedRound.twoWeekPlanGuide.supportPlaceholder} onChange={(value) => updateDraft('leaderSupport', value)} />
@@ -242,7 +258,8 @@ export function LearnerShell() {
         );
       case 'finalFiveLines':
         return (
-          <StepLayout eyebrow="5줄 현장 실행문" title="내일 바로 말할 문장으로 바꿉니다" description="계획을 후배에게 실제로 말할 수 있는 5줄로 정리해 주세요." canGoBack canGoNext={canGoNext()} onBack={goBack} onNext={goNext} nextLabel="결과 보기">
+          <StepLayout eyebrow="5줄 현장 실행문" title="내일 바로 말할 문장으로 바꿉니다" description="AI 결과물은 참고하되, 후배에게 실제로 말할 문장은 직접 다듬어 완성합니다." canGoBack canGoNext={canGoNext()} onBack={goBack} onNext={goNext} nextLabel="결과 보기">
+            {finalArtifact ? <article className="ai-artifact-card compact"><h3>참고할 AI 결과물</h3><pre>{finalArtifact}</pre></article> : null}
             {selectedRound.finalFiveLineGuide.map((guide, index) => <TextInputPanel key={guide} label={`${index + 1}번째 문장`} helper={guide} value={draft.finalLines[index]} placeholder="한 문장으로 적어 주세요." minRows={3} onChange={(value) => setFinalLine(index, value)} />)}
           </StepLayout>
         );
