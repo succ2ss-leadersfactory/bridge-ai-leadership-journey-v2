@@ -56,10 +56,10 @@ Entry
 All people are displayed as full name plus rank.
 
 ```text
-김민재 사원
-이서연 대리
-정하늘 사원
-최도윤 대리
+윤동희 사원
+황성빈 대리
+전민재 사원
+고승민 대리
 ```
 
 Allowed ranks:
@@ -114,7 +114,7 @@ npm run build
 1. Learner app opens on smartphone.
 2. Session Map opens after team name and nickname are entered.
 3. Session 1 shows only R1 and R2.
-4. R2 shows 이서연 대리.
+4. R2 shows 황성빈 대리.
 5. AI prompt copy works on smartphone.
 6. Two-week action plan uses three core inputs.
 7. Final message uses one editable 3 to 5 line text area.
