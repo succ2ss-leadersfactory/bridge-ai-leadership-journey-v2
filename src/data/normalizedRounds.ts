@@ -1,6 +1,7 @@
 import type { Round } from '../types';
 import { rounds as sourceRounds } from './rounds';
 import { roundOverrides } from './roundOverrides';
+import { finalRoundOverrides } from './finalRoundOverrides';
 
 const replacements: Array<[string, string]> = [
   ['김민재', '윤동희'],
@@ -37,4 +38,5 @@ const normalizedSourceRounds = normalizeObject(sourceRounds);
 export const rounds: Round[] = normalizedSourceRounds.map((round) => ({
   ...round,
   ...(roundOverrides[round.id] ?? {}),
+  ...(finalRoundOverrides[round.id] ?? {}),
 }));
