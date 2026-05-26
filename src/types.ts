@@ -6,8 +6,11 @@ export type AiAnswerReviewKey = 'useAsIs' | 'revise' | 'risky';
 
 export type RoundId = 'R1' | 'R2' | 'R3' | 'R4' | 'R5' | 'BOSS';
 
+export type SessionId = 'S1' | 'S2' | 'S3';
+
 export type FlowStepId =
   | 'intro'
+  | 'sessionMap'
   | 'roundMap'
   | 'situation'
   | 'juniorReading'
@@ -53,6 +56,18 @@ export interface AiAnswerReviewOption {
   key: AiAnswerReviewKey;
   label: string;
   description: string;
+}
+
+export interface LearningSession {
+  id: SessionId;
+  order: number;
+  title: string;
+  subtitle: string;
+  theme: string;
+  guidingQuestion: string;
+  miniLectureFocus: string;
+  artifactName: string;
+  roundIds: RoundId[];
 }
 
 export interface Round {

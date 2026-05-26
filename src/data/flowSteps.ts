@@ -13,9 +13,14 @@ export const flowSteps: FlowStep[] = [
     description: '팀명과 닉네임을 적습니다.',
   },
   {
+    id: 'sessionMap',
+    label: '세션 Map',
+    description: '오늘 진행할 세션을 고릅니다.',
+  },
+  {
     id: 'roundMap',
     label: '라운드 Map',
-    description: '오늘 해볼 장면을 고릅니다.',
+    description: '선택한 세션 안에서 해볼 장면을 고릅니다.',
   },
   {
     id: 'situation',
