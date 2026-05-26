@@ -17,7 +17,7 @@ export function RoundCard({ round, isSelected, onSelect }: RoundCardProps) {
       <span className="round-index">{round.id === 'BOSS' ? 'Boss' : `R${round.order}`}</span>
       <span className="round-card-title">{round.title}</span>
       <span className="round-card-meta">
-        {round.juniorName} {round.juniorRole} · {round.developmentTask}
+        {round.juniorName} {round.juniorRole} · 지금 도와줄 일: {round.developmentTask}
       </span>
     </button>
   );
