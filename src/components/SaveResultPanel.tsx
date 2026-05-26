@@ -104,11 +104,11 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
   return (
     <article className="result-card">
       <h3>{round.finalOutput}</h3>
-      <p><strong>성장 목표</strong><br />{draft.growthGoal}</p>
-      <p><strong>작은 과제</strong><br />{draft.twoWeekTask}</p>
-      <p><strong>과장의 지원</strong><br />{draft.leaderSupport}</p>
-      <p><strong>점검 시점</strong><br />{draft.checkTiming}</p>
-      <p><strong>주의할 점</strong><br />{draft.watchOut}</p>
+      <p><strong>2주 뒤 달라졌으면 하는 모습</strong><br />{draft.growthGoal}</p>
+      <p><strong>이번 주에 맡겨볼 작은 일</strong><br />{draft.twoWeekTask}</p>
+      <p><strong>내가 옆에서 도와줄 일</strong><br />{draft.leaderSupport}</p>
+      <p><strong>언제 짧게 같이 볼지</strong><br />{draft.checkTiming}</p>
+      <p><strong>말할 때 조심할 표현</strong><br />{draft.watchOut}</p>
       <ol>
         {draft.finalLines.map((line, index) => (
           <li key={`${line}-${index}`}>{line}</li>
@@ -116,15 +116,15 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
       </ol>
 
       <div className="sheet-save-panel">
-        <p>작성 결과를 강사용 대시보드에서 볼 수 있도록 Google Sheets에 저장합니다.</p>
+        <p>오늘 작성한 내용을 저장하면 강사용 화면에서 함께 볼 수 있습니다.</p>
         <button type="button" className="save-sheet-button" onClick={handleSave} disabled={saveStatus === 'saving'}>
-          {saveStatus === 'saving' ? '저장 중...' : '결과 저장하기'}
+          {saveStatus === 'saving' ? '저장 중...' : '작성한 내용 저장하기'}
         </button>
         {saveMessage ? <span className={`sheet-save-status ${saveStatus}`}>{saveMessage}</span> : null}
       </div>
 
       <button type="button" className="restart-button" onClick={onStartOver}>
-        새 라운드로 다시 시작
+        다른 장면 다시 해보기
       </button>
     </article>
   );
