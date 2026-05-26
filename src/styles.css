@@ -285,7 +285,8 @@ button:disabled {
   outline: 3px solid rgba(23, 100, 168, 0.14);
 }
 
-.copy-panel {
+.copy-panel,
+.sheet-save-panel {
   display: grid;
   gap: 10px;
   border: 1px solid #b9dbff;
@@ -294,7 +295,8 @@ button:disabled {
   background: #edf7ff;
 }
 
-.copy-panel p {
+.copy-panel p,
+.sheet-save-panel p {
   margin: 0;
   color: #2b4f72;
   font-size: 0.9rem;
@@ -302,7 +304,8 @@ button:disabled {
 }
 
 .copy-button,
-.restart-button {
+.restart-button,
+.save-sheet-button {
   min-height: 48px;
   border: 0;
   border-radius: 16px;
@@ -311,7 +314,8 @@ button:disabled {
   font-weight: 900;
 }
 
-.copy-status {
+.copy-status,
+.sheet-save-status {
   display: block;
   border-radius: 14px;
   padding: 9px 10px;
@@ -319,14 +323,32 @@ button:disabled {
   font-weight: 800;
 }
 
-.copy-status.success {
+.copy-status.success,
+.sheet-save-status.success {
   background: #e5f7ed;
   color: #237148;
 }
 
-.copy-status.fail {
+.copy-status.fail,
+.sheet-save-status.error,
+.sheet-save-status.notConfigured {
   background: #fff0ee;
   color: #b33a2f;
+}
+
+.sheet-save-status.saving {
+  background: #fff8df;
+  color: #8a6100;
+}
+
+.sheet-save-panel {
+  margin: 18px 0;
+  border-color: #bfe4ce;
+  background: #f0fbf4;
+}
+
+.save-sheet-button {
+  background: #198754;
 }
 
 .result-card h3 {
