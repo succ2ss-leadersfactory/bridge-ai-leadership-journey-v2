@@ -351,6 +351,58 @@ button:disabled {
   background: #198754;
 }
 
+.ai-artifact-card {
+  border: 1px solid #c9dcf1;
+  border-radius: 22px;
+  padding: 14px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(31, 58, 88, 0.06);
+}
+
+.ai-artifact-card h3 {
+  margin: 0 0 10px;
+  color: #17365d;
+  font-size: 1rem;
+}
+
+.ai-artifact-card p {
+  margin: 0;
+  color: #52667d;
+  line-height: 1.55;
+}
+
+.ai-artifact-card pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  margin: 0;
+  border-radius: 16px;
+  padding: 12px;
+  background: #f5f9fd;
+  color: #24344a;
+  font-family: inherit;
+  font-size: 0.94rem;
+  line-height: 1.62;
+}
+
+.ai-artifact-card.review {
+  border-color: #f1d7a6;
+  background: #fff9ed;
+}
+
+.ai-artifact-card.review pre {
+  background: #fffdf7;
+}
+
+.ai-artifact-card.compact pre {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.muted-card {
+  background: #f5f7fa;
+}
+
 .result-card h3 {
   margin: 0 0 14px;
   color: #152033;
