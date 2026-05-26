@@ -124,7 +124,7 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
       </div>
 
       <button type="button" className="restart-button" onClick={onStartOver}>
-        다른 장면 다시 해보기
+        라운드 Map으로 돌아가기
       </button>
     </article>
   );
