@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { flowSteps } from '../data/flowSteps';
-import { rounds } from '../data/rounds';
+import { rounds } from '../data/normalizedRounds';
 import { copyTextToClipboard } from '../lib/clipboard';
 import { parseAiResult } from '../lib/aiResultParser';
 import { buildKacAiPrompt } from '../lib/promptBuilder';
