@@ -28,14 +28,14 @@ export function FinalFiveLinesStep({
 }: FinalFiveLinesStepProps) {
   return (
     <StepLayout
-      eyebrow="코칭 대화"
-      title="후배 코칭 대화문 만들기"
-      description="좋은 말 5줄을 쓰는 화면이 아닙니다. 내일 실제로 할 코칭 대화를 인정, 질문, 행동 약속 중심으로 정리합니다."
+      eyebrow="내일 할 말 정리"
+      title="후배 앞에서 실제로 할 말 5줄"
+      description="좋은 말처럼 들리는 문장이 아니라, 내일 자리에서 바로 꺼낼 수 있는 말로 바꿉니다. 인정할 말, 물어볼 말, 같이 정할 행동만 남깁니다."
       canGoBack
       canGoNext={canGoNext}
       onBack={onBack}
       onNext={onNext}
-      nextLabel="결과 보기"
+      nextLabel="정리한 내용 보기"
     >
       {finalArtifact ? (
         <article className="ai-artifact-card compact">
