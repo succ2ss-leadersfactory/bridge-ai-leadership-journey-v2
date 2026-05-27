@@ -10,17 +10,17 @@ export const flowSteps: FlowStep[] = [
   {
     id: 'intro',
     label: 'Lab 시작하기',
-    description: '팀명과 닉네임을 적고 후배육성 여정을 시작합니다.',
+    description: '교육장에서 부를 이름을 적고 시작합니다.',
   },
   {
     id: 'sessionMap',
-    label: '오늘의 세션 고르기',
+    label: '오늘 볼 흐름 고르기',
     description: '후배를 읽고, 키울 것을 정하고, 다시 움직이게 하는 흐름을 확인합니다.',
   },
   {
     id: 'roundMap',
     label: '장면 고르기',
-    description: '선택한 세션 안에서 직접 다뤄볼 현업 장면을 고릅니다.',
+    description: '선택한 흐름 안에서 직접 다뤄볼 현업 장면을 고릅니다.',
   },
   {
     id: 'situation',
@@ -48,24 +48,24 @@ export const flowSteps: FlowStep[] = [
     description: '후배의 반응 속에서 다음에 도와줄 지점을 찾습니다.',
   },
   {
+    id: 'additionalSituation',
+    label: '그런데, 일이 조금 달라집니다',
+    description: '새로 들어온 말, 압박, 오해 때문에 처음 판단을 다시 봐야 하는 순간입니다.',
+  },
+  {
     id: 'dilemmaAnalysis',
     label: '다시 보면 걸리는 지점',
-    description: '일 처리와 후배 성장 사이에서 놓치기 쉬운 비용을 적습니다.',
+    description: '처음 판단이 새 상황에서도 괜찮은지, 놓치기 쉬운 비용을 봅니다.',
   },
   {
     id: 'secondDecision',
     label: '판단을 다시 잡기',
-    description: '처음 생각을 유지할지, 보완할지, 전환할지 고릅니다.',
-  },
-  {
-    id: 'additionalSituation',
-    label: '상황이 하나 더 생깁니다',
-    description: '현장에서 새로 생긴 압박까지 함께 고려합니다.',
+    description: '처음 생각을 유지할지, 일부 보완할지, 방향을 전환할지 고릅니다.',
   },
   {
     id: 'developmentDirection',
     label: '키울 것을 하나로 잡기',
-    description: '후배에게 지금 필요한 성장 과제와 지원 방향을 하나로 좁힙니다.',
+    description: '김원중 과장이 이 후배에게 남길 작은 약속을 하나로 좁힙니다.',
   },
   {
     id: 'aiPrompt',
