@@ -214,21 +214,21 @@ export function LearnerShell() {
         return <StoryStep eyebrow="그 선택이 만든 변화" title="이 선택 뒤에 남는 장면입니다" description="일은 조금 풀릴 수 있지만, 다른 부담이 남을 수도 있습니다." story={draft.firstChoice ? selectedRound.firstResultByChoice[draft.firstChoice] : '아직 선택한 내용이 없습니다.'} isEmphasis onBack={goBack} onNext={goNext} />;
       case 'juniorReaction':
         return <StoryStep eyebrow="후배가 이렇게 받아들입니다" title="후배의 다음 말" description="후배의 말 속에 다음에 도와줄 지점이 숨어 있습니다." story={selectedRound.juniorReaction} onBack={goBack} onNext={goNext} />;
+      case 'additionalSituation':
+        return <StoryStep eyebrow="그런데, 일이 조금 달라집니다" title="처음 판단의 비용이 보이기 시작합니다" description="방금 선택이 틀렸다는 뜻은 아닙니다. 다만 새로 들어온 말, 일정, 표정, 압박 때문에 그대로 가도 되는지 다시 봐야 합니다." story={selectedRound.additionalSituation} onBack={goBack} onNext={goNext} />;
       case 'dilemmaAnalysis':
         return (
-          <StepLayout eyebrow="다시 보면 걸리는 지점" title="무엇이 걸리나요?" description={selectedRound.dilemmaPrompt} canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
+          <StepLayout eyebrow="다시 보면 걸리는 지점" title="처음 판단, 그대로 가도 괜찮을까요?" description={selectedRound.dilemmaPrompt} canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
             <div className="signal-list">{selectedRound.dilemmaHints.map((hint) => <p key={hint}>{hint}</p>)}</div>
-            <TextInputPanel label="내가 지금 고민하는 지점" helper="예: 바로 답을 주면 일은 빨리 끝나지만, 다음에도 김원중 과장의 답을 기다릴 수 있다." value={draft.dilemma} placeholder="지금 걸리는 지점을 적어 주세요." onChange={(value) => updateDraft('dilemma', value)} />
+            <TextInputPanel label="새 상황을 보고 걸리는 지점" helper="예: 처음 대응이 틀린 것은 아니지만, 새로 생긴 압박 때문에 후배에게 다르게 들릴 수 있다." value={draft.dilemma} placeholder="처음 판단에서 다시 봐야 할 지점을 적어 주세요." onChange={(value) => updateDraft('dilemma', value)} />
           </StepLayout>
         );
       case 'secondDecision':
         return (
-          <StepLayout eyebrow="판단을 다시 잡기" title={selectedRound.secondQuestion} description="후배의 반응을 보고, 처음 판단을 유지할지 보완할지 전환할지 정리합니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
+          <StepLayout eyebrow="판단을 다시 잡기" title={selectedRound.secondQuestion} description="새로 생긴 변수까지 보고, 처음 판단을 유지할지, 조금 고칠지, 방향을 바꿀지 정합니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
             <div className="choice-stack">{selectedRound.secondChoices.map((choice) => <button key={choice.id} type="button" className={`direction-card ${draft.secondChoice === choice.id ? 'selected' : ''}`} onClick={() => updateDraft('secondChoice', choice.id)}><strong>{choice.label}</strong><span>{choice.description}</span></button>)}</div>
           </StepLayout>
         );
-      case 'additionalSituation':
-        return <StoryStep eyebrow="상황이 하나 더 생깁니다" title="현장은 한 번 더 흔들립니다" description="새로 생긴 압박까지 보고, 앞으로 어떻게 도와줄지 정합니다." story={selectedRound.additionalSituation} onBack={goBack} onNext={goNext} />;
       case 'developmentDirection':
         return (
           <StepLayout eyebrow="키울 것을 하나로 잡기" title="앞으로 2주, 이 후배에게 무엇을 남길까요?" description="좋은 말보다 중요한 건 다음 행동입니다. 김원중 과장이 이 후배에게 남길 작은 약속을 하나 고르세요." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
