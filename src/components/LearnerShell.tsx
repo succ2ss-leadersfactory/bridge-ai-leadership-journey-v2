@@ -7,6 +7,7 @@ import { copyTextToClipboard } from '../lib/clipboard';
 import { parseAiResult } from '../lib/aiResultParser';
 import { buildKacAiPrompt } from '../lib/promptBuilder';
 import { getRoundDisplayTitle } from '../lib/roundDisplay';
+import { getFirstRoundInSession, getRoundsForSession } from '../lib/roundSelectors';
 import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
 import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
 import type { FlowStepId, LearningSession, Round, RoundId } from '../types';
@@ -38,10 +39,6 @@ function findSessionByRoundId(roundId: string | undefined) {
   return sessions.find((session) => session.roundIds.includes(roundId as RoundId)) ?? sessions[0];
 }
 
-function getFirstRoundInSession(session: LearningSession) {
-  return rounds.find((round) => round.id === session.roundIds[0]) ?? rounds[0];
-}
-
 export function LearnerShell() {
   const savedDraft = getInitialSavedDraft();
   const [selectedSession, setSelectedSession] = useState<LearningSession>(() => findSessionByRoundId(savedDraft?.selectedRoundId));
@@ -54,7 +51,7 @@ export function LearnerShell() {
 
   const stepIndex = stepOrder.indexOf(currentStep);
   const sessionRounds = useMemo(
-    () => rounds.filter((round) => selectedSession.roundIds.includes(round.id)),
+    () => getRoundsForSession(rounds, selectedSession),
     [selectedSession],
   );
 
@@ -98,7 +95,7 @@ export function LearnerShell() {
 
   function selectSession(nextSession: LearningSession) {
     setSelectedSession(nextSession);
-    setSelectedRound(getFirstRoundInSession(nextSession));
+    setSelectedRound(getFirstRoundInSession(rounds, nextSession));
     setDraft((prev) => createFreshRoundDraft(prev));
     setCopyStatus('idle');
   }
