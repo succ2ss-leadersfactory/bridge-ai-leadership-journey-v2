@@ -119,10 +119,12 @@ export function LearnerShell() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function setFinalLinesText(value: string) {
-    const nextLines = value.split('\n').map((line) => line.trim()).filter(Boolean).slice(0, 5);
-    const padded = [...nextLines, '', '', '', '', ''].slice(0, 5);
-    setDraft((prev) => ({ ...prev, finalLines: padded }));
+  function setFinalLine(index: number, value: string) {
+    setDraft((prev) => {
+      const nextLines = [...prev.finalLines, '', '', '', '', ''].slice(0, 5);
+      nextLines[index] = value;
+      return { ...prev, finalLines: nextLines };
+    });
   }
 
   async function handleCopyPrompt() {
@@ -212,12 +214,12 @@ export function LearnerShell() {
         return (
           <StepLayout eyebrow="걸리는 지점" title="지금 어디서 막히나요?" description={selectedRound.dilemmaPrompt} canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
             <div className="signal-list">{selectedRound.dilemmaHints.map((hint) => <p key={hint}>{hint}</p>)}</div>
-            <TextInputPanel label="내가 지금 고민하는 지점" helper="예: 바로 답을 주면 일은 빨리 끝나지만, 다음에도 과장의 답을 기다릴 수 있다." value={draft.dilemma} placeholder="지금 걸리는 지점을 적어 주세요." onChange={(value) => updateDraft('dilemma', value)} />
+            <TextInputPanel label="내가 지금 고민하는 지점" helper="예: 바로 답을 주면 일은 빨리 끝나지만, 다음에도 김원중 과장의 답을 기다릴 수 있다." value={draft.dilemma} placeholder="지금 걸리는 지점을 적어 주세요." onChange={(value) => updateDraft('dilemma', value)} />
           </StepLayout>
         );
       case 'secondDecision':
         return (
-          <StepLayout eyebrow="다시 보기" title={selectedRound.secondQuestion} description="처음 생각을 그대로 갈 수도 있고, 조금 고치거나 방향을 바꿀 수도 있습니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
+          <StepLayout eyebrow="판단 보완" title={selectedRound.secondQuestion} description="후배의 반응을 보고, 처음 판단에 무엇을 보완할지 정리합니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
             <div className="choice-stack">{selectedRound.secondChoices.map((choice) => <button key={choice.id} type="button" className={`direction-card ${draft.secondChoice === choice.id ? 'selected' : ''}`} onClick={() => updateDraft('secondChoice', choice.id)}><strong>{choice.label}</strong><span>{choice.description}</span></button>)}</div>
           </StepLayout>
         );
@@ -232,7 +234,6 @@ export function LearnerShell() {
       case 'aiPrompt':
         return (
           <AiPromptStep
-            canGoNext={isNextEnabled}
             promptText={promptText}
             copyStatus={copyStatus}
             onBack={goBack}
@@ -284,7 +285,7 @@ export function LearnerShell() {
             finalLines={draft.finalLines}
             onBack={goBack}
             onNext={goNext}
-            onFinalLinesChange={setFinalLinesText}
+            onFinalLineChange={setFinalLine}
           />
         );
       case 'result':
