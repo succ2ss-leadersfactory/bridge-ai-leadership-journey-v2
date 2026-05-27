@@ -1,4 +1,5 @@
 import type { Round } from '../types';
+import { getRoundDisplayCode } from '../lib/roundDisplay';
 
 interface RoundCardProps {
   round: Round;
@@ -15,7 +16,7 @@ export function RoundCard({ round, isSelected, isCompleted = false, onSelect }: 
       onClick={() => onSelect(round)}
       aria-pressed={isSelected}
     >
-      <span className="round-index">{round.id === 'BOSS' ? 'Boss' : `R${round.order}`}</span>
+      <span className="round-index">{getRoundDisplayCode(round.id)}</span>
       {isCompleted ? <span className="round-completed-badge">완료</span> : null}
       <span className="round-card-title">{round.title}</span>
       <span className="round-card-meta">
