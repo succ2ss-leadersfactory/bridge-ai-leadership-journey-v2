@@ -21,6 +21,10 @@ const coachingDialogueLabels = [
   '조심할 표현',
 ];
 
+function getCoachingDialogueLabel(index: number) {
+  return coachingDialogueLabels[index] ?? `코칭 문장 ${index + 1}`;
+}
+
 export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onSaveSuccess, onStartOver }: SaveResultPanelProps) {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [saveMessage, setSaveMessage] = useState('');
@@ -34,7 +38,9 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
   );
 
   const hasSaved = saveStatus === 'success';
-  const finalLines = draft.finalLines.map((line, index) => ({ label: coachingDialogueLabels[index], line })).filter((item) => item.line.trim().length > 0);
+  const finalLines = draft.finalLines
+    .map((line, index) => ({ label: getCoachingDialogueLabel(index), line }))
+    .filter((item) => item.line.trim().length > 0);
 
   async function handleSave() {
     setSaveStatus('saving');
