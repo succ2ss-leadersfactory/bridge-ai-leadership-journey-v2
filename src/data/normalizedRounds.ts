@@ -60,9 +60,7 @@ function normalizeObject<T>(value: T): T {
   return value;
 }
 
-const normalizedSourceRounds = normalizeObject(sourceRounds);
-
-export const rounds: Round[] = normalizedSourceRounds.map((round) => ({
+export const rounds: Round[] = sourceRounds.map((round) => normalizeObject({
   ...round,
   ...(roundOverrides[round.id] ?? {}),
   ...(finalRoundOverrides[round.id] ?? {}),
