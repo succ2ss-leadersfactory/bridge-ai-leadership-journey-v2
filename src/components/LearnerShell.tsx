@@ -231,8 +231,17 @@ export function LearnerShell() {
         return <StoryStep eyebrow="상황이 하나 더 생깁니다" title="현장은 한 번 더 흔들립니다" description="새로 생긴 압박까지 보고, 앞으로 어떻게 도와줄지 정합니다." story={selectedRound.additionalSituation} onBack={goBack} onNext={goNext} />;
       case 'developmentDirection':
         return (
-          <StepLayout eyebrow="키울 것을 하나로 잡기" title="앞으로 2주, 무엇을 도와줄까요?" description="후배가 조금 달라질 수 있는 작은 도움을 하나 골라봅니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
-            <div className="choice-stack">{selectedRound.developmentDirections.map((direction) => <button key={direction.id} type="button" className={`direction-card ${draft.directionId === direction.id ? 'selected' : ''}`} onClick={() => updateDraft('directionId', direction.id)}><strong>{direction.title}</strong><span>{direction.description}</span><small>조심할 점: {direction.watchOut}</small></button>)}</div>
+          <StepLayout eyebrow="키울 것을 하나로 잡기" title="앞으로 2주, 이 후배에게 무엇을 남길까요?" description="좋은 말보다 중요한 건 다음 행동입니다. 김원중 과장이 이 후배에게 남길 작은 약속을 하나 고르세요." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
+            <div className="choice-stack">
+              {selectedRound.developmentDirections.map((direction) => (
+                <button key={direction.id} type="button" className={`direction-card ${draft.directionId === direction.id ? 'selected' : ''}`} onClick={() => updateDraft('directionId', direction.id)}>
+                  <strong>{direction.title}</strong>
+                  <span><b>왜 필요한가</b><br />{direction.description}</span>
+                  <span><b>어디에 쓸 수 있나</b><br />{direction.bestWhen}</span>
+                  <small><b>조심할 점</b><br />{direction.watchOut}</small>
+                </button>
+              ))}
+            </div>
           </StepLayout>
         );
       case 'aiPrompt':
