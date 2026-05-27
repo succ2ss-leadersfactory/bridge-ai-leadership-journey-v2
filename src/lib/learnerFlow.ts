@@ -1,3 +1,4 @@
+import { hasRequiredCoachingDialogueLines } from '../data/coachingDialogueConfig';
 import type { ChoiceId, FlowStepId } from '../types';
 
 export type LearnerDraft = {
@@ -63,10 +64,6 @@ interface CanMoveNextInput {
   promptText: string;
 }
 
-function hasCoreCoachingDialogue(finalLines: string[]) {
-  return [0, 1, 2].every((index) => (finalLines[index] ?? '').trim().length > 0);
-}
-
 export function canMoveNext({ currentStep, draft, hasSelectedRound, promptText }: CanMoveNextInput) {
   switch (currentStep) {
     case 'intro':
@@ -92,7 +89,7 @@ export function canMoveNext({ currentStep, draft, hasSelectedRound, promptText }
     case 'twoWeekPlan':
       return [draft.growthGoal, draft.twoWeekTask, draft.leaderSupport].every((value) => value.trim().length > 0);
     case 'finalFiveLines':
-      return hasCoreCoachingDialogue(draft.finalLines);
+      return hasRequiredCoachingDialogueLines(draft.finalLines);
     default:
       return true;
   }
