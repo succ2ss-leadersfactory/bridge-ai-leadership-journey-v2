@@ -234,6 +234,7 @@ export function LearnerShell() {
       case 'aiPrompt':
         return (
           <AiPromptStep
+            canGoNext={isNextEnabled}
             promptText={promptText}
             copyStatus={copyStatus}
             onBack={goBack}
