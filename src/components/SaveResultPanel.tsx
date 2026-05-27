@@ -13,6 +13,14 @@ interface SaveResultPanelProps {
   onStartOver: () => void;
 }
 
+const coachingDialogueLabels = [
+  '먼저 인정할 말',
+  '스스로 생각하게 할 질문',
+  '이번 주 함께 정할 행동',
+  '김원중 과장이 도와줄 방식',
+  '조심할 표현',
+];
+
 export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onSaveSuccess, onStartOver }: SaveResultPanelProps) {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [saveMessage, setSaveMessage] = useState('');
@@ -26,7 +34,7 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
   );
 
   const hasSaved = saveStatus === 'success';
-  const finalLines = draft.finalLines.filter((line) => line.trim().length > 0);
+  const finalLines = draft.finalLines.map((line, index) => ({ label: coachingDialogueLabels[index], line })).filter((item) => item.line.trim().length > 0);
 
   async function handleSave() {
     setSaveStatus('saving');
@@ -57,11 +65,11 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
       <h3>{round.finalOutput}</h3>
       <p><strong>2주 뒤 보고 싶은 작은 변화</strong><br />{draft.growthGoal}</p>
       <p><strong>이번 주 맡겨볼 작은 행동</strong><br />{draft.twoWeekTask}</p>
-      <p><strong>과장이 도와줄 방식</strong><br />{draft.leaderSupport}</p>
-      <p><strong>후배에게 할 말</strong></p>
+      <p><strong>김원중 과장이 도와줄 방식</strong><br />{draft.leaderSupport}</p>
+      <p><strong>후배 코칭 대화문</strong></p>
       <ol>
-        {finalLines.map((line, index) => (
-          <li key={`${line}-${index}`}>{line}</li>
+        {finalLines.map((item, index) => (
+          <li key={`${item.line}-${index}`}><strong>{item.label}</strong><br />{item.line}</li>
         ))}
       </ol>
 
