@@ -49,6 +49,24 @@ export const initialLearnerDraft: LearnerDraft = {
   finalLines: createEmptyCoachingDialogueLines(),
 };
 
+export function normalizeLearnerDraft(draft?: Partial<LearnerDraft>): LearnerDraft {
+  const finalLines = createEmptyCoachingDialogueLines();
+  const savedFinalLines = Array.isArray(draft?.finalLines) ? draft.finalLines : [];
+
+  savedFinalLines.forEach((line, index) => {
+    if (index < finalLines.length) {
+      finalLines[index] = typeof line === 'string' ? line : '';
+    }
+  });
+
+  return {
+    ...initialLearnerDraft,
+    ...draft,
+    firstChoice: draft?.firstChoice ?? '',
+    finalLines,
+  };
+}
+
 export function createFreshRoundDraft(prev: LearnerDraft): LearnerDraft {
   return {
     ...initialLearnerDraft,
