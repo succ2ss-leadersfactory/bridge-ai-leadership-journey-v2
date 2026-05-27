@@ -7,7 +7,7 @@ import { copyTextToClipboard } from '../lib/clipboard';
 import { parseAiResult } from '../lib/aiResultParser';
 import { buildKacAiPrompt } from '../lib/promptBuilder';
 import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
-import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
+import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, normalizeLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
 import type { FlowStepId, LearningSession, Round, RoundId } from '../types';
 import { ChoiceCard } from './ChoiceCard';
 import { AiAnswerReviewStep } from './learner/AiAnswerReviewStep';
@@ -46,7 +46,7 @@ export function LearnerShell() {
   const [selectedSession, setSelectedSession] = useState<LearningSession>(() => findSessionByRoundId(savedDraft?.selectedRoundId));
   const [selectedRound, setSelectedRound] = useState<Round>(() => findRoundById(savedDraft?.selectedRoundId));
   const [currentStep, setCurrentStep] = useState<FlowStepId>(() => savedDraft?.currentStep ?? 'intro');
-  const [draft, setDraft] = useState<LearnerDraft>(() => ({ ...initialLearnerDraft, ...(savedDraft?.draft ?? {}) }));
+  const [draft, setDraft] = useState<LearnerDraft>(() => normalizeLearnerDraft(savedDraft?.draft));
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(() => savedDraft?.savedAt ?? null);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'fail'>('idle');
   const [completedRoundIds, setCompletedRoundIds] = useState<RoundId[]>(() => loadCompletedRoundIds());
