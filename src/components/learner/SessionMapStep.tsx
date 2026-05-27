@@ -20,14 +20,14 @@ export function SessionMapStep({
 }: SessionMapStepProps) {
   return (
     <StepLayout
-      eyebrow="세션 Map"
-      title="오늘 진행할 세션을 고르세요"
-      description="각 세션은 2개의 라운드로 구성됩니다. 세션별 체험 후 강사가 핵심 내용을 짧게 리뷰합니다."
+      eyebrow="오늘 볼 흐름"
+      title="후배를 읽고, 맡길 일을 정하고, 다시 움직이게 합니다"
+      description="각 흐름마다 두 개의 장면이 있습니다. 먼저 다뤄볼 흐름을 고르세요."
       canGoBack
       canGoNext={canGoNext}
       onBack={onBack}
       onNext={onNext}
-      nextLabel="세션 안의 라운드 보기"
+      nextLabel="장면 고르기"
     >
       <div className="round-list">
         {sessions.map((session) => (
@@ -41,8 +41,8 @@ export function SessionMapStep({
             <span className="round-index">S{session.order}</span>
             <span className="round-card-title">{session.title}</span>
             <span className="round-card-meta">{session.subtitle}</span>
-            <span className="round-card-meta">주제: {session.theme}</span>
-            <span className="round-card-meta">결과물: {session.artifactName}</span>
+            <span className="round-card-meta">볼 것: {session.theme}</span>
+            <span className="round-card-meta">남길 것: {session.artifactName}</span>
           </button>
         ))}
       </div>
