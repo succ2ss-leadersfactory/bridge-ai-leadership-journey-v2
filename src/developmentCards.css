@@ -1,0 +1,73 @@
+.direction-card {
+  display: grid;
+  gap: 10px;
+  padding: 17px 16px;
+}
+
+.direction-card strong {
+  margin-bottom: 2px;
+  color: #111f33;
+  font-size: 1.02rem;
+  line-height: 1.38;
+  letter-spacing: -0.02em;
+}
+
+.direction-card span,
+.direction-card small {
+  margin-top: 0;
+  border-radius: 16px;
+  padding: 11px 12px;
+  background: #f5f8fc;
+  color: #43566d;
+  font-size: 0.87rem;
+  line-height: 1.52;
+}
+
+.direction-card span b,
+.direction-card small b {
+  display: block;
+  margin-bottom: 4px;
+  color: #1764a8;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.direction-card small {
+  background: #fff7ed;
+  color: #6b4a1f;
+}
+
+.direction-card small b {
+  color: #9a5a00;
+}
+
+.direction-card.selected {
+  background: #f8fbff;
+}
+
+.direction-card.selected strong {
+  color: #0f548f;
+}
+
+.direction-card.selected span {
+  background: #eef6ff;
+}
+
+.direction-card.selected small {
+  background: #fff3dc;
+}
+
+@media (max-width: 380px) {
+  .direction-card {
+    padding: 15px 14px;
+    gap: 8px;
+  }
+
+  .direction-card span,
+  .direction-card small {
+    padding: 10px 11px;
+    font-size: 0.84rem;
+    line-height: 1.48;
+  }
+}
