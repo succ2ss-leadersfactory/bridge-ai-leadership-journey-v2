@@ -67,6 +67,13 @@ function filledFinalLineCount(finalLines: string[]) {
   return finalLines.filter((line) => line.trim().length > 0).length;
 }
 
+function hasEnoughFinalMessage(finalLines: string[]) {
+  const lines = filledFinalLineCount(finalLines);
+  const text = finalLines.join('\n').trim();
+
+  return lines >= 3 || text.length >= 20;
+}
+
 export function canMoveNext({ currentStep, draft, hasSelectedRound, promptText }: CanMoveNextInput) {
   switch (currentStep) {
     case 'intro':
@@ -92,7 +99,7 @@ export function canMoveNext({ currentStep, draft, hasSelectedRound, promptText }
     case 'twoWeekPlan':
       return [draft.growthGoal, draft.twoWeekTask, draft.leaderSupport].every((value) => value.trim().length > 0);
     case 'finalFiveLines':
-      return filledFinalLineCount(draft.finalLines) >= 3;
+      return hasEnoughFinalMessage(draft.finalLines);
     default:
       return true;
   }
