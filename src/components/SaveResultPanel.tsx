@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { coachingDialogueFields, getCoachingDialogueLabel } from '../data/coachingDialogueConfig';
 import { saveLearnerResultToGoogleSheets, type SaveStatus } from '../lib/googleSheets';
 import { createId } from '../lib/ids';
 import { buildSavePayload, type ResultDraft } from '../lib/resultMapper';
@@ -11,18 +12,6 @@ interface SaveResultPanelProps {
   promptText: string;
   onSaveSuccess: () => void;
   onStartOver: () => void;
-}
-
-const coachingDialogueLabels = [
-  '먼저 인정할 말',
-  '스스로 생각하게 할 질문',
-  '이번 주 함께 정할 행동',
-  '김원중 과장이 도와줄 방식',
-  '조심할 표현',
-];
-
-function getCoachingDialogueLabel(index: number) {
-  return coachingDialogueLabels[index] ?? `코칭 문장 ${index + 1}`;
 }
 
 export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onSaveSuccess, onStartOver }: SaveResultPanelProps) {
@@ -38,8 +27,8 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
   );
 
   const hasSaved = saveStatus === 'success';
-  const finalLines = draft.finalLines
-    .map((line, index) => ({ label: getCoachingDialogueLabel(index), line }))
+  const finalLines = coachingDialogueFields
+    .map((field, index) => ({ label: getCoachingDialogueLabel(index), line: draft.finalLines[index] ?? '' }))
     .filter((item) => item.line.trim().length > 0);
 
   async function handleSave() {
