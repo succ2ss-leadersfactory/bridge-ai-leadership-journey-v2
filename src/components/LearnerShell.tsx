@@ -6,6 +6,7 @@ import { sessions } from '../data/sessions';
 import { copyTextToClipboard } from '../lib/clipboard';
 import { parseAiResult } from '../lib/aiResultParser';
 import { buildKacAiPrompt } from '../lib/promptBuilder';
+import { getRoundDisplayTitle } from '../lib/roundDisplay';
 import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
 import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
 import type { FlowStepId, LearningSession, Round, RoundId } from '../types';
@@ -305,9 +306,13 @@ export function LearnerShell() {
     }
   }
 
+  const roundHeaderTitle = currentStep === 'intro' || currentStep === 'sessionMap' || currentStep === 'roundMap'
+    ? undefined
+    : getRoundDisplayTitle(selectedRound);
+
   return (
     <div className="mobile-learner-shell">
-      <ProgressHeader currentStep={currentStep} roundTitle={currentStep === 'intro' || currentStep === 'sessionMap' || currentStep === 'roundMap' ? undefined : selectedRound.title} />
+      <ProgressHeader currentStep={currentStep} roundTitle={roundHeaderTitle} />
       {renderSaveIndicator()}
       {renderStep()}
     </div>
