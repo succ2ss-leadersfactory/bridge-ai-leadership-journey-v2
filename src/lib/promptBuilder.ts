@@ -1,4 +1,5 @@
 import type { ChoiceId, Round } from '../types';
+import { getRoundDisplayTitle } from './roundDisplay';
 
 interface PromptDraft {
   juniorReading: string;
@@ -55,6 +56,9 @@ export function buildKacAiPrompt(round: Round, draft: PromptDraft) {
     '[당신의 역할]',
     '당신은 한국 직장에서 김원중 과장이 후배와 실제로 나눌 코칭 대화를 함께 다듬어 주는 리더십 코치입니다.',
     '보고, 회의, 메신저, 짧은 1:1에서 바로 쓸 수 있는 말과 작은 실행 계획으로 정리해 주세요.',
+    '',
+    '[라운드]',
+    getRoundDisplayTitle(round),
     '',
     '[오늘의 장면]',
     round.situation,
