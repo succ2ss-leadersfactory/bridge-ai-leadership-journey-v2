@@ -40,6 +40,10 @@ const coachingDialogueFields = [
   },
 ];
 
+function personalizePlaceholder(value: string, round: Round) {
+  return value.split('윤동희 사원').join(`${round.juniorName} ${round.juniorRole}`);
+}
+
 export function FinalFiveLinesStep({
   round,
   canGoNext,
@@ -74,7 +78,7 @@ export function FinalFiveLinesStep({
             label={field.label}
             helper={field.helper}
             value={finalLines[index] ?? ''}
-            placeholder={field.placeholder.replaceAll('윤동희 사원', `${round.juniorName} ${round.juniorRole}`)}
+            placeholder={personalizePlaceholder(field.placeholder, round)}
             minRows={3}
             onChange={(value) => onFinalLineChange(index, value)}
           />
