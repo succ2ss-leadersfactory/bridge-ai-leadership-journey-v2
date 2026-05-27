@@ -1,4 +1,4 @@
-import { hasRequiredCoachingDialogueLines } from '../data/coachingDialogueConfig';
+import { createEmptyCoachingDialogueLines, hasRequiredCoachingDialogueLines } from '../data/coachingDialogueConfig';
 import type { ChoiceId, FlowStepId } from '../types';
 
 export type LearnerDraft = {
@@ -46,12 +46,13 @@ export const initialLearnerDraft: LearnerDraft = {
   leaderSupport: '',
   checkTiming: '',
   watchOut: '',
-  finalLines: ['', '', '', '', ''],
+  finalLines: createEmptyCoachingDialogueLines(),
 };
 
 export function createFreshRoundDraft(prev: LearnerDraft): LearnerDraft {
   return {
     ...initialLearnerDraft,
+    finalLines: createEmptyCoachingDialogueLines(),
     teamName: prev.teamName,
     nickname: prev.nickname,
   };

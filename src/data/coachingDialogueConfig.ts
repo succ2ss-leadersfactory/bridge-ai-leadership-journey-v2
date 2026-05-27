@@ -41,6 +41,10 @@ export const coachingDialogueFields = [
   },
 ] as const;
 
+export function createEmptyCoachingDialogueLines() {
+  return coachingDialogueFields.map(() => '');
+}
+
 export function getCoachingDialogueLabel(index: number) {
   return coachingDialogueFields[index]?.resultLabel ?? `코칭 문장 ${index + 1}`;
 }

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createEmptyCoachingDialogueLines } from '../data/coachingDialogueConfig';
 import { flowSteps } from '../data/flowSteps';
 import { rounds } from '../data/normalizedRounds';
 import { sessions } from '../data/sessions';
@@ -121,7 +122,12 @@ export function LearnerShell() {
 
   function setFinalLine(index: number, value: string) {
     setDraft((prev) => {
-      const nextLines = [...prev.finalLines, '', '', '', '', ''].slice(0, 5);
+      const nextLines = createEmptyCoachingDialogueLines();
+      prev.finalLines.forEach((line, lineIndex) => {
+        if (lineIndex < nextLines.length) {
+          nextLines[lineIndex] = line;
+        }
+      });
       nextLines[index] = value;
       return { ...prev, finalLines: nextLines };
     });
@@ -139,7 +145,7 @@ export function LearnerShell() {
     setSelectedSession(sessions[0]);
     setSelectedRound(rounds[0]);
     setCurrentStep('intro');
-    setDraft(initialLearnerDraft);
+    setDraft({ ...initialLearnerDraft, finalLines: createEmptyCoachingDialogueLines() });
     setCopyStatus('idle');
     setLastSavedAt(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
