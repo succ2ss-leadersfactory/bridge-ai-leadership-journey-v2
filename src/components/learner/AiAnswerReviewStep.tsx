@@ -9,6 +9,8 @@ interface AiAnswerReviewStepProps {
   aiUseAsIs: string;
   aiRevise: string;
   aiRisky: string;
+  judgmentSummary: string;
+  directionSummary: string;
   onBack: () => void;
   onNext: () => void;
   onRawResultChange: (value: string) => void;
@@ -25,6 +27,8 @@ export function AiAnswerReviewStep({
   aiUseAsIs,
   aiRevise,
   aiRisky,
+  judgmentSummary,
+  directionSummary,
   onBack,
   onNext,
   onRawResultChange,
@@ -42,6 +46,11 @@ export function AiAnswerReviewStep({
       onBack={onBack}
       onNext={onNext}
     >
+      <article className="ai-artifact-card compact">
+        <h3>앞에서 정한 방향</h3>
+        <p><strong>다시 잡은 판단</strong><br />{judgmentSummary || '아직 선택한 판단이 없습니다.'}</p>
+        <p><strong>이 후배에게 남길 약속</strong><br />{directionSummary || '아직 선택한 약속이 없습니다.'}</p>
+      </article>
       <TextInputPanel
         label="AI가 준 답변 붙여넣기"
         helper="받은 답을 그대로 붙여넣으세요. 필요한 부분만 아래에서 따로 골라냅니다."
