@@ -35,6 +35,7 @@
   font-size: clamp(1.35rem, 5.5vw, 1.8rem);
   line-height: 1.28;
   letter-spacing: -0.06em;
+  white-space: pre-line;
 }
 
 .step-description {
@@ -43,6 +44,7 @@
   font-size: 0.98rem;
   line-height: var(--kac-line);
   letter-spacing: -0.035em;
+  white-space: pre-line;
 }
 
 .step-body {
@@ -72,6 +74,19 @@
 .text-panel-helper,
 .round-card-meta {
   line-height: var(--kac-line);
+}
+
+.story-card,
+.signal-list p,
+.choice-title,
+.choice-note,
+.text-panel-helper {
+  white-space: pre-line;
+}
+
+.story-card {
+  line-height: 1.78;
+  letter-spacing: -0.038em;
 }
 
 .ai-artifact-card.compact {
