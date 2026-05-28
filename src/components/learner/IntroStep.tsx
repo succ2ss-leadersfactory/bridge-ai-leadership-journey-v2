@@ -1,3 +1,4 @@
+import { kacCiLogoDataUrl } from '../../assets/kacCiLogo';
 import type { LearnerDraft } from '../../lib/learnerFlow';
 import { StepLayout } from '../StepLayout';
 import { TextInputPanel } from '../TextInputPanel';
@@ -25,12 +26,9 @@ export function IntroStep({ draft, canGoNext, onBack, onNext, onTeamNameChange, 
       onNext={onNext}
       nextLabel="오늘 볼 흐름 보기"
     >
-      <section className="kac-intro-lockup" aria-label="한국공항공사 Bridge AI Leadership Journey">
-        <div className="kac-logo-mark">KAC</div>
-        <div>
-          <p className="kac-org-name">한국공항공사</p>
-          <p className="kac-program-name">Bridge AI Leadership Journey</p>
-        </div>
+      <section className="kac-intro-lockup logo" aria-label="한국공항공사 Bridge AI Leadership Journey">
+        <img className="kac-ci-image" src={kacCiLogoDataUrl} alt="한국공항공사 CI" />
+        <p className="kac-program-name">Bridge AI Leadership Journey</p>
       </section>
 
       <div className="form-stack">
