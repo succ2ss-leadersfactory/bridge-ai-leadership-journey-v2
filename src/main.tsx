@@ -5,6 +5,7 @@ import './styles.css';
 import './completedRounds.css';
 import './developmentCards.css';
 import './kacUiOverrides.css';
+import './readabilityPolish.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
