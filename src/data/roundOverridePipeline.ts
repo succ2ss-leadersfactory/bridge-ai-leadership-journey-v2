@@ -9,6 +9,7 @@ import { firstDilemmaChoiceOverrides } from './firstDilemmaChoiceOverrides';
 import { pressureSituationOverrides } from './pressureSituationOverrides';
 import { r01RefinementOverrides } from './r01RefinementOverrides';
 import { r1LineBreakOverrides } from './r1LineBreakOverrides';
+import { r2LineBreakOverrides } from './r2LineBreakOverrides';
 import { roundOverrides } from './roundOverrides';
 
 const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
@@ -22,6 +23,7 @@ const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   coachingViewpointOverrides,
   directionPriorityOverrides,
   r1LineBreakOverrides,
+  r2LineBreakOverrides,
 ];
 
 function withCoachingViewpointsInPathIntro(round: Round): Round {
