@@ -10,7 +10,7 @@ import { getRoundDisplayTitle } from '../lib/roundDisplay';
 import { getFirstRoundInSession, getRoundsForSession } from '../lib/roundSelectors';
 import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
 import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
-import type { FlowStepId, LearningSession, Round, RoundId } from '../types';
+import type { ChoiceId, FlowStepId, LearningSession, Round, RoundId } from '../types';
 import { ChoiceCard } from './ChoiceCard';
 import { AiAnswerReviewStep } from './learner/AiAnswerReviewStep';
 import { AiPromptStep } from './learner/AiPromptStep';
@@ -37,6 +37,16 @@ function findRoundById(roundId: string | undefined) {
 
 function findSessionByRoundId(roundId: string | undefined) {
   return sessions.find((session) => session.roundIds.includes(roundId as RoundId)) ?? sessions[0];
+}
+
+function getChoiceId(value: string): ChoiceId | null {
+  return value === 'A' || value === 'B' ? value : null;
+}
+
+function getChoiceBasedText(round: Round, firstChoice: string, field: 'juniorReactionByChoice' | 'additionalSituationByChoice' | 'developmentPathIntroByChoice', fallback: string) {
+  const choiceId = getChoiceId(firstChoice);
+  if (!choiceId) return fallback;
+  return round[field]?.[choiceId] || fallback;
 }
 
 function getSelectedJudgmentSummary(round: Round, secondChoiceId: string) {
@@ -71,7 +81,24 @@ export function LearnerShell() {
     [selectedSession],
   );
 
-  const generatedPrompt = useMemo(() => buildKacAiPrompt(selectedRound, draft), [draft, selectedRound]);
+  const choiceBasedJuniorReaction = useMemo(
+    () => getChoiceBasedText(selectedRound, draft.firstChoice, 'juniorReactionByChoice', selectedRound.juniorReaction),
+    [draft.firstChoice, selectedRound],
+  );
+  const choiceBasedAdditionalSituation = useMemo(
+    () => getChoiceBasedText(selectedRound, draft.firstChoice, 'additionalSituationByChoice', selectedRound.additionalSituation),
+    [draft.firstChoice, selectedRound],
+  );
+  const developmentPathIntro = useMemo(
+    () => getChoiceBasedText(selectedRound, draft.firstChoice, 'developmentPathIntroByChoice', ''),
+    [draft.firstChoice, selectedRound],
+  );
+
+  const generatedPrompt = useMemo(() => buildKacAiPrompt(selectedRound, draft, {
+    juniorReaction: choiceBasedJuniorReaction,
+    additionalSituation: choiceBasedAdditionalSituation,
+    developmentPathIntro,
+  }), [choiceBasedAdditionalSituation, choiceBasedJuniorReaction, developmentPathIntro, draft, selectedRound]);
   const promptText = draft.editedPrompt || generatedPrompt;
   const parsedAiResult = useMemo(() => parseAiResult(draft.aiRawResult), [draft.aiRawResult]);
   const finalArtifact = draft.aiFinalArtifact || parsedAiResult.finalArtifact;
@@ -252,9 +279,9 @@ export function LearnerShell() {
       case 'firstResult':
         return <StoryStep eyebrow="그 선택이 만든 변화" title="이 선택 뒤에 남는 장면입니다" description="일은 조금 풀릴 수 있지만, 다른 부담이 남을 수도 있습니다." story={draft.firstChoice ? selectedRound.firstResultByChoice[draft.firstChoice] : '아직 선택한 내용이 없습니다.'} isEmphasis onBack={goBack} onNext={goNext} />;
       case 'juniorReaction':
-        return <StoryStep eyebrow="후배가 이렇게 받아들입니다" title="후배의 다음 말" description="후배의 말 속에 다음에 도와줄 지점이 숨어 있습니다." story={selectedRound.juniorReaction} onBack={goBack} onNext={goNext} />;
+        return <StoryStep eyebrow="후배가 이렇게 받아들입니다" title="후배의 다음 말" description="내 첫마디를 후배가 어떻게 받아들였는지 봅니다. 같은 상황도 선택에 따라 다른 신호를 남깁니다." story={choiceBasedJuniorReaction} onBack={goBack} onNext={goNext} />;
       case 'additionalSituation':
-        return <StoryStep eyebrow="그런데, 일이 조금 달라집니다" title="처음 판단의 비용이 보이기 시작합니다" description="방금 선택이 틀렸다는 뜻은 아닙니다. 다만 새로 들어온 말, 일정, 표정, 압박 때문에 그대로 가도 되는지 다시 봐야 합니다." story={selectedRound.additionalSituation} onBack={goBack} onNext={goNext} />;
+        return <StoryStep eyebrow="그런데, 일이 조금 달라집니다" title="처음 판단의 비용이 보이기 시작합니다" description="방금 선택이 틀렸다는 뜻은 아닙니다. 다만 선택에 따라 다른 부담이 드러납니다. 그대로 가도 되는지 다시 봐야 합니다." story={choiceBasedAdditionalSituation} onBack={goBack} onNext={goNext} />;
       case 'dilemmaAnalysis':
         return (
           <StepLayout eyebrow="다시 보면 걸리는 지점" title="처음 판단, 그대로 가도 괜찮을까요?" description={selectedRound.dilemmaPrompt} canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
@@ -270,7 +297,13 @@ export function LearnerShell() {
         );
       case 'developmentDirection':
         return (
-          <StepLayout eyebrow="키울 것을 하나로 잡기" title="앞으로 2주, 이 후배에게 무엇을 남길까요?" description="좋은 말보다 중요한 건 다음 행동입니다. 김원중 과장이 이 후배에게 남길 작은 약속을 하나 고르세요." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
+          <StepLayout eyebrow="키울 것을 하나로 잡기" title="앞으로 2주, 이 후배에게 무엇을 남길까요?" description="앞에서 고른 첫마디가 만든 이익과 비용을 보고, 김원중 과장이 이 후배에게 남길 작은 약속을 하나 고르세요." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
+            {developmentPathIntro ? (
+              <article className="ai-artifact-card compact">
+                <h3>앞 선택이 남긴 숙제</h3>
+                <p>{developmentPathIntro}</p>
+              </article>
+            ) : null}
             <div className="choice-stack">
               {selectedRound.developmentDirections.map((direction) => (
                 <button key={direction.id} type="button" className={`direction-card ${draft.directionId === direction.id ? 'selected' : ''}`} onClick={() => updateDraft('directionId', direction.id)}>
