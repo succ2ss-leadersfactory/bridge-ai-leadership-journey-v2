@@ -1,0 +1,219 @@
+:root {
+  --kac-text-strong: #111827;
+  --kac-text-body: #334155;
+  --kac-text-muted: #64748b;
+  --kac-line: 1.72;
+}
+
+.mobile-learner-shell,
+.step-layout,
+.step-content,
+.step-body,
+.result-card,
+.direction-card,
+.ai-artifact-card,
+.signal-list,
+.text-panel-label,
+.text-panel-helper {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.step-content {
+  gap: 16px;
+}
+
+.step-eyebrow {
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.step-content h2 {
+  margin: 0;
+  color: var(--kac-text-strong);
+  font-size: clamp(1.35rem, 5.5vw, 1.8rem);
+  line-height: 1.28;
+  letter-spacing: -0.06em;
+}
+
+.step-description {
+  margin-top: 10px;
+  color: var(--kac-text-body);
+  font-size: 0.98rem;
+  line-height: var(--kac-line);
+  letter-spacing: -0.035em;
+}
+
+.step-body {
+  display: grid;
+  gap: 14px;
+}
+
+.signal-list,
+.ai-artifact-card,
+.result-card,
+.team-select-panel,
+.text-input-panel,
+.direction-card,
+.choice-card {
+  line-height: var(--kac-line);
+  letter-spacing: -0.035em;
+}
+
+.signal-list p,
+.ai-artifact-card p,
+.result-card p,
+.direction-card span,
+.direction-card small,
+.choice-card span,
+.choice-card small,
+.text-panel-helper {
+  line-height: var(--kac-line);
+}
+
+.ai-artifact-card.compact {
+  display: grid;
+  gap: 10px;
+}
+
+.ai-artifact-card.compact h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+
+.ai-artifact-card.compact p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.direction-card {
+  align-items: stretch;
+  gap: 11px;
+  padding: 17px 16px;
+  text-align: left;
+}
+
+.direction-card strong {
+  display: block;
+  color: var(--kac-text-strong);
+  font-size: 1.02rem;
+  line-height: 1.42;
+  letter-spacing: -0.055em;
+}
+
+.direction-card span,
+.direction-card small {
+  display: block;
+  color: var(--kac-text-body);
+  font-size: 0.93rem;
+}
+
+.direction-card b {
+  display: inline-block;
+  margin-bottom: 2px;
+  color: #1764a8;
+  font-size: 0.87rem;
+  letter-spacing: -0.035em;
+}
+
+.text-input-panel textarea,
+.text-input-panel input,
+textarea,
+input {
+  line-height: 1.65;
+  letter-spacing: -0.035em;
+}
+
+.text-panel-label {
+  margin-bottom: 4px;
+  color: var(--kac-text-strong);
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+
+.text-panel-helper {
+  color: var(--kac-text-muted);
+  font-size: 0.92rem;
+}
+
+.team-select-panel {
+  gap: 10px;
+}
+
+.team-option {
+  min-height: 46px;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.bottom-actions {
+  gap: 9px;
+  align-items: center;
+}
+
+.primary-button,
+.secondary-button,
+.home-button,
+.restart-button,
+.save-sheet-button {
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  touch-action: manipulation;
+}
+
+.kac-ci-image {
+  max-height: 62px;
+}
+
+.kac-program-name {
+  letter-spacing: -0.025em;
+}
+
+.result-card h3 {
+  line-height: 1.35;
+  letter-spacing: -0.05em;
+}
+
+.result-card ol {
+  padding-left: 1.1rem;
+}
+
+.result-card li {
+  margin-bottom: 12px;
+  line-height: var(--kac-line);
+}
+
+.result-card li strong {
+  display: inline-block;
+  margin-bottom: 3px;
+  color: #1764a8;
+}
+
+@media (max-width: 420px) {
+  .step-content {
+    gap: 14px;
+  }
+
+  .step-content h2 {
+    font-size: 1.45rem;
+  }
+
+  .step-description {
+    font-size: 0.95rem;
+  }
+
+  .direction-card {
+    padding: 16px 14px;
+  }
+
+  .direction-card strong {
+    font-size: 0.98rem;
+  }
+
+  .kac-ci-image {
+    max-height: 56px;
+  }
+}
