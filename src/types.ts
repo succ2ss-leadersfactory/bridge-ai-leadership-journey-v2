@@ -2,6 +2,8 @@ export type ChoiceId = 'A' | 'B';
 
 export type SecondChoiceId = 'keep' | 'revise' | 'change';
 
+export type DevelopmentPathKey = `${ChoiceId}_${SecondChoiceId}`;
+
 export type AiAnswerReviewKey = 'useAsIs' | 'revise' | 'risky';
 
 export type RoundId = 'R1' | 'R2' | 'R3' | 'R4' | 'R5' | 'BOSS';
@@ -98,6 +100,7 @@ export interface Round {
   additionalSituation: string;
   additionalSituationByChoice?: Partial<Record<ChoiceId, string>>;
   developmentPathIntroByChoice?: Partial<Record<ChoiceId, string>>;
+  developmentDirectionPriorityByPath?: Partial<Record<DevelopmentPathKey, string[]>>;
   developmentDirections: DevelopmentDirectionOption[];
   aiPromptTemplate: string;
   aiAnswerReviewOptions: AiAnswerReviewOption[];
