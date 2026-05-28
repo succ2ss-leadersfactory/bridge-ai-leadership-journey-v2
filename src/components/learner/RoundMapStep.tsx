@@ -24,8 +24,8 @@ export function RoundMapStep({
   return (
     <StepLayout
       eyebrow="장면 고르기"
-      title="지금 가장 익숙한 장면부터 들어가 보세요"
-      description="완료한 장면은 카드에 표시됩니다. 다른 장면도 이어서 볼 수 있습니다."
+      title="진행할 장면을 선택하세요."
+      description={<>완료한 장면은 카드에 표시됩니다.<br />다른 장면도 이어서 볼 수 있습니다.</>}
       canGoBack
       canGoNext={canGoNext}
       onBack={onBack}
