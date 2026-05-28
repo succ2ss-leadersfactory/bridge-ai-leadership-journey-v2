@@ -3,12 +3,12 @@ import type { Round } from '../types';
 export const directionPriorityOverrides: Partial<Record<Round['id'], Partial<Round>>> = {
   R1: {
     developmentDirectionPriorityByPath: {
-      A_keep: ['one-line-before-question', 'criteria-with-question', 'solo-or-together-line'],
-      A_revise: ['one-line-before-question', 'solo-or-together-line', 'criteria-with-question'],
-      A_change: ['solo-or-together-line', 'one-line-before-question', 'criteria-with-question'],
-      B_keep: ['criteria-with-question', 'one-line-before-question', 'solo-or-together-line'],
-      B_revise: ['solo-or-together-line', 'criteria-with-question', 'one-line-before-question'],
-      B_change: ['one-line-before-question', 'solo-or-together-line', 'criteria-with-question'],
+      A_keep: ['one-line-before-question', 'three-checks', 'solo-or-together-line'],
+      A_revise: ['one-line-before-question', 'solo-or-together-line', 'three-checks'],
+      A_change: ['solo-or-together-line', 'one-line-before-question', 'three-checks'],
+      B_keep: ['three-checks', 'one-line-before-question', 'solo-or-together-line'],
+      B_revise: ['solo-or-together-line', 'three-checks', 'one-line-before-question'],
+      B_change: ['one-line-before-question', 'solo-or-together-line', 'three-checks'],
     },
   },
   R2: {
