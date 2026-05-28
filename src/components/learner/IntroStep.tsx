@@ -18,8 +18,8 @@ export function IntroStep({ draft, canGoNext, onBack, onNext, onTeamNameChange, 
   return (
     <StepLayout
       eyebrow="시작"
-      title="우리 팀과 부를 이름을 확인하고 시작합니다"
-      description="실제 직원 이름이나 민감한 정보는 쓰지 않습니다. 여기서는 가상의 후배 장면으로 연습합니다."
+      title={<>먼저 팀을 선택하고,<br />사용할 이름/닉네임을 입력하세요.</>}
+      description={<>실제 직원 이름이나 민감한 정보는 쓰지 않습니다.<br />여기서는 가상의 후배 장면으로 연습합니다.</>}
       canGoBack={false}
       canGoNext={canGoNext}
       onBack={onBack}
@@ -50,7 +50,7 @@ export function IntroStep({ draft, canGoNext, onBack, onNext, onTeamNameChange, 
             ))}
           </div>
         </section>
-        <TextInputPanel label="부를 이름" helper="토의 때 불러도 괜찮은 이름을 적어 주세요." value={draft.nickname} placeholder="예: 김과장" minRows={2} onChange={onNicknameChange} />
+        <TextInputPanel label="이름/닉네임" helper="토의 때 불러도 괜찮은 이름을 적어 주세요." value={draft.nickname} placeholder="예: 김과장" minRows={2} onChange={onNicknameChange} />
       </div>
     </StepLayout>
   );
