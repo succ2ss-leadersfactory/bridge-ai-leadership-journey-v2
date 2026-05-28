@@ -7,6 +7,7 @@ interface FinalFiveLinesStepProps {
   round: Round;
   canGoNext: boolean;
   finalArtifact: string;
+  directionSummary: string;
   finalLines: string[];
   onBack: () => void;
   onNext: () => void;
@@ -21,6 +22,7 @@ export function FinalFiveLinesStep({
   round,
   canGoNext,
   finalArtifact,
+  directionSummary,
   finalLines,
   onBack,
   onNext,
@@ -37,6 +39,10 @@ export function FinalFiveLinesStep({
       onNext={onNext}
       nextLabel="정리한 내용 보기"
     >
+      <article className="ai-artifact-card compact">
+        <h3>이 말을 통해 남길 약속</h3>
+        <p>{directionSummary || '아직 선택한 약속이 없습니다.'}</p>
+      </article>
       {finalArtifact ? (
         <article className="ai-artifact-card compact">
           <h3>참고할 AI 초안</h3>
