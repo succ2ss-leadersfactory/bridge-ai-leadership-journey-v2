@@ -21,7 +21,7 @@ export function SessionMapStep({
   return (
     <StepLayout
       eyebrow="오늘 볼 흐름"
-      title="후배를 읽고, 맡길 일을 정하고, 다시 움직이게 합니다"
+      title={<>후배를 읽고, 맡길 일을 정하고,<br />다시 움직이게 합니다.</>}
       description="각 흐름마다 두 개의 장면이 있습니다. 먼저 다뤄볼 흐름을 고르세요."
       canGoBack
       canGoNext={canGoNext}
@@ -41,8 +41,8 @@ export function SessionMapStep({
             <span className="round-index">S{session.order}</span>
             <span className="round-card-title">{session.title}</span>
             <span className="round-card-meta">{session.subtitle}</span>
-            <span className="round-card-meta">볼 것: {session.theme}</span>
-            <span className="round-card-meta">남길 것: {session.artifactName}</span>
+            <span className="round-card-meta session-meta-row"><span className="session-meta-label">볼 것</span><span>{session.theme}</span></span>
+            <span className="round-card-meta session-meta-row"><span className="session-meta-label">남길 것</span><span>{session.artifactName}</span></span>
           </button>
         ))}
       </div>
