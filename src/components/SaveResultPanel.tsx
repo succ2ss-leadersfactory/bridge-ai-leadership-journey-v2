@@ -58,6 +58,9 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
   return (
     <article className="result-card">
       <h3>{round.finalOutput}</h3>
+      <p className="result-helper">
+        AI가 나눠 넣은 초안을 바탕으로 정리한 최종본입니다. 저장하기 전에 실제 후배 앞에서 말할 수 있는 표현인지 한 번만 더 확인해 주세요.
+      </p>
       <p><strong>2주 뒤 보고 싶은 작은 변화</strong><br />{draft.growthGoal}</p>
       <p><strong>이번 주 맡겨볼 작은 행동</strong><br />{draft.twoWeekTask}</p>
       <p><strong>김원중 과장이 도와줄 방식</strong><br />{draft.leaderSupport}</p>
@@ -69,9 +72,9 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
       </ol>
 
       <div className="sheet-save-panel">
-        <p>오늘 작성한 내용을 저장하면 강사용 화면에서 함께 볼 수 있습니다.</p>
+        <p>저장하면 강사용 화면에서 팀별 판단 흐름과 최종 대화문을 함께 볼 수 있습니다.</p>
         <button type="button" className="save-sheet-button" onClick={handleSave} disabled={saveStatus === 'saving' || hasSaved}>
-          {saveStatus === 'saving' ? '저장 중...' : hasSaved ? '저장 완료' : '작성한 내용 저장하기'}
+          {saveStatus === 'saving' ? '저장 중...' : hasSaved ? '저장 완료' : '최종본 저장하기'}
         </button>
         {saveMessage ? <span className={`sheet-save-status ${saveStatus}`}>{saveMessage}</span> : null}
       </div>
