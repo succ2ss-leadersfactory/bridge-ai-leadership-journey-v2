@@ -86,6 +86,7 @@ export interface Round {
   firstChoices: ChoiceOption[];
   firstResultByChoice: Record<ChoiceId, string>;
   juniorReaction: string;
+  juniorReactionByChoice?: Partial<Record<ChoiceId, string>>;
   dilemmaPrompt: string;
   dilemmaHints: string[];
   secondQuestion: string;
@@ -95,6 +96,8 @@ export interface Round {
     description: string;
   }>;
   additionalSituation: string;
+  additionalSituationByChoice?: Partial<Record<ChoiceId, string>>;
+  developmentPathIntroByChoice?: Partial<Record<ChoiceId, string>>;
   developmentDirections: DevelopmentDirectionOption[];
   aiPromptTemplate: string;
   aiAnswerReviewOptions: AiAnswerReviewOption[];
