@@ -10,6 +10,12 @@ interface PromptDraft {
   directionId: string;
 }
 
+interface PromptPathContext {
+  juniorReaction?: string;
+  additionalSituation?: string;
+  developmentPathIntro?: string;
+}
+
 function getFirstChoiceText(round: Round, draft: PromptDraft) {
   const selected = round.firstChoices.find((choice) => choice.id === draft.firstChoice);
   if (!selected) return '아직 고르지 않음';
@@ -49,8 +55,11 @@ function getDevelopmentDirection(round: Round, draft: PromptDraft) {
   ].join('\n');
 }
 
-export function buildKacAiPrompt(round: Round, draft: PromptDraft) {
+export function buildKacAiPrompt(round: Round, draft: PromptDraft, pathContext: PromptPathContext = {}) {
   const finalOutputName = round.finalOutput || '2주 동안 같이 해볼 일';
+  const juniorReaction = pathContext.juniorReaction || round.juniorReaction;
+  const additionalSituation = pathContext.additionalSituation || round.additionalSituation;
+  const developmentPathIntro = pathContext.developmentPathIntro || '';
 
   return [
     '[당신의 역할]',
@@ -82,16 +91,19 @@ export function buildKacAiPrompt(round: Round, draft: PromptDraft) {
     getFirstChoiceResult(round, draft),
     '',
     '[후배의 다음 말]',
-    round.juniorReaction,
+    juniorReaction,
     '',
     '[그런데, 일이 조금 달라진 장면]',
-    round.additionalSituation,
+    additionalSituation,
     '',
     '[새 상황을 보고 걸리는 지점]',
     draft.dilemma || '아직 적지 않음',
     '',
     '[다시 잡은 판단: 유지 / 일부 보완 / 전환]',
     getSecondChoiceText(round, draft),
+    '',
+    '[앞 선택이 남긴 숙제]',
+    developmentPathIntro || '아직 선택 경로에 따른 별도 정리 없음',
     '',
     '[이 후배에게 남길 작은 약속]',
     getDevelopmentDirection(round, draft),
@@ -109,6 +121,7 @@ export function buildKacAiPrompt(round: Round, draft: PromptDraft) {
     '- 필요하면 김원중 과장이 어떻게 도울지 말하는 지원 문장을 추가해 주세요.',
     '- 후배가 방어적으로 들을 수 있는 표현은 피하고, 현장에서 자연스럽게 말할 수 있게 써 주세요.',
     '- 앞에서 고른 “다시 잡은 판단”과 “이 후배에게 남길 작은 약속”이 대화문에 자연스럽게 반영되게 해 주세요.',
+    '- 앞 선택이 남긴 숙제까지 반영해, 이미 생긴 비용을 줄이는 말과 행동으로 써 주세요.',
     '',
     '[꼭 지킬 것]',
     '- 후배를 의존형, 소심형, 문제형처럼 단정하지 마세요.',
