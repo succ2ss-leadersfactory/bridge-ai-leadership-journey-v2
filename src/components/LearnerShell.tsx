@@ -92,6 +92,22 @@ function keepExistingOrFill(currentValue: string, parsedValue: string) {
   return currentValue.trim().length > 0 ? currentValue : parsedValue;
 }
 
+function clearAiAndFinalFields() {
+  return {
+    editedPrompt: '',
+    aiRawResult: '',
+    aiFinalArtifact: '',
+    aiReviewNotes: '',
+    aiUseAsIs: '',
+    aiRevise: '',
+    aiRisky: '',
+    growthGoal: '',
+    twoWeekTask: '',
+    leaderSupport: '',
+    finalLines: createEmptyCoachingDialogueLines(),
+  };
+}
+
 export function LearnerShell() {
   const savedDraft = getInitialSavedDraft();
   const [selectedSession, setSelectedSession] = useState<LearningSession>(() => findSessionByRoundId(savedDraft?.selectedRoundId));
@@ -153,6 +169,46 @@ export function LearnerShell() {
 
   function updateDraft<K extends keyof LearnerDraft>(key: K, value: LearnerDraft[K]) {
     setDraft((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function handleFirstChoiceChange(choiceId: ChoiceId) {
+    setDraft((prev) => {
+      if (prev.firstChoice === choiceId) return prev;
+      return {
+        ...prev,
+        firstChoice: choiceId,
+        dilemma: '',
+        secondChoice: '',
+        directionId: '',
+        ...clearAiAndFinalFields(),
+      };
+    });
+    setCopyStatus('idle');
+  }
+
+  function handleSecondChoiceChange(choiceId: SecondChoiceId) {
+    setDraft((prev) => {
+      if (prev.secondChoice === choiceId) return prev;
+      return {
+        ...prev,
+        secondChoice: choiceId,
+        directionId: '',
+        ...clearAiAndFinalFields(),
+      };
+    });
+    setCopyStatus('idle');
+  }
+
+  function handleDirectionChange(directionId: string) {
+    setDraft((prev) => {
+      if (prev.directionId === directionId) return prev;
+      return {
+        ...prev,
+        directionId,
+        ...clearAiAndFinalFields(),
+      };
+    });
+    setCopyStatus('idle');
   }
 
   function updateAiRawResult(value: string) {
@@ -303,7 +359,7 @@ export function LearnerShell() {
       case 'firstDecision':
         return (
           <StepLayout eyebrow="김원중 과장의 첫마디" title={selectedRound.firstQuestion} description="정답을 맞히는 화면이 아닙니다. 지금 내가 실제로 할 법한 첫 대응을 골라보세요." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
-            <div className="choice-stack">{selectedRound.firstChoices.map((choice) => <ChoiceCard key={choice.id} choice={choice} isSelected={draft.firstChoice === choice.id} onSelect={(choiceId) => updateDraft('firstChoice', choiceId)} />)}</div>
+            <div className="choice-stack">{selectedRound.firstChoices.map((choice) => <ChoiceCard key={choice.id} choice={choice} isSelected={draft.firstChoice === choice.id} onSelect={(choiceId) => handleFirstChoiceChange(choiceId)} />)}</div>
             <TextInputPanel label="왜 그렇게 말하려고 하나요?" helper="지금 상황에서 이 선택이 더 낫다고 본 이유를 적어 주세요." value={draft.firstReason} placeholder="내 선택 이유를 적어 주세요." onChange={(value) => updateDraft('firstReason', value)} />
           </StepLayout>
         );
@@ -323,7 +379,7 @@ export function LearnerShell() {
       case 'secondDecision':
         return (
           <StepLayout eyebrow="판단을 다시 잡기" title={selectedRound.secondQuestion} description="새로 생긴 변수까지 보고, 처음 판단을 유지할지, 조금 고칠지, 방향을 바꿀지 정합니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
-            <div className="choice-stack">{selectedRound.secondChoices.map((choice) => <button key={choice.id} type="button" className={`direction-card ${draft.secondChoice === choice.id ? 'selected' : ''}`} onClick={() => updateDraft('secondChoice', choice.id)}><strong>{choice.label}</strong><span>{choice.description}</span></button>)}</div>
+            <div className="choice-stack">{selectedRound.secondChoices.map((choice) => <button key={choice.id} type="button" className={`direction-card ${draft.secondChoice === choice.id ? 'selected' : ''}`} onClick={() => handleSecondChoiceChange(choice.id)}><strong>{choice.label}</strong><span>{choice.description}</span></button>)}</div>
           </StepLayout>
         );
       case 'developmentDirection':
@@ -337,7 +393,7 @@ export function LearnerShell() {
             ) : null}
             <div className="choice-stack">
               {prioritizedDirections.map((direction, index) => (
-                <button key={direction.id} type="button" className={`direction-card ${draft.directionId === direction.id ? 'selected' : ''}`} onClick={() => updateDraft('directionId', direction.id)}>
+                <button key={direction.id} type="button" className={`direction-card ${draft.directionId === direction.id ? 'selected' : ''}`} onClick={() => handleDirectionChange(direction.id)}>
                   <strong>{index === 0 ? '[추천] ' : '[대안] '}{direction.title}</strong>
                   <span><b>왜 필요한가</b><br />{direction.description}</span>
                   <span><b>어디에 쓸 수 있나</b><br />{direction.bestWhen}</span>
