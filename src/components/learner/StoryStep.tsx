@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { StepLayout } from '../StepLayout';
 
 interface StoryStepProps {
   eyebrow: string;
-  title: string;
-  description: string;
+  title: ReactNode;
+  description: ReactNode;
   story: string;
   isEmphasis?: boolean;
   onBack: () => void;
