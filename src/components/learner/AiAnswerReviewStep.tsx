@@ -1,11 +1,19 @@
 import { StepLayout } from '../StepLayout';
 import { TextInputPanel } from '../TextInputPanel';
 
+interface ParsedAiFields {
+  growthGoal: string;
+  twoWeekTask: string;
+  leaderSupport: string;
+  finalLines: string[];
+}
+
 interface AiAnswerReviewStepProps {
   canGoNext: boolean;
   aiRawResult: string;
   finalArtifact: string;
   reviewNotes: string;
+  parsedFields: ParsedAiFields;
   aiUseAsIs: string;
   aiRevise: string;
   aiRisky: string;
@@ -19,11 +27,31 @@ interface AiAnswerReviewStepProps {
   onRiskyChange: (value: string) => void;
 }
 
+function isFilled(value: string) {
+  return value.trim().length > 0;
+}
+
+function getExtractionStatus(fields: ParsedAiFields) {
+  const planItems = [fields.growthGoal, fields.twoWeekTask, fields.leaderSupport];
+  const lineItems = fields.finalLines.slice(0, 5);
+  const planCount = planItems.filter(isFilled).length;
+  const lineCount = lineItems.filter(isFilled).length;
+  const totalCount = planCount + lineCount;
+
+  return {
+    planCount,
+    lineCount,
+    totalCount,
+    isComplete: totalCount === 8,
+  };
+}
+
 export function AiAnswerReviewStep({
   canGoNext,
   aiRawResult,
   finalArtifact,
   reviewNotes,
+  parsedFields,
   aiUseAsIs,
   aiRevise,
   aiRisky,
@@ -36,6 +64,8 @@ export function AiAnswerReviewStep({
   onReviseChange,
   onRiskyChange,
 }: AiAnswerReviewStepProps) {
+  const extractionStatus = getExtractionStatus(parsedFields);
+
   return (
     <StepLayout
       eyebrow="AI 답변 걸러보기"
@@ -59,6 +89,20 @@ export function AiAnswerReviewStep({
         minRows={10}
         onChange={onRawResultChange}
       />
+      {aiRawResult.trim().length > 0 ? (
+        <article className={`ai-artifact-card extraction ${extractionStatus.isComplete ? 'complete' : 'partial'}`}>
+          <h3>자동 분리 확인</h3>
+          <p>
+            2주 실행안은 <strong>{extractionStatus.planCount}/3개</strong>, 코칭 대화문은 <strong>{extractionStatus.lineCount}/5개</strong>가 분리됐습니다.
+          </p>
+          <p>
+            전체 <strong>{extractionStatus.totalCount}/8개</strong> 항목이 잡혔습니다.
+            {extractionStatus.isComplete
+              ? ' 다음 화면에서 문장을 다듬으면 됩니다.'
+              : ' 누락된 항목은 다음 화면에서 직접 채우거나, AI 답변을 다시 붙여넣어 주세요.'}
+          </p>
+        </article>
+      ) : null}
       {finalArtifact ? (
         <article className="ai-artifact-card">
           <h3>AI가 잡아준 초안</h3>
