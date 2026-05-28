@@ -3,6 +3,7 @@ import { choicePathOverrides } from './choicePathOverrides';
 import { coachingViewpointOverrides } from './coachingViewpointOverrides';
 import { applyDirectionTitleOverrides } from './directionTitleOverrides';
 import { directionPriorityOverrides } from './directionPriorityOverrides';
+import { editorialFlowOverrides } from './editorialFlowOverrides';
 import { fieldLanguageOverrides } from './fieldLanguageOverrides';
 import { finalRoundOverrides } from './finalRoundOverrides';
 import { firstDilemmaChoiceOverrides } from './firstDilemmaChoiceOverrides';
@@ -26,6 +27,7 @@ const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   r1LineBreakOverrides,
   r2LineBreakOverrides,
   responseDifferentiationOverrides,
+  editorialFlowOverrides,
 ];
 
 function withCoachingViewpointsInPathIntro(round: Round): Round {
