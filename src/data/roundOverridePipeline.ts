@@ -1,5 +1,6 @@
 import type { Round } from '../types';
 import { choicePathOverrides } from './choicePathOverrides';
+import { coachingViewpointOverrides } from './coachingViewpointOverrides';
 import { applyDirectionTitleOverrides } from './directionTitleOverrides';
 import { directionPriorityOverrides } from './directionPriorityOverrides';
 import { fieldLanguageOverrides } from './fieldLanguageOverrides';
@@ -17,6 +18,7 @@ const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   pressureSituationOverrides,
   firstDilemmaChoiceOverrides,
   choicePathOverrides,
+  coachingViewpointOverrides,
   directionPriorityOverrides,
 ];
 
