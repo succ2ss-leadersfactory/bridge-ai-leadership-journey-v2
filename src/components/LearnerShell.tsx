@@ -51,6 +51,10 @@ function getSelectedDirectionSummary(round: Round, directionId: string) {
   return `${selected.title}\n왜 필요한가: ${selected.description}\n어디에 쓸 수 있나: ${selected.bestWhen}\n조심할 점: ${selected.watchOut}`;
 }
 
+function keepExistingOrFill(currentValue: string, parsedValue: string) {
+  return currentValue.trim().length > 0 ? currentValue : parsedValue;
+}
+
 export function LearnerShell() {
   const savedDraft = getInitialSavedDraft();
   const [selectedSession, setSelectedSession] = useState<LearningSession>(() => findSessionByRoundId(savedDraft?.selectedRoundId));
@@ -95,12 +99,27 @@ export function LearnerShell() {
 
   function updateAiRawResult(value: string) {
     const parsed = parseAiResult(value);
-    setDraft((prev) => ({
-      ...prev,
-      aiRawResult: value,
-      aiFinalArtifact: parsed.finalArtifact,
-      aiReviewNotes: parsed.reviewNotes,
-    }));
+    const fields = parsed.fields;
+
+    setDraft((prev) => {
+      const nextLines = createEmptyCoachingDialogueLines();
+      prev.finalLines.forEach((line, lineIndex) => {
+        if (lineIndex < nextLines.length) {
+          nextLines[lineIndex] = keepExistingOrFill(line, fields.finalLines[lineIndex] ?? '');
+        }
+      });
+
+      return {
+        ...prev,
+        aiRawResult: value,
+        aiFinalArtifact: parsed.finalArtifact,
+        aiReviewNotes: parsed.reviewNotes,
+        growthGoal: keepExistingOrFill(prev.growthGoal, fields.growthGoal),
+        twoWeekTask: keepExistingOrFill(prev.twoWeekTask, fields.twoWeekTask),
+        leaderSupport: keepExistingOrFill(prev.leaderSupport, fields.leaderSupport),
+        finalLines: nextLines,
+      };
+    });
   }
 
   function goNext() {
