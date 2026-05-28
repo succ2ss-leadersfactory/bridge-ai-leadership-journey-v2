@@ -32,7 +32,7 @@ export function FinalFiveLinesStep({
     <StepLayout
       eyebrow="내일 할 말 정리"
       title="후배 앞에서 실제로 할 말 5줄"
-      description="좋은 말처럼 들리는 문장이 아니라, 내일 자리에서 바로 꺼낼 수 있는 말로 바꿉니다. 인정할 말, 물어볼 말, 같이 정할 행동만 남깁니다."
+      description="AI가 항목별로 나눠 넣은 초안입니다. 그대로 읽지 말고, 김원중 과장이 내일 자리에서 실제로 말할 수 있게 고쳐 주세요."
       canGoBack
       canGoNext={canGoNext}
       onBack={onBack}
@@ -55,7 +55,7 @@ export function FinalFiveLinesStep({
           <TextInputPanel
             key={field.id}
             label={field.label}
-            helper={field.helper}
+            helper={`${field.helper} AI 초안이 어색하면 우리 팀 말투로 짧게 고쳐 주세요.`}
             value={finalLines[index] ?? ''}
             placeholder={personalizePlaceholder(field.placeholder, round)}
             minRows={3}
