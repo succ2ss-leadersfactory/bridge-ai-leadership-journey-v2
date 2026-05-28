@@ -26,6 +26,13 @@ function getStoryStepHeader(eyebrow: string, title: ReactNode, description: Reac
     };
   }
 
+  if (eyebrow === '그런데, 일이 조금 달라집니다') {
+    return {
+      title: '처음 선택의 비용이 보입니다',
+      description: '방금 선택이 틀렸다는 뜻은 아닙니다. 다만 시간이 지나며 다른 부담이 드러납니다.',
+    };
+  }
+
   return { title, description };
 }
 
