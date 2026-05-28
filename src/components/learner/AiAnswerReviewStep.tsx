@@ -51,6 +51,12 @@ function getFieldValue(fields: ParsedAiFields, key: (typeof extractionLabels)[nu
   return fields.finalLines[lineIndex] ?? '';
 }
 
+function getPreviewText(value: string) {
+  const normalized = value.replace(/\s+/g, ' ').trim();
+  if (!normalized) return '아직 잡히지 않았습니다.';
+  return normalized.length > 74 ? `${normalized.slice(0, 74)}…` : normalized;
+}
+
 function getExtractionStatus(fields: ParsedAiFields) {
   const planItems = [fields.growthGoal, fields.twoWeekTask, fields.leaderSupport];
   const lineItems = fields.finalLines.slice(0, 5);
@@ -132,6 +138,22 @@ export function AiAnswerReviewStep({
                 {extractionStatus.missingLabels.map((label) => (
                   <li key={label}>{label}</li>
                 ))}
+              </ul>
+            </div>
+          ) : null}
+          {extractionStatus.totalCount > 0 ? (
+            <div className="extraction-preview-list">
+              <strong>분리된 내용 미리보기</strong>
+              <ul>
+                {extractionLabels.map((item) => {
+                  const value = getFieldValue(parsedFields, item.key);
+                  return (
+                    <li key={item.key} className={isFilled(value) ? 'filled' : 'empty'}>
+                      <span>{item.label}</span>
+                      <small>{getPreviewText(value)}</small>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ) : null}
