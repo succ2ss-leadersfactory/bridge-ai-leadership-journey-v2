@@ -146,6 +146,30 @@
   color: #a15c00;
 }
 
+.extraction-missing-list {
+  margin-top: 10px;
+  border-top: 1px solid rgba(161, 92, 0, 0.2);
+  padding-top: 10px;
+}
+
+.extraction-missing-list strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.88rem;
+}
+
+.extraction-missing-list ul {
+  margin: 0;
+  padding-left: 1.05rem;
+}
+
+.extraction-missing-list li {
+  margin-bottom: 4px;
+  color: var(--kac-text-body);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
 .direction-card {
   align-items: stretch;
   gap: 11px;
