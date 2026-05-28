@@ -1,4 +1,5 @@
 import type { Round } from '../types';
+import { choicePathOverrides } from './choicePathOverrides';
 import { fieldLanguageOverrides } from './fieldLanguageOverrides';
 import { finalRoundOverrides } from './finalRoundOverrides';
 import { firstDilemmaChoiceOverrides } from './firstDilemmaChoiceOverrides';
@@ -13,6 +14,7 @@ const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   fieldLanguageOverrides,
   pressureSituationOverrides,
   firstDilemmaChoiceOverrides,
+  choicePathOverrides,
 ];
 
 export function applyRoundOverrides(round: Round): Round {
