@@ -237,7 +237,12 @@ export function LearnerShell() {
       const nextLines = createEmptyCoachingDialogueLines();
       prev.finalLines.forEach((line, lineIndex) => {
         if (lineIndex < nextLines.length) {
-          nextLines[lineIndex] = keepExistingOrFill(line, fields.finalLines[lineIndex] ?? '');
+          nextLines[lineIndex] = line;
+        }
+      });
+      parsed.fields.finalLines.forEach((line, lineIndex) => {
+        if (lineIndex < nextLines.length) {
+          nextLines[lineIndex] = keepExistingOrFill(nextLines[lineIndex], line);
         }
       });
 
@@ -370,14 +375,14 @@ export function LearnerShell() {
         return <StoryStep eyebrow="지금 벌어진 일" title={selectedRound.title} description={selectedRound.subtitle} story={selectedRound.situation} onBack={goBack} onNext={goNext} />;
       case 'juniorReading':
         return (
-          <StepLayout eyebrow="후배를 제대로 읽기" title={`${selectedRound.juniorName} ${selectedRound.juniorRole}, 무엇이 보이나요?`} description="성격이나 태도로 단정하지 말고, 실제로 보인 말과 행동을 기준으로 적어봅니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
+          <StepLayout eyebrow="후배를 제대로 읽기" title={`${selectedRound.juniorName} ${selectedRound.juniorRole}, 무엇이 보이나요?`} description={<>성격이나 태도로 단정하지 말고,<br />실제로 보인 말과 행동을 기준으로 적어봅니다.</>} canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
             <div className="signal-list">{selectedRound.juniorSignals.map((signal) => <p key={signal}>{signal}</p>)}</div>
-            <TextInputPanel label="내 눈에 보인 모습" helper="예: 확신이 없으면 혼자 판단하기보다 먼저 확인하려는 모습으로 보인다." value={draft.juniorReading} placeholder="후배의 말과 행동을 한두 문장으로 적어 주세요." onChange={(value) => updateDraft('juniorReading', value)} />
+            <TextInputPanel label="내 눈에 보인 모습" helper={"예: 확신이 없으면 혼자 판단하기보다 먼저 확인하려는\n모습으로 보인다."} value={draft.juniorReading} placeholder="후배의 말과 행동을 한두 문장으로 적어 주세요." onChange={(value) => updateDraft('juniorReading', value)} />
           </StepLayout>
         );
       case 'firstDecision':
         return (
-          <StepLayout eyebrow="김원중 과장의 첫마디" title={selectedRound.firstQuestion} description="정답을 맞히는 화면이 아닙니다. 지금 내가 실제로 할 법한 첫 대응을 골라보세요." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
+          <StepLayout eyebrow="김원중 과장의 첫마디" title={selectedRound.firstQuestion} description={<>정답을 맞히는 화면이 아닙니다.<br />지금 내가 실제로 할 법한 첫 대응을 골라보세요.</>} canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={goNext}>
             <div className="choice-stack">{selectedRound.firstChoices.map((choice) => <ChoiceCard key={choice.id} choice={choice} isSelected={draft.firstChoice === choice.id} onSelect={(choiceId) => handleFirstChoiceChange(choiceId)} />)}</div>
             <TextInputPanel label="왜 그렇게 말하려고 하나요?" helper="지금 상황에서 이 선택이 더 낫다고 본 이유를 적어 주세요." value={draft.firstReason} placeholder="내 선택 이유를 적어 주세요." onChange={(value) => updateDraft('firstReason', value)} />
           </StepLayout>
