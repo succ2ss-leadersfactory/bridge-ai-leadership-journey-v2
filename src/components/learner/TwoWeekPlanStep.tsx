@@ -6,6 +6,7 @@ interface TwoWeekPlanStepProps {
   round: Round;
   canGoNext: boolean;
   finalArtifact: string;
+  directionSummary: string;
   growthGoal: string;
   twoWeekTask: string;
   leaderSupport: string;
@@ -20,6 +21,7 @@ export function TwoWeekPlanStep({
   round,
   canGoNext,
   finalArtifact,
+  directionSummary,
   growthGoal,
   twoWeekTask,
   leaderSupport,
@@ -39,6 +41,10 @@ export function TwoWeekPlanStep({
       onBack={onBack}
       onNext={onNext}
     >
+      <article className="ai-artifact-card compact">
+        <h3>방금 고른 약속</h3>
+        <p>{directionSummary || '아직 선택한 약속이 없습니다.'}</p>
+      </article>
       {finalArtifact ? (
         <article className="ai-artifact-card compact">
           <h3>AI가 잡아준 참고안</h3>
