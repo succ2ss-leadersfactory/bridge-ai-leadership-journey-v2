@@ -10,6 +10,7 @@ import { pressureSituationOverrides } from './pressureSituationOverrides';
 import { r01RefinementOverrides } from './r01RefinementOverrides';
 import { r1LineBreakOverrides } from './r1LineBreakOverrides';
 import { r2LineBreakOverrides } from './r2LineBreakOverrides';
+import { responseDifferentiationOverrides } from './responseDifferentiationOverrides';
 import { roundOverrides } from './roundOverrides';
 
 const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
@@ -24,6 +25,7 @@ const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   directionPriorityOverrides,
   r1LineBreakOverrides,
   r2LineBreakOverrides,
+  responseDifferentiationOverrides,
 ];
 
 function withCoachingViewpointsInPathIntro(round: Round): Round {
