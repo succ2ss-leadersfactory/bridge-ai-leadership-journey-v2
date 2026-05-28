@@ -23,6 +23,10 @@ export function StepLayout({
   onBack,
   onNext,
 }: StepLayoutProps) {
+  function handleHome() {
+    window.dispatchEvent(new CustomEvent('kac-go-session-home'));
+  }
+
   return (
     <section className="step-layout">
       <div className="step-content">
@@ -35,6 +39,9 @@ export function StepLayout({
       <nav className="bottom-actions" aria-label="단계 이동">
         <button type="button" className="secondary-button" onClick={onBack} disabled={!canGoBack}>
           이전
+        </button>
+        <button type="button" className="home-button" onClick={handleHome}>
+          홈
         </button>
         <button type="button" className="primary-button" onClick={onNext} disabled={!canGoNext}>
           {nextLabel}
