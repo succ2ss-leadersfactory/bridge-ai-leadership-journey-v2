@@ -384,7 +384,7 @@ export function LearnerShell() {
         );
       case 'developmentDirection':
         return (
-          <StepLayout eyebrow="키울 것을 하나로 잡기" title="앞으로 2주, 이 후배에게 무엇을 남길까요?" description="앞에서 고른 첫마디와 다시 잡은 판단을 기준으로, 지금 가장 필요한 약속부터 먼저 보여줍니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
+          <StepLayout eyebrow="키울 것을 하나로 잡기" title="앞으로 2주, 이 후배에게 무엇을 남길까요?" description="앞에서 고른 첫마디와 다시 잡은 판단을 기준으로, 먼저 검토할 만한 대안부터 보여드립니다. 정답은 없습니다. 지금 후배에게 가장 맞는 하나를 고르세요." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
             {developmentPathIntro ? (
               <article className="ai-artifact-card compact">
                 <h3>앞 선택이 남긴 숙제</h3>
@@ -394,7 +394,7 @@ export function LearnerShell() {
             <div className="choice-stack">
               {prioritizedDirections.map((direction, index) => (
                 <button key={direction.id} type="button" className={`direction-card ${draft.directionId === direction.id ? 'selected' : ''}`} onClick={() => handleDirectionChange(direction.id)}>
-                  <strong>{index === 0 ? '[추천] ' : '[대안] '}{direction.title}</strong>
+                  <strong>{`[대안 ${index + 1}] `}{direction.title}</strong>
                   <span><b>왜 필요한가</b><br />{direction.description}</span>
                   <span><b>어디에 쓸 수 있나</b><br />{direction.bestWhen}</span>
                   <small><b>조심할 점</b><br />{direction.watchOut}</small>
