@@ -1,0 +1,115 @@
+.bottom-actions {
+  grid-template-columns: 0.85fr 0.75fr 1.1fr;
+}
+
+.primary-button,
+.secondary-button,
+.home-button {
+  min-height: 52px;
+  border: 0;
+  border-radius: 18px;
+  font-weight: 900;
+}
+
+.home-button {
+  background: #ffffff;
+  color: #1764a8;
+  border: 1px solid #c8d9ea;
+  box-shadow: 0 8px 18px rgba(23, 100, 168, 0.1);
+}
+
+.kac-intro-lockup {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border: 1px solid #c9dcf1;
+  border-radius: 24px;
+  padding: 16px;
+  background: linear-gradient(135deg, #ffffff, #eef7ff);
+  box-shadow: 0 10px 24px rgba(31, 58, 88, 0.07);
+}
+
+.kac-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 58px;
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background: #1764a8;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 1000;
+  letter-spacing: -0.03em;
+  box-shadow: 0 10px 20px rgba(23, 100, 168, 0.22);
+}
+
+.kac-org-name {
+  margin: 0 0 4px;
+  color: #142033;
+  font-size: 1.05rem;
+  font-weight: 1000;
+  letter-spacing: -0.03em;
+}
+
+.kac-program-name {
+  margin: 0;
+  color: #52667d;
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.team-select-panel {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #dbe5ef;
+  border-radius: 22px;
+  padding: 14px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(31, 58, 88, 0.06);
+}
+
+.team-option-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.team-option {
+  min-height: 44px;
+  border: 1px solid #d5e2ef;
+  border-radius: 14px;
+  background: #f7fbff;
+  color: #344b65;
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.team-option.selected {
+  border-color: #1764a8;
+  background: #e7f2ff;
+  color: #1764a8;
+  outline: 3px solid rgba(23, 100, 168, 0.12);
+}
+
+@media (max-width: 360px) {
+  .bottom-actions {
+    gap: 7px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .home-button {
+    border-radius: 15px;
+    font-size: 0.9rem;
+  }
+
+  .team-option-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
