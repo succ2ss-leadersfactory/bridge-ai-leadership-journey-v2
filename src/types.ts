@@ -54,6 +54,11 @@ export interface DevelopmentDirectionOption {
   watchOut: string;
 }
 
+export interface CoachingViewpoint {
+  title: string;
+  body: string;
+}
+
 export interface AiAnswerReviewOption {
   key: AiAnswerReviewKey;
   label: string;
@@ -100,6 +105,7 @@ export interface Round {
   additionalSituation: string;
   additionalSituationByChoice?: Partial<Record<ChoiceId, string>>;
   developmentPathIntroByChoice?: Partial<Record<ChoiceId, string>>;
+  coachingViewpoints?: CoachingViewpoint[];
   developmentDirectionPriorityByPath?: Partial<Record<DevelopmentPathKey, string[]>>;
   developmentDirections: DevelopmentDirectionOption[];
   aiPromptTemplate: string;
