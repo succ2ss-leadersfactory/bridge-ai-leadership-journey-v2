@@ -10,7 +10,7 @@ import { getRoundDisplayTitle } from '../lib/roundDisplay';
 import { getFirstRoundInSession, getRoundsForSession } from '../lib/roundSelectors';
 import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
 import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
-import type { ChoiceId, FlowStepId, LearningSession, Round, RoundId } from '../types';
+import type { ChoiceId, DevelopmentDirectionOption, DevelopmentPathKey, FlowStepId, LearningSession, Round, RoundId, SecondChoiceId } from '../types';
 import { ChoiceCard } from './ChoiceCard';
 import { AiAnswerReviewStep } from './learner/AiAnswerReviewStep';
 import { AiPromptStep } from './learner/AiPromptStep';
@@ -43,10 +43,37 @@ function getChoiceId(value: string): ChoiceId | null {
   return value === 'A' || value === 'B' ? value : null;
 }
 
+function getSecondChoiceId(value: string): SecondChoiceId | null {
+  return value === 'keep' || value === 'revise' || value === 'change' ? value : null;
+}
+
+function getDevelopmentPathKey(firstChoice: string, secondChoice: string): DevelopmentPathKey | null {
+  const choiceId = getChoiceId(firstChoice);
+  const secondChoiceId = getSecondChoiceId(secondChoice);
+  if (!choiceId || !secondChoiceId) return null;
+  return `${choiceId}_${secondChoiceId}`;
+}
+
 function getChoiceBasedText(round: Round, firstChoice: string, field: 'juniorReactionByChoice' | 'additionalSituationByChoice' | 'developmentPathIntroByChoice', fallback: string) {
   const choiceId = getChoiceId(firstChoice);
   if (!choiceId) return fallback;
   return round[field]?.[choiceId] || fallback;
+}
+
+function sortDirectionsByPath(round: Round, firstChoice: string, secondChoice: string): DevelopmentDirectionOption[] {
+  const pathKey = getDevelopmentPathKey(firstChoice, secondChoice);
+  if (!pathKey) return round.developmentDirections;
+
+  const priority = round.developmentDirectionPriorityByPath?.[pathKey];
+  if (!priority?.length) return round.developmentDirections;
+
+  const byId = new Map(round.developmentDirections.map((direction) => [direction.id, direction]));
+  const sorted = priority
+    .map((id) => byId.get(id))
+    .filter((direction): direction is DevelopmentDirectionOption => Boolean(direction));
+  const remaining = round.developmentDirections.filter((direction) => !priority.includes(direction.id));
+
+  return [...sorted, ...remaining];
 }
 
 function getSelectedJudgmentSummary(round: Round, secondChoiceId: string) {
@@ -92,6 +119,10 @@ export function LearnerShell() {
   const developmentPathIntro = useMemo(
     () => getChoiceBasedText(selectedRound, draft.firstChoice, 'developmentPathIntroByChoice', ''),
     [draft.firstChoice, selectedRound],
+  );
+  const prioritizedDirections = useMemo(
+    () => sortDirectionsByPath(selectedRound, draft.firstChoice, draft.secondChoice),
+    [draft.firstChoice, draft.secondChoice, selectedRound],
   );
 
   const generatedPrompt = useMemo(() => buildKacAiPrompt(selectedRound, draft, {
@@ -297,7 +328,7 @@ export function LearnerShell() {
         );
       case 'developmentDirection':
         return (
-          <StepLayout eyebrow="키울 것을 하나로 잡기" title="앞으로 2주, 이 후배에게 무엇을 남길까요?" description="앞에서 고른 첫마디가 만든 이익과 비용을 보고, 김원중 과장이 이 후배에게 남길 작은 약속을 하나 고르세요." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
+          <StepLayout eyebrow="키울 것을 하나로 잡기" title="앞으로 2주, 이 후배에게 무엇을 남길까요?" description="앞에서 고른 첫마디와 다시 잡은 판단을 기준으로, 지금 가장 필요한 약속부터 먼저 보여줍니다." canGoBack canGoNext={isNextEnabled} onBack={goBack} onNext={() => { if (!draft.editedPrompt) updateDraft('editedPrompt', generatedPrompt); setCopyStatus('idle'); goNext(); }}>
             {developmentPathIntro ? (
               <article className="ai-artifact-card compact">
                 <h3>앞 선택이 남긴 숙제</h3>
@@ -305,9 +336,9 @@ export function LearnerShell() {
               </article>
             ) : null}
             <div className="choice-stack">
-              {selectedRound.developmentDirections.map((direction) => (
+              {prioritizedDirections.map((direction, index) => (
                 <button key={direction.id} type="button" className={`direction-card ${draft.directionId === direction.id ? 'selected' : ''}`} onClick={() => updateDraft('directionId', direction.id)}>
-                  <strong>{direction.title}</strong>
+                  <strong>{index === 0 ? '[추천] ' : '[대안] '}{direction.title}</strong>
                   <span><b>왜 필요한가</b><br />{direction.description}</span>
                   <span><b>어디에 쓸 수 있나</b><br />{direction.bestWhen}</span>
                   <small><b>조심할 점</b><br />{direction.watchOut}</small>
