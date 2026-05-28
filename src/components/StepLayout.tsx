@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 
 interface StepLayoutProps {
   eyebrow: string;
-  title: string;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   children: ReactNode;
   canGoBack: boolean;
   canGoNext: boolean;
