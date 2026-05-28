@@ -446,6 +446,7 @@ export function LearnerShell() {
             aiRawResult={draft.aiRawResult}
             finalArtifact={finalArtifact}
             reviewNotes={reviewNotes}
+            parsedFields={parsedAiResult.fields}
             aiUseAsIs={draft.aiUseAsIs}
             aiRevise={draft.aiRevise}
             aiRisky={draft.aiRisky}
