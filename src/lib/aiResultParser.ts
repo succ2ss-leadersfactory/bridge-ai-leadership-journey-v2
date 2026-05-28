@@ -1,5 +1,5 @@
 export function extractBlock(text: string, tag: string) {
-  const pattern = new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`, 'i');
+  const pattern = new RegExp(`<${tag}>([\s\S]*?)<\/${tag}>`, 'i');
   const match = text.match(pattern);
   return match ? match[1].trim() : '';
 }
@@ -8,23 +8,54 @@ const fieldAliases = {
   growthGoal: [
     '2주 뒤 달라졌으면 하는 모습',
     '2주 뒤, 뭐가 조금 달라지면 좋을까요',
+    '2주 뒤 뭐가 조금 달라지면 좋을까요',
     '2주 뒤 변화',
+    '달라졌으면 하는 모습',
+    '기대 변화',
   ],
   twoWeekTask: [
     '이번 주에 맡겨볼 작은 일',
     '이번 주에 실제로 맡겨볼 일',
     '이번 주 함께 해볼 일',
+    '이번 주에 같이 해볼 일',
+    '이번 주 맡길 일',
+    '맡겨볼 작은 일',
   ],
   leaderSupport: [
     '김원중 과장이 옆에서 도와줄 일',
     '김원중 과장은 어디까지 봐줄까요',
     '김원중 과장이 봐줄 선',
+    '김원중 과장이 도와줄 일',
+    '과장이 옆에서 도와줄 일',
+    '리더가 도와줄 일',
   ],
-  line1: ['먼저 풀어줄 말'],
-  line2: ['바로 답하기 전에 물어볼 말'],
-  line3: ['이번 주에 같이 해볼 일'],
-  line4: ['김원중 과장이 봐줄 선'],
-  line5: ['입 밖으로 내면 안 좋은 말'],
+  line1: [
+    '먼저 풀어줄 말',
+    '먼저 건넬 말',
+    '처음 풀어줄 말',
+  ],
+  line2: [
+    '바로 답하기 전에 물어볼 말',
+    '답하기 전에 물어볼 말',
+    '먼저 물어볼 말',
+  ],
+  line3: [
+    '이번 주에 같이 해볼 일',
+    '이번 주 같이 해볼 일',
+    '이번 주 함께 해볼 일',
+  ],
+  line4: [
+    '김원중 과장이 봐줄 선',
+    '김원중 과장은 어디까지 봐줄까요',
+    '과장이 봐줄 선',
+    '봐줄 선',
+  ],
+  line5: [
+    '입 밖으로 내면 안 좋은 말',
+    '말할 때 조심할 표현',
+    '피해야 할 말',
+    '하지 말아야 할 말',
+  ],
 } as const;
 
 type ParsedFieldKey = keyof typeof fieldAliases;
@@ -40,21 +71,42 @@ const orderedFieldKeys: ParsedFieldKey[] = [
   'line5',
 ];
 
+function normalizeWhitespace(value: string) {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
 function normalizeLine(line: string) {
   return line
-    .replace(/^\s*[-*•]\s*/, '')
-    .replace(/^\s*\d+[.)]\s*/, '')
+    .replace(/^\s*[-*•·]\s*/, '')
+    .replace(/^\s*\d+\s*[.)]\s*/, '')
+    .replace(/^\s*\d+\s*[-–]\s*/, '')
+    .replace(/^\s*[①②③④⑤⑥⑦⑧⑨⑩]\s*/, '')
     .trim();
 }
 
 function cleanExtractedValue(value: string) {
   return value
     .split('\n')
-    .map((line) => line.replace(/^\s*[-*•]\s*/, '').trimEnd())
+    .map((line) => line.replace(/^\s*[-*•·]\s*/, '').trimEnd())
     .join('\n')
-    .replace(/^[:：\s]+/, '')
+    .replace(/^[:：\-–\s]+/, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+}
+
+function aliasMatchesLine(line: string, alias: string) {
+  const normalizedLine = normalizeWhitespace(line);
+  const normalizedAlias = normalizeWhitespace(alias);
+
+  return (
+    normalizedLine === normalizedAlias ||
+    normalizedLine.startsWith(`${normalizedAlias}:`) ||
+    normalizedLine.startsWith(`${normalizedAlias}：`) ||
+    normalizedLine.startsWith(`${normalizedAlias} -`) ||
+    normalizedLine.startsWith(`${normalizedAlias} –`) ||
+    normalizedLine.startsWith(`${normalizedAlias}은 `) ||
+    normalizedLine.startsWith(`${normalizedAlias}는 `)
+  );
 }
 
 function getFieldKeyFromLine(line: string): ParsedFieldKey | null {
@@ -62,7 +114,7 @@ function getFieldKeyFromLine(line: string): ParsedFieldKey | null {
 
   for (const key of orderedFieldKeys) {
     const aliases = fieldAliases[key];
-    if (aliases.some((alias) => normalized === alias || normalized.startsWith(`${alias}:`) || normalized.startsWith(`${alias}：`))) {
+    if (aliases.some((alias) => aliasMatchesLine(normalized, alias))) {
       return key;
     }
   }
@@ -74,12 +126,24 @@ function removeLabelFromLine(line: string, key: ParsedFieldKey) {
   let normalized = normalizeLine(line);
 
   for (const alias of fieldAliases[key]) {
-    if (normalized === alias) return '';
-    if (normalized.startsWith(`${alias}:`)) {
-      return normalized.slice(alias.length + 1).trim();
+    const normalizedAlias = normalizeWhitespace(alias);
+    const normalizedLine = normalizeWhitespace(normalized);
+
+    if (normalizedLine === normalizedAlias) return '';
+
+    const separators = [':', '：', ' -', ' –'];
+    for (const separator of separators) {
+      const prefix = `${normalizedAlias}${separator}`;
+      if (normalizedLine.startsWith(prefix)) {
+        return normalizedLine.slice(prefix.length).trim();
+      }
     }
-    if (normalized.startsWith(`${alias}：`)) {
-      return normalized.slice(alias.length + 1).trim();
+
+    for (const particle of ['은 ', '는 ']) {
+      const prefix = `${normalizedAlias}${particle}`;
+      if (normalizedLine.startsWith(prefix)) {
+        return normalizedLine.slice(prefix.length).trim();
+      }
     }
   }
 
