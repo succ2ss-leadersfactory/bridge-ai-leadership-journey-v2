@@ -56,7 +56,8 @@
 .team-select-panel,
 .text-input-panel,
 .direction-card,
-.choice-card {
+.choice-card,
+.round-card {
   line-height: var(--kac-line);
   letter-spacing: -0.035em;
 }
@@ -68,7 +69,8 @@
 .direction-card small,
 .choice-card span,
 .choice-card small,
-.text-panel-helper {
+.text-panel-helper,
+.round-card-meta {
   line-height: var(--kac-line);
 }
 
@@ -170,6 +172,60 @@ input {
 
 .kac-program-name {
   letter-spacing: -0.025em;
+}
+
+.round-card {
+  gap: 9px;
+  text-align: left;
+}
+
+.round-card-title {
+  display: block;
+  color: var(--kac-text-strong);
+  font-size: 1.03rem;
+  line-height: 1.38;
+  letter-spacing: -0.055em;
+}
+
+.session-meta-row,
+.round-character-row,
+.round-task-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  column-gap: 8px;
+  row-gap: 2px;
+}
+
+.round-task-row {
+  grid-template-columns: 1fr;
+  margin-top: 2px;
+}
+
+.session-meta-label,
+.round-meta-label {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  border-radius: 999px;
+  background: #e7f2ff;
+  color: #1764a8;
+  padding: 2px 8px;
+  font-size: 0.76rem;
+  font-weight: 1000;
+  line-height: 1.45;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.round-task-row .round-meta-label {
+  margin-bottom: 2px;
+}
+
+.round-card-meta {
+  color: var(--kac-text-body);
+  font-size: 0.91rem;
+  letter-spacing: -0.035em;
 }
 
 .result-card h3 {
