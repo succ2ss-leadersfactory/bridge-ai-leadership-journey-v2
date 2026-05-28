@@ -39,6 +39,18 @@ function findSessionByRoundId(roundId: string | undefined) {
   return sessions.find((session) => session.roundIds.includes(roundId as RoundId)) ?? sessions[0];
 }
 
+function getSelectedJudgmentSummary(round: Round, secondChoiceId: string) {
+  const selected = round.secondChoices.find((choice) => choice.id === secondChoiceId);
+  if (!selected) return '';
+  return `${selected.label}\n${selected.description}`;
+}
+
+function getSelectedDirectionSummary(round: Round, directionId: string) {
+  const selected = round.developmentDirections.find((direction) => direction.id === directionId);
+  if (!selected) return '';
+  return `${selected.title}\n왜 필요한가: ${selected.description}\n어디에 쓸 수 있나: ${selected.bestWhen}\n조심할 점: ${selected.watchOut}`;
+}
+
 export function LearnerShell() {
   const savedDraft = getInitialSavedDraft();
   const [selectedSession, setSelectedSession] = useState<LearningSession>(() => findSessionByRoundId(savedDraft?.selectedRoundId));
@@ -60,6 +72,14 @@ export function LearnerShell() {
   const parsedAiResult = useMemo(() => parseAiResult(draft.aiRawResult), [draft.aiRawResult]);
   const finalArtifact = draft.aiFinalArtifact || parsedAiResult.finalArtifact;
   const reviewNotes = draft.aiReviewNotes || parsedAiResult.reviewNotes;
+  const judgmentSummary = useMemo(
+    () => getSelectedJudgmentSummary(selectedRound, draft.secondChoice),
+    [draft.secondChoice, selectedRound],
+  );
+  const directionSummary = useMemo(
+    () => getSelectedDirectionSummary(selectedRound, draft.directionId),
+    [draft.directionId, selectedRound],
+  );
   const isNextEnabled = currentStep === 'sessionMap'
     ? Boolean(selectedSession)
     : canMoveNext({ currentStep, draft, hasSelectedRound: Boolean(selectedRound), promptText });
@@ -266,6 +286,8 @@ export function LearnerShell() {
             aiUseAsIs={draft.aiUseAsIs}
             aiRevise={draft.aiRevise}
             aiRisky={draft.aiRisky}
+            judgmentSummary={judgmentSummary}
+            directionSummary={directionSummary}
             onBack={goBack}
             onNext={goNext}
             onRawResultChange={updateAiRawResult}
@@ -280,6 +302,7 @@ export function LearnerShell() {
             round={selectedRound}
             canGoNext={isNextEnabled}
             finalArtifact={finalArtifact}
+            directionSummary={directionSummary}
             growthGoal={draft.growthGoal}
             twoWeekTask={draft.twoWeekTask}
             leaderSupport={draft.leaderSupport}
@@ -296,6 +319,7 @@ export function LearnerShell() {
             round={selectedRound}
             canGoNext={isNextEnabled}
             finalArtifact={finalArtifact}
+            directionSummary={directionSummary}
             finalLines={draft.finalLines}
             onBack={goBack}
             onNext={goNext}
