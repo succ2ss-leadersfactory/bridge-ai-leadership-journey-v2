@@ -167,8 +167,26 @@ export function LearnerShell() {
     setLastSavedAt(new Date().toISOString());
   }, [currentStep, draft, selectedRound.id]);
 
+  useEffect(() => {
+    function handleHomeEvent() {
+      goSessionHome();
+    }
+
+    window.addEventListener('kac-go-session-home', handleHomeEvent);
+    return () => window.removeEventListener('kac-go-session-home', handleHomeEvent);
+  });
+
   function updateDraft<K extends keyof LearnerDraft>(key: K, value: LearnerDraft[K]) {
     setDraft((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function goSessionHome() {
+    setCurrentStep('sessionMap');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function isCurrentSessionCompleted(nextCompletedRoundIds: RoundId[]) {
+    return selectedSession.roundIds.every((roundId) => nextCompletedRoundIds.includes(roundId));
   }
 
   function handleFirstChoiceChange(choiceId: ChoiceId) {
@@ -265,9 +283,10 @@ export function LearnerShell() {
   }
 
   function returnToRoundMap() {
+    const nextCompletedRoundIds = Array.from(new Set([...loadCompletedRoundIds(), selectedRound.id])) as RoundId[];
     setDraft((prev) => createFreshRoundDraft(prev));
     setCopyStatus('idle');
-    setCurrentStep('roundMap');
+    setCurrentStep(isCurrentSessionCompleted(nextCompletedRoundIds) ? 'sessionMap' : 'roundMap');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
