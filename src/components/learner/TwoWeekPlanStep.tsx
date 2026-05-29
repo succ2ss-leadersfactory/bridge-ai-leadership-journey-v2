@@ -10,11 +10,15 @@ interface TwoWeekPlanStepProps {
   growthGoal: string;
   twoWeekTask: string;
   leaderSupport: string;
+  checkTiming: string;
+  watchOut: string;
   onBack: () => void;
   onNext: () => void;
   onGrowthGoalChange: (value: string) => void;
   onTwoWeekTaskChange: (value: string) => void;
   onLeaderSupportChange: (value: string) => void;
+  onCheckTimingChange: (value: string) => void;
+  onWatchOutChange: (value: string) => void;
 }
 
 export function TwoWeekPlanStep({
@@ -25,11 +29,15 @@ export function TwoWeekPlanStep({
   growthGoal,
   twoWeekTask,
   leaderSupport,
+  checkTiming,
+  watchOut,
   onBack,
   onNext,
   onGrowthGoalChange,
   onTwoWeekTaskChange,
   onLeaderSupportChange,
+  onCheckTimingChange,
+  onWatchOutChange,
 }: TwoWeekPlanStepProps) {
   return (
     <StepLayout
@@ -72,6 +80,20 @@ export function TwoWeekPlanStep({
         placeholder={round.twoWeekPlanGuide.supportPlaceholder}
         minRows={4}
         onChange={onLeaderSupportChange}
+      />
+      <TextInputPanel
+        label="언제 짧게 같이 볼까요?"
+        helper="후배가 혼자 하게 둘 시간과 김원중 과장이 짧게 볼 시간을 구분합니다."
+        value={checkTiming}
+        placeholder={round.twoWeekPlanGuide.checkTimingPlaceholder}
+        onChange={onCheckTimingChange}
+      />
+      <TextInputPanel
+        label="말할 때 특히 조심할 표현"
+        helper="후배가 방어적으로 듣거나, 낙인처럼 받아들일 수 있는 표현을 미리 걸러냅니다."
+        value={watchOut}
+        placeholder={round.twoWeekPlanGuide.watchOutPlaceholder}
+        onChange={onWatchOutChange}
       />
     </StepLayout>
   );
