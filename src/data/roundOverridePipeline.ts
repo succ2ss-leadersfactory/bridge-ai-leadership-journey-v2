@@ -14,6 +14,7 @@ import { r1LineBreakOverrides } from './r1LineBreakOverrides';
 import { r2LineBreakOverrides } from './r2LineBreakOverrides';
 import { r3RecoveryOverrides } from './r3RecoveryOverrides';
 import { r3ToBossLineBreakOverrides } from './r3ToBossLineBreakOverrides';
+import { r4AiValidationOverrides } from './r4AiValidationOverrides';
 import { responseDifferentiationOverrides } from './responseDifferentiationOverrides';
 import { roundOverrides } from './roundOverrides';
 import { applyRoundStoryLineBreaks } from './storyLineBreaks';
@@ -33,6 +34,7 @@ const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   r3ToBossLineBreakOverrides,
   responseDifferentiationOverrides,
   r3RecoveryOverrides,
+  r4AiValidationOverrides,
   bossDensityOverrides,
   editorialFlowOverrides,
 ];
