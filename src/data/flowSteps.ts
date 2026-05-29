@@ -74,8 +74,8 @@ export const flowSteps: FlowStep[] = [
   },
   {
     id: 'aiAnswerReview',
-    label: '쓸 말·고칠 말·버릴 말',
-    description: 'AI 답변을 그대로 믿지 않고 현장에서 쓸 말로 골라냅니다.',
+    label: '참고할 말·고칠 말·조심할 말',
+    description: 'AI 답변을 그대로 믿지 않고 현장에서 쓸 말로 다듬습니다.',
   },
   {
     id: 'twoWeekPlan',
