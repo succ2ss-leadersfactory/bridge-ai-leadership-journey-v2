@@ -33,13 +33,14 @@ Entry
 → First decision
 → Result
 → Reaction
+→ Additional situation
 → Dilemma analysis
 → Second decision
 → Development direction
 → AI prompt edit and copy
 → AI answer review
-→ Three-part two-week action plan
-→ 3 to 5 lines for the junior
+→ Five-part two-week action plan
+→ Five coaching dialogue lines
 → Save result
 ```
 
@@ -108,6 +109,7 @@ npm run build
 | `docs/pilot-qa-checklist.md` | Pilot QA checklist for current learner flow |
 | `docs/facilitator-session-guide.md` | Facilitator mini-review guide by session |
 | `docs/PILOT_REHEARSAL_SCRIPT.md` | Pilot rehearsal script |
+| `docs/manual-test-script.md` | End-to-end manual test script with sample AI output |
 
 ## Pilot minimum check
 
@@ -116,8 +118,9 @@ npm run build
 3. Session 1 shows only R1 and R2.
 4. R2 shows 황성빈 대리.
 5. AI prompt copy works on smartphone.
-6. Two-week action plan uses three core inputs.
-7. Final message uses one editable 3 to 5 line text area.
-8. Test learner result is saved to Google Sheets.
-9. Completed round badge appears after save success.
-10. Instructor dashboard shows team, session, and round response data.
+6. AI answer paste screen separates 5 plan fields and 5 coaching dialogue fields.
+7. Two-week action plan uses five inputs: growth goal, task, leader support, check timing, and watch-out expression.
+8. Final coaching dialogue uses five editable line inputs.
+9. Test learner result is saved to Google Sheets.
+10. Completed round badge appears after save success.
+11. Instructor dashboard shows team, session, round, full two-week plan, and final dialogue data.
