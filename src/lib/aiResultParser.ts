@@ -1,5 +1,5 @@
 export function extractBlock(text: string, tag: string) {
-  const pattern = new RegExp(`<${tag}>([\s\S]*?)<\/${tag}>`, 'i');
+  const pattern = new RegExp(`<${tag}>([\\s\\S]*?)<\/${tag}>`, 'i');
   const match = text.match(pattern);
   return match ? match[1].trim() : '';
 }
@@ -29,30 +29,49 @@ const fieldAliases = {
     '과장이 옆에서 도와줄 일',
     '리더가 도와줄 일',
   ],
+  checkTiming: [
+    '언제 짧게 같이 볼지',
+    '언제 같이 볼지',
+    '짧게 같이 볼 시점',
+    '확인 시점',
+    '점검 시점',
+  ],
+  watchOut: [
+    '말할 때 조심할 표현',
+    '조심할 표현',
+    '피해야 할 표현',
+    '피해야 할 말',
+    '하지 말아야 할 말',
+  ],
   line1: [
     '먼저 풀어줄 말',
     '먼저 건넬 말',
     '처음 풀어줄 말',
+    '먼저 인정할 말',
   ],
   line2: [
     '바로 답하기 전에 물어볼 말',
     '답하기 전에 물어볼 말',
     '먼저 물어볼 말',
+    '스스로 생각하게 할 질문',
   ],
   line3: [
     '이번 주에 같이 해볼 일',
     '이번 주 같이 해볼 일',
     '이번 주 함께 해볼 일',
+    '이번 주 함께 정할 행동',
   ],
   line4: [
     '김원중 과장이 봐줄 선',
     '김원중 과장은 어디까지 봐줄까요',
+    '김원중 과장이 도와줄 방식',
     '과장이 봐줄 선',
     '봐줄 선',
   ],
   line5: [
     '입 밖으로 내면 안 좋은 말',
     '말할 때 조심할 표현',
+    '조심할 표현',
     '피해야 할 말',
     '하지 말아야 할 말',
   ],
@@ -64,6 +83,8 @@ const orderedFieldKeys: ParsedFieldKey[] = [
   'growthGoal',
   'twoWeekTask',
   'leaderSupport',
+  'checkTiming',
+  'watchOut',
   'line1',
   'line2',
   'line3',
@@ -155,6 +176,8 @@ function parseFieldsFromText(text: string) {
     growthGoal: [],
     twoWeekTask: [],
     leaderSupport: [],
+    checkTiming: [],
+    watchOut: [],
     line1: [],
     line2: [],
     line3: [],
@@ -189,6 +212,8 @@ function parseFieldsFromText(text: string) {
     growthGoal: cleanExtractedValue(buckets.growthGoal.join('\n')),
     twoWeekTask: cleanExtractedValue(buckets.twoWeekTask.join('\n')),
     leaderSupport: cleanExtractedValue(buckets.leaderSupport.join('\n')),
+    checkTiming: cleanExtractedValue(buckets.checkTiming.join('\n')),
+    watchOut: cleanExtractedValue(buckets.watchOut.join('\n')),
     finalLines: [
       cleanExtractedValue(buckets.line1.join('\n')),
       cleanExtractedValue(buckets.line2.join('\n')),
@@ -213,6 +238,15 @@ export function parseAiResult(text: string) {
     finalArtifact: taggedFinalArtifact,
     reviewNotes,
     fields,
-    hasStructuredResult: Boolean(taggedFinalArtifact || reviewNotes || fields.growthGoal || fields.twoWeekTask || fields.finalLines.some(Boolean)),
+    hasStructuredResult: Boolean(
+      taggedFinalArtifact ||
+      reviewNotes ||
+      fields.growthGoal ||
+      fields.twoWeekTask ||
+      fields.leaderSupport ||
+      fields.checkTiming ||
+      fields.watchOut ||
+      fields.finalLines.some(Boolean),
+    ),
   };
 }
