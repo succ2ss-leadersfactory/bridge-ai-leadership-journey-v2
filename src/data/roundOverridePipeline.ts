@@ -13,6 +13,7 @@ import { r1LineBreakOverrides } from './r1LineBreakOverrides';
 import { r2LineBreakOverrides } from './r2LineBreakOverrides';
 import { responseDifferentiationOverrides } from './responseDifferentiationOverrides';
 import { roundOverrides } from './roundOverrides';
+import { applyRoundStoryLineBreaks } from './storyLineBreaks';
 
 const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   roundOverrides,
@@ -61,5 +62,5 @@ export function applyRoundOverrides(round: Round): Round {
     round,
   );
 
-  return applyDirectionTitleOverrides(withCoachingViewpointsInPathIntro(mergedRound));
+  return applyRoundStoryLineBreaks(applyDirectionTitleOverrides(withCoachingViewpointsInPathIntro(mergedRound)));
 }
