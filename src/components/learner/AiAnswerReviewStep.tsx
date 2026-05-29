@@ -1,12 +1,6 @@
+import { extractionLabels, getExtractionStatus, getFieldValue, getPreviewText, isFilled, type ParsedAiFields } from '../../lib/aiExtractionStatus';
 import { StepLayout } from '../StepLayout';
 import { TextInputPanel } from '../TextInputPanel';
-
-interface ParsedAiFields {
-  growthGoal: string;
-  twoWeekTask: string;
-  leaderSupport: string;
-  finalLines: string[];
-}
 
 interface AiAnswerReviewStepProps {
   canGoNext: boolean;
@@ -25,55 +19,6 @@ interface AiAnswerReviewStepProps {
   onUseAsIsChange: (value: string) => void;
   onReviseChange: (value: string) => void;
   onRiskyChange: (value: string) => void;
-}
-
-const extractionLabels = [
-  { key: 'growthGoal', label: '2주 뒤 달라졌으면 하는 모습' },
-  { key: 'twoWeekTask', label: '이번 주에 맡겨볼 작은 일' },
-  { key: 'leaderSupport', label: '김원중 과장이 옆에서 도와줄 일' },
-  { key: 'line1', label: '먼저 풀어줄 말' },
-  { key: 'line2', label: '바로 답하기 전에 물어볼 말' },
-  { key: 'line3', label: '이번 주에 같이 해볼 일' },
-  { key: 'line4', label: '김원중 과장이 봐줄 선' },
-  { key: 'line5', label: '입 밖으로 내면 안 좋은 말' },
-] as const;
-
-function isFilled(value: string) {
-  return value.trim().length > 0;
-}
-
-function getFieldValue(fields: ParsedAiFields, key: (typeof extractionLabels)[number]['key']) {
-  if (key === 'growthGoal') return fields.growthGoal;
-  if (key === 'twoWeekTask') return fields.twoWeekTask;
-  if (key === 'leaderSupport') return fields.leaderSupport;
-
-  const lineIndex = Number(key.replace('line', '')) - 1;
-  return fields.finalLines[lineIndex] ?? '';
-}
-
-function getPreviewText(value: string) {
-  const normalized = value.replace(/\s+/g, ' ').trim();
-  if (!normalized) return '아직 잡히지 않았습니다.';
-  return normalized.length > 74 ? `${normalized.slice(0, 74)}…` : normalized;
-}
-
-function getExtractionStatus(fields: ParsedAiFields) {
-  const planItems = [fields.growthGoal, fields.twoWeekTask, fields.leaderSupport];
-  const lineItems = fields.finalLines.slice(0, 5);
-  const planCount = planItems.filter(isFilled).length;
-  const lineCount = lineItems.filter(isFilled).length;
-  const totalCount = planCount + lineCount;
-  const missingLabels = extractionLabels
-    .filter((item) => !isFilled(getFieldValue(fields, item.key)))
-    .map((item) => item.label);
-
-  return {
-    planCount,
-    lineCount,
-    totalCount,
-    missingLabels,
-    isComplete: totalCount === 8,
-  };
 }
 
 export function AiAnswerReviewStep({
