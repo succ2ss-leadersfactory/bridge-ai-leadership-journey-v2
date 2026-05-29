@@ -1,0 +1,64 @@
+name: 운영 개선 요청
+description: 파일럿 운영, 강사용 대시보드, 테스트 절차, 교육장 진행 개선을 기록합니다.
+title: "[Ops] "
+labels: ["operation", "pilot-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        파일럿 운영 중 발견한 진행 방식, 대시보드 활용, 강사 안내, 테스트 절차 개선 사항을 기록해 주세요.
+  - type: dropdown
+    id: area
+    attributes:
+      label: 개선 영역
+      options:
+        - Preflight 점검
+        - 교육생 접속 안내
+        - 세션/라운드 진행 방식
+        - AI 사용 안내
+        - 저장/대시보드 확인
+        - 강사용 토의 운영
+        - Google Sheets 운영
+        - 장애 대응
+        - 교육 종료 후 데이터 정리
+        - 기타
+    validations:
+      required: true
+  - type: textarea
+    id: observation
+    attributes:
+      label: 관찰된 상황
+      description: 실제 운영 중 어떤 일이 있었는지 적어 주세요.
+      placeholder: "예: 교육생들이 AI 답변을 어디에 붙여넣어야 하는지 헷갈려 했습니다."
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: 운영 영향
+      description: 시간 지연, 참여자 혼란, 강사 부담, 데이터 누락 등 영향을 적어 주세요.
+      placeholder: "예: AI 실습 단계에서 5분 정도 지연됐습니다."
+  - type: textarea
+    id: improvement
+    attributes:
+      label: 개선 제안
+      description: 다음 운영 때 바꾸면 좋을 방식을 적어 주세요.
+      placeholder: "예: AI 답변 붙여넣기 직전에 강사가 화면 시연을 30초 추가합니다."
+    validations:
+      required: true
+  - type: dropdown
+    id: timing
+    attributes:
+      label: 반영 시점
+      options:
+        - 즉시 반영 필요
+        - 다음 파일럿 전 반영
+        - v2.1 개선 과제로 반영
+        - 장기 개선 과제
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 추가 메모
+      placeholder: "참여자 수, 사용 기기, 강사 의견 등을 적어 주세요."
