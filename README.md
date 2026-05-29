@@ -48,9 +48,9 @@ Entry
 
 | Session | Theme | Rounds |
 |---|---|---|
-| Session 1 | 후배를 읽고 기준을 남기다 | R1, R2 |
-| Session 2 | 시도를 성장 경험으로 바꾸다 | R3, R4 |
-| Session 3 | 맡기고 수습 속에서도 키우다 | R5, Boss Round |
+| Session 1 | 후배를 제대로 읽다 | R1, R2 |
+| Session 2 | 키울 것을 하나로 잡다 | R5, R4 |
+| Session 3 | 다시 움직이게 하다 | R3, Boss Round |
 
 ## Naming rule
 
