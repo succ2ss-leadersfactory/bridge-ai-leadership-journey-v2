@@ -9,7 +9,7 @@ import { buildKacAiPrompt } from '../lib/promptBuilder';
 import { getRoundDisplayTitle } from '../lib/roundDisplay';
 import { getFirstRoundInSession, getRoundsForSession } from '../lib/roundSelectors';
 import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
-import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
+import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, normalizeLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
 import type { ChoiceId, DevelopmentDirectionOption, DevelopmentPathKey, FlowStepId, LearningSession, Round, RoundId, SecondChoiceId } from '../types';
 import { ChoiceCard } from './ChoiceCard';
 import { AiAnswerReviewStep } from './learner/AiAnswerReviewStep';
@@ -104,6 +104,8 @@ function clearAiAndFinalFields() {
     growthGoal: '',
     twoWeekTask: '',
     leaderSupport: '',
+    checkTiming: '',
+    watchOut: '',
     finalLines: createEmptyCoachingDialogueLines(),
   };
 }
@@ -113,7 +115,7 @@ export function LearnerShell() {
   const [selectedSession, setSelectedSession] = useState<LearningSession>(() => findSessionByRoundId(savedDraft?.selectedRoundId));
   const [selectedRound, setSelectedRound] = useState<Round>(() => findRoundById(savedDraft?.selectedRoundId));
   const [currentStep, setCurrentStep] = useState<FlowStepId>(() => savedDraft?.currentStep ?? 'intro');
-  const [draft, setDraft] = useState<LearnerDraft>(() => ({ ...initialLearnerDraft, ...(savedDraft?.draft ?? {}) }));
+  const [draft, setDraft] = useState<LearnerDraft>(() => normalizeLearnerDraft(savedDraft?.draft));
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(() => savedDraft?.savedAt ?? null);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'fail'>('idle');
   const [completedRoundIds, setCompletedRoundIds] = useState<RoundId[]>(() => loadCompletedRoundIds());
@@ -254,6 +256,8 @@ export function LearnerShell() {
         growthGoal: keepExistingOrFill(prev.growthGoal, fields.growthGoal),
         twoWeekTask: keepExistingOrFill(prev.twoWeekTask, fields.twoWeekTask),
         leaderSupport: keepExistingOrFill(prev.leaderSupport, fields.leaderSupport),
+        checkTiming: keepExistingOrFill(prev.checkTiming, fields.checkTiming),
+        watchOut: keepExistingOrFill(prev.watchOut, fields.watchOut),
         finalLines: nextLines,
       };
     });
