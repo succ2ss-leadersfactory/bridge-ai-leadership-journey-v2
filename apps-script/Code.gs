@@ -53,11 +53,15 @@ function doGet(e) {
       return getDashboardDataV2();
     }
 
+    if (action === 'setupSheetsV2') {
+      return setupSheetsV2();
+    }
+
     return jsonResponse({
       ok: true,
       app: 'Bridge AI Leadership Journey v2.0',
       message: 'Apps Script endpoint is running.',
-      supportedActions: ['saveLearnerResultV2', 'getDashboardDataV2'],
+      supportedActions: ['saveLearnerResultV2', 'getDashboardDataV2', 'setupSheetsV2'],
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
@@ -84,6 +88,10 @@ function doPost(e) {
       return getDashboardDataV2();
     }
 
+    if (payload.action === 'setupSheetsV2') {
+      return setupSheetsV2();
+    }
+
     return jsonResponse({ ok: false, error: 'Unknown action: ' + payload.action });
   } catch (error) {
     return jsonResponse({
@@ -102,33 +110,40 @@ function parsePayload(e) {
 }
 
 function saveLearnerResultV2(payload) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const participantSheet = getOrCreateSheet(ss, SHEET_NAMES.PARTICIPANTS, PARTICIPANTS_COLUMNS);
-  const responseSheet = getOrCreateSheet(ss, SHEET_NAMES.RESPONSES, RESPONSES_V2_COLUMNS);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
 
-  const participant = payload.participant || {};
-  const response = payload.response || {};
-  const now = new Date().toISOString();
+  try {
+    const ss = getSpreadsheet();
+    const participantSheet = getOrCreateSheet(ss, SHEET_NAMES.PARTICIPANTS, PARTICIPANTS_COLUMNS);
+    const responseSheet = getOrCreateSheet(ss, SHEET_NAMES.RESPONSES, RESPONSES_V2_COLUMNS);
 
-  participant.updated_at = participant.updated_at || now;
-  participant.created_at = participant.created_at || now;
-  response.updated_at = response.updated_at || now;
-  response.created_at = response.created_at || now;
+    const participant = payload.participant || {};
+    const response = payload.response || {};
+    const now = new Date().toISOString();
 
-  upsertRowByKey(participantSheet, PARTICIPANTS_COLUMNS, 'participant_id', participant);
-  upsertRowByKey(responseSheet, RESPONSES_V2_COLUMNS, 'response_id', response);
+    participant.updated_at = participant.updated_at || now;
+    participant.created_at = participant.created_at || now;
+    response.updated_at = response.updated_at || now;
+    response.created_at = response.created_at || now;
 
-  return jsonResponse({
-    ok: true,
-    action: 'saveLearnerResultV2',
-    participant_id: participant.participant_id || '',
-    response_id: response.response_id || '',
-    saved_at: now,
-  });
+    upsertRowByKey(participantSheet, PARTICIPANTS_COLUMNS, 'participant_id', participant);
+    upsertRowByKey(responseSheet, RESPONSES_V2_COLUMNS, 'response_id', response);
+
+    return jsonResponse({
+      ok: true,
+      action: 'saveLearnerResultV2',
+      participant_id: participant.participant_id || '',
+      response_id: response.response_id || '',
+      saved_at: now,
+    });
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function getDashboardDataV2() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet();
   const participantSheet = getOrCreateSheet(ss, SHEET_NAMES.PARTICIPANTS, PARTICIPANTS_COLUMNS);
   const responseSheet = getOrCreateSheet(ss, SHEET_NAMES.RESPONSES, RESPONSES_V2_COLUMNS);
 
@@ -138,6 +153,37 @@ function getDashboardDataV2() {
     responses: rowsToObjects(responseSheet),
     loaded_at: new Date().toISOString(),
   });
+}
+
+function setupSheetsV2() {
+  const ss = getSpreadsheet();
+  const participantSheet = getOrCreateSheet(ss, SHEET_NAMES.PARTICIPANTS, PARTICIPANTS_COLUMNS);
+  const responseSheet = getOrCreateSheet(ss, SHEET_NAMES.RESPONSES, RESPONSES_V2_COLUMNS);
+
+  return jsonResponse({
+    ok: true,
+    action: 'setupSheetsV2',
+    spreadsheetName: ss.getName(),
+    sheets: [
+      {
+        name: participantSheet.getName(),
+        columns: PARTICIPANTS_COLUMNS,
+      },
+      {
+        name: responseSheet.getName(),
+        columns: RESPONSES_V2_COLUMNS,
+      },
+    ],
+    checked_at: new Date().toISOString(),
+  });
+}
+
+function getSpreadsheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    throw new Error('Active spreadsheet not found. Open Apps Script from the target Google Sheet, or bind this script to the sheet.');
+  }
+  return ss;
 }
 
 function getOrCreateSheet(ss, name, columns) {
@@ -209,7 +255,9 @@ function rowsToObjects(sheet) {
   }).map(function (row) {
     const item = {};
     header.forEach(function (column, index) {
-      item[column] = row[index];
+      if (column) {
+        item[column] = row[index];
+      }
     });
     return item;
   });
