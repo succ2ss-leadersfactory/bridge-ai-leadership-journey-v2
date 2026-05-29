@@ -64,6 +64,8 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
       <p><strong>2주 뒤 보고 싶은 작은 변화</strong><br />{draft.growthGoal}</p>
       <p><strong>이번 주 맡겨볼 작은 행동</strong><br />{draft.twoWeekTask}</p>
       <p><strong>김원중 과장이 도와줄 방식</strong><br />{draft.leaderSupport}</p>
+      <p><strong>짧게 같이 볼 시점</strong><br />{draft.checkTiming}</p>
+      <p><strong>말할 때 조심할 표현</strong><br />{draft.watchOut}</p>
       <p><strong>후배 코칭 대화문</strong></p>
       <ol>
         {finalLines.map((item, index) => (
