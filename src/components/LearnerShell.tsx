@@ -474,11 +474,15 @@ export function LearnerShell() {
             growthGoal={draft.growthGoal}
             twoWeekTask={draft.twoWeekTask}
             leaderSupport={draft.leaderSupport}
+            checkTiming={draft.checkTiming}
+            watchOut={draft.watchOut}
             onBack={goBack}
             onNext={goNext}
             onGrowthGoalChange={(value) => updateDraft('growthGoal', value)}
             onTwoWeekTaskChange={(value) => updateDraft('twoWeekTask', value)}
             onLeaderSupportChange={(value) => updateDraft('leaderSupport', value)}
+            onCheckTimingChange={(value) => updateDraft('checkTiming', value)}
+            onWatchOutChange={(value) => updateDraft('watchOut', value)}
           />
         );
       case 'finalFiveLines':
