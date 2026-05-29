@@ -109,6 +109,7 @@ npm run build
 | `docs/classroom-final-ops-checklist.md` | Final classroom operations checklist |
 | `docs/facilitator-day-script.md` | Facilitator day-of delivery script |
 | `docs/content-line-break-policy.md` | Content line break policy for mobile readability |
+| `docs/round-content-layer-map.md` | Round content override layer map |
 | `docs/pilot-readiness-summary.md` | Pilot readiness summary |
 | `docs/pilot-qa-checklist.md` | Pilot QA checklist for current learner flow |
 | `docs/facilitator-session-guide.md` | Facilitator mini-review guide by session |
