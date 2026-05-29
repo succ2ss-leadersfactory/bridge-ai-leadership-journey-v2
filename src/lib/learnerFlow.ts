@@ -49,6 +49,50 @@ export const initialLearnerDraft: LearnerDraft = {
   finalLines: createEmptyCoachingDialogueLines(),
 };
 
+function normalizeTextField(value: unknown) {
+  return typeof value === 'string' ? value : '';
+}
+
+function normalizeChoice(value: unknown): ChoiceId | '' {
+  return value === 'A' || value === 'B' ? value : '';
+}
+
+export function normalizeLearnerDraft(draft?: Partial<LearnerDraft> | null): LearnerDraft {
+  const finalLines = createEmptyCoachingDialogueLines();
+  const savedFinalLines = Array.isArray(draft?.finalLines) ? draft.finalLines : [];
+
+  savedFinalLines.forEach((line, index) => {
+    if (index < finalLines.length) {
+      finalLines[index] = normalizeTextField(line);
+    }
+  });
+
+  return {
+    ...initialLearnerDraft,
+    teamName: normalizeTextField(draft?.teamName),
+    nickname: normalizeTextField(draft?.nickname),
+    juniorReading: normalizeTextField(draft?.juniorReading),
+    firstChoice: normalizeChoice(draft?.firstChoice),
+    firstReason: normalizeTextField(draft?.firstReason),
+    dilemma: normalizeTextField(draft?.dilemma),
+    secondChoice: normalizeTextField(draft?.secondChoice),
+    directionId: normalizeTextField(draft?.directionId),
+    editedPrompt: normalizeTextField(draft?.editedPrompt),
+    aiRawResult: normalizeTextField(draft?.aiRawResult),
+    aiFinalArtifact: normalizeTextField(draft?.aiFinalArtifact),
+    aiReviewNotes: normalizeTextField(draft?.aiReviewNotes),
+    aiUseAsIs: normalizeTextField(draft?.aiUseAsIs),
+    aiRevise: normalizeTextField(draft?.aiRevise),
+    aiRisky: normalizeTextField(draft?.aiRisky),
+    growthGoal: normalizeTextField(draft?.growthGoal),
+    twoWeekTask: normalizeTextField(draft?.twoWeekTask),
+    leaderSupport: normalizeTextField(draft?.leaderSupport),
+    checkTiming: normalizeTextField(draft?.checkTiming),
+    watchOut: normalizeTextField(draft?.watchOut),
+    finalLines,
+  };
+}
+
 export function createFreshRoundDraft(prev: LearnerDraft): LearnerDraft {
   return {
     ...initialLearnerDraft,
