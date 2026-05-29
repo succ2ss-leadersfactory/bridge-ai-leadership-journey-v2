@@ -46,6 +46,35 @@ function countBySession(responses: DashboardResponseRow[]) {
   }, {});
 }
 
+function countByField(responses: DashboardResponseRow[], field: 'first_choice' | 'second_choice') {
+  return responses.reduce<Record<string, number>>((acc, response) => {
+    const value = response[field] || '미입력';
+    acc[value] = (acc[value] ?? 0) + 1;
+    return acc;
+  }, {});
+}
+
+function getSecondChoiceLabel(value: string) {
+  if (value === 'keep') return '유지';
+  if (value === 'revise') return '일부 보완';
+  if (value === 'change') return '전환';
+  return value || '미입력';
+}
+
+function getFirstChoiceLabel(value: string) {
+  if (value === 'A') return 'A 선택';
+  if (value === 'B') return 'B 선택';
+  return value || '미입력';
+}
+
+const facilitationQuestions = [
+  '첫 선택이 갈린 이유는 무엇이었나요?',
+  'AI 답변 중 우리 말투로 고쳐야 했던 표현은 무엇이었나요?',
+  '2주 실행안 중 실제로 확인 가능한 행동은 무엇인가요?',
+  '과장이 도와줄 선은 어디까지가 적절할까요?',
+  '후배의 강점을 살리면서 기준을 남기려면 어떤 말이 필요할까요?',
+];
+
 export function InstructorDashboard() {
   const [status, setStatus] = useState<DashboardLoadStatus>('idle');
   const [message, setMessage] = useState('아직 데이터를 불러오지 않았습니다.');
@@ -55,6 +84,8 @@ export function InstructorDashboard() {
   const teamGroups = useMemo(() => groupByTeam(data.responses), [data.responses]);
   const sessionCounts = useMemo(() => countBySession(data.responses), [data.responses]);
   const roundCounts = useMemo(() => countByRound(data.responses), [data.responses]);
+  const firstChoiceCounts = useMemo(() => countByField(data.responses, 'first_choice'), [data.responses]);
+  const secondChoiceCounts = useMemo(() => countByField(data.responses, 'second_choice'), [data.responses]);
   const recentResponses = useMemo(
     () => [...data.responses].sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at))).slice(0, 12),
     [data.responses],
@@ -76,7 +107,7 @@ export function InstructorDashboard() {
           <p className="dashboard-eyebrow">Instructor Dashboard · v2.0</p>
           <h1>Bridge AI Leadership Journey 운영 대시보드</h1>
           <p>
-            교육생의 세션·라운드 진행 결과, 팀별 저장 현황, 육성 방향과 실행 문장을 강의 운영용으로 확인합니다.
+            평가용 화면이 아니라 토의 운영 화면입니다. 선택 분포, 2주 실행안, 5줄 대화문을 보며 판단의 차이를 함께 다룹니다.
           </p>
         </div>
         <button type="button" className="dashboard-refresh" onClick={loadDashboard} disabled={status === 'loading'}>
@@ -136,6 +167,45 @@ export function InstructorDashboard() {
         </article>
       </section>
 
+      <section className="dashboard-grid">
+        <article className="dashboard-card">
+          <h2>첫 선택 분포</h2>
+          <div className="dashboard-list">
+            {Object.entries(firstChoiceCounts).length === 0 ? <p className="empty-text">아직 저장된 선택이 없습니다.</p> : null}
+            {Object.entries(firstChoiceCounts).map(([choice, count]) => (
+              <div className="round-row" key={choice}>
+                <span>{getFirstChoiceLabel(choice)}</span>
+                <strong>{count}건</strong>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="dashboard-card">
+          <h2>다시 잡은 판단 분포</h2>
+          <div className="dashboard-list">
+            {Object.entries(secondChoiceCounts).length === 0 ? <p className="empty-text">아직 저장된 판단이 없습니다.</p> : null}
+            {Object.entries(secondChoiceCounts).map(([choice, count]) => (
+              <div className="round-row" key={choice}>
+                <span>{getSecondChoiceLabel(choice)}</span>
+                <strong>{count}건</strong>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+
+      <section className="dashboard-card full-width">
+        <h2>강사용 토의 질문</h2>
+        <div className="dashboard-list">
+          {facilitationQuestions.map((question, index) => (
+            <div className="round-row" key={question}>
+              <span>{index + 1}. {question}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="dashboard-card full-width">
         <h2>라운드별 응답 분포</h2>
         <div className="dashboard-list">
@@ -151,6 +221,7 @@ export function InstructorDashboard() {
 
       <section className="dashboard-card full-width">
         <h2>최근 저장 응답</h2>
+        <p className="empty-text">응답을 펼쳐 교육생의 판단 흐름과 실제로 말할 문장을 확인하세요.</p>
         <div className="response-table">
           <div className="response-table-head">
             <span>팀/닉네임</span>
@@ -172,6 +243,17 @@ export function InstructorDashboard() {
                 <p><strong>후배 행동 읽기</strong><br />{response.junior_reading || '-'}</p>
                 <p><strong>육성 딜레마</strong><br />{response.development_dilemma || '-'}</p>
                 <p>
+                  <strong>선택 흐름</strong><br />
+                  첫 선택: {getFirstChoiceLabel(response.first_choice)}<br />
+                  다시 잡은 판단: {getSecondChoiceLabel(response.second_choice)}
+                </p>
+                <p>
+                  <strong>AI 답변 검토</strong><br />
+                  참고할 부분: {response.ai_use_as_is || '-'}<br />
+                  고칠 부분: {response.ai_revise || '-'}<br />
+                  조심할 부분: {response.ai_risky || '-'}
+                </p>
+                <p>
                   <strong>2주 실행안</strong><br />
                   작은 변화: {response.growth_goal || '-'}<br />
                   작은 행동: {response.two_week_task || '-'}<br />
@@ -179,7 +261,7 @@ export function InstructorDashboard() {
                   점검 시점: {response.check_timing || '-'}<br />
                   조심할 표현: {response.watch_out || '-'}
                 </p>
-                <p><strong>후배에게 할 말</strong></p>
+                <p><strong>후배에게 할 말 5줄</strong></p>
                 <ol>
                   {[response.final_line_1, response.final_line_2, response.final_line_3, response.final_line_4, response.final_line_5]
                     .filter((line) => String(line || '').trim().length > 0)
@@ -187,6 +269,10 @@ export function InstructorDashboard() {
                       <li key={`${response.response_id}-${index}`}>{line}</li>
                     ))}
                 </ol>
+                <p>
+                  <strong>토의 힌트</strong><br />
+                  이 응답에서 첫 선택과 다시 잡은 판단이 어떻게 달라졌는지, 그리고 최종 5줄 대화문이 그 판단을 실제 말로 바꾸고 있는지 함께 보세요.
+                </p>
               </div>
             </details>
           ))}
