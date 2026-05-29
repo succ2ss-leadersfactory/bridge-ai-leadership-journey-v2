@@ -5,6 +5,7 @@ const webAppUrl = import.meta.env.VITE_GOOGLE_SCRIPT_WEBAPP_URL as string | unde
 
 export type SaveStatus = 'idle' | 'saving' | 'success' | 'error' | 'notConfigured';
 export type DashboardLoadStatus = 'idle' | 'loading' | 'success' | 'error' | 'notConfigured';
+export type SetupCheckStatus = DashboardLoadStatus;
 
 export interface SaveLearnerResultInput {
   participant: Participant;
@@ -59,6 +60,18 @@ export interface DashboardDataV2 {
   loaded_at?: string;
 }
 
+interface SetupSheetInfo {
+  name: string;
+  columns: string[];
+}
+
+export interface SetupSheetsDataV2 {
+  action?: string;
+  spreadsheetName?: string;
+  sheets?: SetupSheetInfo[];
+  checked_at?: string;
+}
+
 interface GoogleSheetsPayload {
   action: 'saveLearnerResultV2';
   participant: ReturnType<typeof mapParticipantToRow>;
@@ -72,6 +85,12 @@ interface GoogleSheetsPayload {
 
 export function isGoogleSheetsConfigured() {
   return Boolean(webAppUrl && webAppUrl.trim().length > 0);
+}
+
+function createActionUrl(action: string) {
+  const url = new URL(webAppUrl!);
+  url.searchParams.set('action', action);
+  return url.toString();
 }
 
 export async function saveLearnerResultToGoogleSheets({ participant, response }: SaveLearnerResultInput) {
@@ -110,6 +129,46 @@ export async function saveLearnerResultToGoogleSheets({ participant, response }:
   }
 }
 
+export async function setupSheetsV2() {
+  if (!isGoogleSheetsConfigured()) {
+    return {
+      ok: false,
+      status: 'notConfigured' as const,
+      message: 'Google Sheets 저장 URL이 설정되지 않았습니다.',
+      data: {} satisfies SetupSheetsDataV2,
+    };
+  }
+
+  try {
+    const response = await fetch(createActionUrl('setupSheetsV2'));
+    const data = (await response.json()) as SetupSheetsDataV2 & { ok?: boolean; error?: string };
+
+    if (data.ok === false) {
+      return {
+        ok: false,
+        status: 'error' as const,
+        message: data.error || '시트와 헤더를 점검하지 못했습니다.',
+        data: {} satisfies SetupSheetsDataV2,
+      };
+    }
+
+    const sheetCount = data.sheets?.length ?? 0;
+    return {
+      ok: true,
+      status: 'success' as const,
+      message: `시트와 헤더 점검이 완료되었습니다. 확인된 시트 ${sheetCount}개`,
+      data,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      status: 'error' as const,
+      message: error instanceof Error ? error.message : '시트와 헤더를 점검하는 중 오류가 발생했습니다.',
+      data: {} satisfies SetupSheetsDataV2,
+    };
+  }
+}
+
 export async function fetchDashboardDataV2() {
   if (!isGoogleSheetsConfigured()) {
     return {
@@ -121,10 +180,7 @@ export async function fetchDashboardDataV2() {
   }
 
   try {
-    const url = new URL(webAppUrl!);
-    url.searchParams.set('action', 'getDashboardDataV2');
-
-    const response = await fetch(url.toString());
+    const response = await fetch(createActionUrl('getDashboardDataV2'));
     const data = (await response.json()) as Partial<DashboardDataV2> & { ok?: boolean; error?: string };
 
     if (data.ok === false) {
