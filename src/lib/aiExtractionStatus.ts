@@ -2,6 +2,8 @@ export interface ParsedAiFields {
   growthGoal: string;
   twoWeekTask: string;
   leaderSupport: string;
+  checkTiming: string;
+  watchOut: string;
   finalLines: string[];
 }
 
@@ -9,6 +11,8 @@ export const extractionLabels = [
   { key: 'growthGoal', label: '2주 뒤 달라졌으면 하는 모습' },
   { key: 'twoWeekTask', label: '이번 주에 맡겨볼 작은 일' },
   { key: 'leaderSupport', label: '김원중 과장이 옆에서 도와줄 일' },
+  { key: 'checkTiming', label: '언제 짧게 같이 볼지' },
+  { key: 'watchOut', label: '말할 때 조심할 표현' },
   { key: 'line1', label: '먼저 풀어줄 말' },
   { key: 'line2', label: '바로 답하기 전에 물어볼 말' },
   { key: 'line3', label: '이번 주에 같이 해볼 일' },
@@ -26,6 +30,8 @@ export function getFieldValue(fields: ParsedAiFields, key: ExtractionFieldKey) {
   if (key === 'growthGoal') return fields.growthGoal;
   if (key === 'twoWeekTask') return fields.twoWeekTask;
   if (key === 'leaderSupport') return fields.leaderSupport;
+  if (key === 'checkTiming') return fields.checkTiming;
+  if (key === 'watchOut') return fields.watchOut;
 
   const lineIndex = Number(key.replace('line', '')) - 1;
   return fields.finalLines[lineIndex] ?? '';
@@ -38,7 +44,13 @@ export function getPreviewText(value: string) {
 }
 
 export function getExtractionStatus(fields: ParsedAiFields) {
-  const planItems = [fields.growthGoal, fields.twoWeekTask, fields.leaderSupport];
+  const planItems = [
+    fields.growthGoal,
+    fields.twoWeekTask,
+    fields.leaderSupport,
+    fields.checkTiming,
+    fields.watchOut,
+  ];
   const lineItems = fields.finalLines.slice(0, 5);
   const planCount = planItems.filter(isFilled).length;
   const lineCount = lineItems.filter(isFilled).length;
@@ -52,6 +64,6 @@ export function getExtractionStatus(fields: ParsedAiFields) {
     lineCount,
     totalCount,
     missingLabels,
-    isComplete: totalCount === 8,
+    isComplete: totalCount === 10,
   };
 }
