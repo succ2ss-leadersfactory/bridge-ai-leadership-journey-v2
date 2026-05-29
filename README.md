@@ -103,6 +103,7 @@ npm run build
 
 | Document | Purpose |
 |---|---|
+| `docs/release-notes-v2-final.md` | Final release notes for v2 pilot |
 | `apps-script/README.md` | Apps Script setup guide |
 | `docs/DEPLOYMENT_RUNBOOK.md` | Deployment runbook |
 | `docs/tablet-preflight-guide.md` | Tablet-based preflight guide for classroom operators |
