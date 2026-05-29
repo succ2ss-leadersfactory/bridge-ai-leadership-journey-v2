@@ -106,6 +106,8 @@ npm run build
 | `apps-script/README.md` | Apps Script setup guide |
 | `docs/DEPLOYMENT_RUNBOOK.md` | Deployment runbook |
 | `docs/tablet-preflight-guide.md` | Tablet-based preflight guide for classroom operators |
+| `docs/classroom-final-ops-checklist.md` | Final classroom operations checklist |
+| `docs/facilitator-day-script.md` | Facilitator day-of delivery script |
 | `docs/pilot-readiness-summary.md` | Pilot readiness summary |
 | `docs/pilot-qa-checklist.md` | Pilot QA checklist for current learner flow |
 | `docs/facilitator-session-guide.md` | Facilitator mini-review guide by session |
