@@ -68,10 +68,10 @@ export function AiAnswerReviewStep({
         <article className={`ai-artifact-card extraction ${extractionStatus.isComplete ? 'complete' : 'partial'}`}>
           <h3>자동 분리 확인</h3>
           <p>
-            2주 실행안은 <strong>{extractionStatus.planCount}/3개</strong>, 코칭 대화문은 <strong>{extractionStatus.lineCount}/5개</strong>가 분리됐습니다.
+            2주 실행안은 <strong>{extractionStatus.planCount}/5개</strong>, 코칭 대화문은 <strong>{extractionStatus.lineCount}/5개</strong>가 분리됐습니다.
           </p>
           <p>
-            전체 <strong>{extractionStatus.totalCount}/8개</strong> 항목이 잡혔습니다.
+            전체 <strong>{extractionStatus.totalCount}/10개</strong> 항목이 잡혔습니다.
             {extractionStatus.isComplete
               ? ' 다음 화면에서 문장을 다듬으면 됩니다.'
               : ' 누락된 항목은 다음 화면에서 직접 채우거나, AI 답변을 다시 붙여넣어 주세요.'}
