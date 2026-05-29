@@ -44,8 +44,8 @@ export function AiAnswerReviewStep({
   return (
     <StepLayout
       eyebrow="AI 답변 걸러보기"
-      title="좋아 보이는 말도, 그대로 말하면 이상할 수 있습니다"
-      description="AI가 준 답을 붙여넣고, 실제 후배 앞에서 쓸 말인지 아닌지 가릅니다. 회사에서 말하기 어색한 문장은 여기서 버립니다."
+      title="그대로 쓰기 전에, 쓸 말과 고칠 말을 나눕니다"
+      description="AI 답변을 붙여넣고 실제 후배에게 말해도 되는지 확인합니다. 어색한 문장은 다음 화면에서 고치면 됩니다."
       canGoBack
       canGoNext={canGoNext}
       onBack={onBack}
@@ -57,8 +57,8 @@ export function AiAnswerReviewStep({
         <p><strong>이 후배에게 남길 약속</strong><br />{directionSummary || '아직 선택한 약속이 없습니다.'}</p>
       </article>
       <TextInputPanel
-        label="AI가 준 답변 붙여넣기"
-        helper="받은 답을 그대로 붙여넣으세요. 필요한 부분만 아래에서 따로 골라냅니다."
+        label="AI 답변 붙여넣기"
+        helper="외부 AI에서 받은 답변 전체를 붙여넣으세요. 앱이 실행안과 대화문을 나눠 봅니다."
         value={aiRawResult}
         placeholder="AI 답변을 여기에 붙여넣어 주세요."
         minRows={10}
@@ -74,7 +74,7 @@ export function AiAnswerReviewStep({
             전체 <strong>{extractionStatus.totalCount}/10개</strong> 항목이 잡혔습니다.
             {extractionStatus.isComplete
               ? ' 다음 화면에서 문장을 다듬으면 됩니다.'
-              : ' 누락된 항목은 다음 화면에서 직접 채우거나, AI 답변을 다시 붙여넣어 주세요.'}
+              : ' 누락된 항목은 다음 화면에서 직접 채우면 됩니다.'}
           </p>
           {!extractionStatus.isComplete ? (
             <div className="extraction-missing-list">
@@ -117,29 +117,29 @@ export function AiAnswerReviewStep({
       )}
       {reviewNotes ? (
         <article className="ai-artifact-card review">
-          <h3>그대로 쓰기 전에 걸리는 점</h3>
+          <h3>한 번 더 생각해 볼 점</h3>
           <pre>{reviewNotes}</pre>
         </article>
       ) : null}
       <TextInputPanel
-        label="이 말은 써도 되겠다"
-        helper="후배 앞에서 말해도 어색하지 않은 문장이나 흐름을 적습니다."
+        label="그대로 참고할 부분"
+        helper="후배에게 말해도 자연스러운 문장이나 흐름을 적습니다."
         value={aiUseAsIs}
-        placeholder="예: 먼저 노력은 인정하고, 다음 기준을 묻는 흐름은 쓸 수 있겠다."
+        placeholder="예: 먼저 빠르게 움직인 점을 인정하는 흐름은 쓸 수 있겠다."
         onChange={onUseAsIsChange}
       />
       <TextInputPanel
-        label="이 말은 우리 식으로 고쳐야겠다"
-        helper="말투가 세거나, 너무 교과서 같거나, 우리 팀 상황과 안 맞는 부분입니다."
+        label="우리 상황에 맞게 고칠 부분"
+        helper="말투, 강도, 확인 범위가 우리 팀 상황과 맞지 않는 부분입니다."
         value={aiRevise}
-        placeholder="예: ‘책임감을 가지세요’는 세게 들리니 ‘다음엔 기준을 먼저 같이 보자’로 바꿔야겠다."
+        placeholder="예: 표현을 조금 부드럽게 바꾸고, 확인 범위는 더 작게 줄여야겠다."
         onChange={onReviseChange}
       />
       <TextInputPanel
-        label="이 말은 빼야겠다"
-        helper="후배를 단정하거나, 책임을 밀어내거나, 회사에서 말하면 분위기가 얼어붙을 문장입니다."
+        label="빼거나 조심할 부분"
+        helper="후배가 방어적으로 듣거나 오해할 수 있는 표현입니다."
         value={aiRisky}
-        placeholder="예: ‘당신은 의존적인 편입니다’ 같은 표현은 빼야겠다."
+        placeholder="예: 빠른 실행 자체를 문제처럼 들리게 하는 표현은 피해야겠다."
         onChange={onRiskyChange}
       />
     </StepLayout>
