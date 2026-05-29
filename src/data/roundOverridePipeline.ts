@@ -11,6 +11,7 @@ import { pressureSituationOverrides } from './pressureSituationOverrides';
 import { r01RefinementOverrides } from './r01RefinementOverrides';
 import { r1LineBreakOverrides } from './r1LineBreakOverrides';
 import { r2LineBreakOverrides } from './r2LineBreakOverrides';
+import { r3ToBossLineBreakOverrides } from './r3ToBossLineBreakOverrides';
 import { responseDifferentiationOverrides } from './responseDifferentiationOverrides';
 import { roundOverrides } from './roundOverrides';
 import { applyRoundStoryLineBreaks } from './storyLineBreaks';
@@ -27,6 +28,7 @@ const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   directionPriorityOverrides,
   r1LineBreakOverrides,
   r2LineBreakOverrides,
+  r3ToBossLineBreakOverrides,
   responseDifferentiationOverrides,
   editorialFlowOverrides,
 ];
