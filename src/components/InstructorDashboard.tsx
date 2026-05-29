@@ -171,7 +171,14 @@ export function InstructorDashboard() {
                 <p><strong>세션</strong><br />{getSessionTitle(response.round_id)}</p>
                 <p><strong>후배 행동 읽기</strong><br />{response.junior_reading || '-'}</p>
                 <p><strong>육성 딜레마</strong><br />{response.development_dilemma || '-'}</p>
-                <p><strong>2주 실행안</strong><br />작은 변화: {response.growth_goal || '-'}<br />작은 행동: {response.two_week_task || '-'}<br />과장 지원: {response.leader_support || '-'}</p>
+                <p>
+                  <strong>2주 실행안</strong><br />
+                  작은 변화: {response.growth_goal || '-'}<br />
+                  작은 행동: {response.two_week_task || '-'}<br />
+                  과장 지원: {response.leader_support || '-'}<br />
+                  점검 시점: {response.check_timing || '-'}<br />
+                  조심할 표현: {response.watch_out || '-'}
+                </p>
                 <p><strong>후배에게 할 말</strong></p>
                 <ol>
                   {[response.final_line_1, response.final_line_2, response.final_line_3, response.final_line_4, response.final_line_5]
