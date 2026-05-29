@@ -105,6 +105,7 @@ npm run build
 |---|---|
 | `docs/release-notes-v2-final.md` | Final release notes for v2 pilot |
 | `docs/v2-1-improvement-backlog.md` | v2.1 improvement backlog after pilot |
+| `docs/round-density-qa.md` | Round content density QA guide |
 | `docs/pilot-test-log-template.md` | Pilot test result logging template |
 | `apps-script/README.md` | Apps Script setup guide |
 | `docs/DEPLOYMENT_RUNBOOK.md` | Deployment runbook |
