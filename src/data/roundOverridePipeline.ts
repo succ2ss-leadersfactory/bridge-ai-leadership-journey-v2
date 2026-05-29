@@ -1,4 +1,5 @@
 import type { ChoiceId, Round } from '../types';
+import { bossDensityOverrides } from './bossDensityOverrides';
 import { choicePathOverrides } from './choicePathOverrides';
 import { coachingViewpointOverrides } from './coachingViewpointOverrides';
 import { applyDirectionTitleOverrides } from './directionTitleOverrides';
@@ -30,6 +31,7 @@ const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   r2LineBreakOverrides,
   r3ToBossLineBreakOverrides,
   responseDifferentiationOverrides,
+  bossDensityOverrides,
   editorialFlowOverrides,
 ];
 
