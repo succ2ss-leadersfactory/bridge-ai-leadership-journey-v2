@@ -132,7 +132,13 @@ export function canMoveNext({ currentStep, draft, hasSelectedRound, promptText }
         draft.aiUseAsIs.trim().length > 0 || draft.aiRevise.trim().length > 0 || draft.aiRisky.trim().length > 0
       );
     case 'twoWeekPlan':
-      return [draft.growthGoal, draft.twoWeekTask, draft.leaderSupport].every((value) => value.trim().length > 0);
+      return [
+        draft.growthGoal,
+        draft.twoWeekTask,
+        draft.leaderSupport,
+        draft.checkTiming,
+        draft.watchOut,
+      ].every((value) => value.trim().length > 0);
     case 'finalFiveLines':
       return hasRequiredCoachingDialogueLines(draft.finalLines);
     default:
