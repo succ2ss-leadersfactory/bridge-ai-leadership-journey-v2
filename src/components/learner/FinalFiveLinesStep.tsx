@@ -30,9 +30,9 @@ export function FinalFiveLinesStep({
 }: FinalFiveLinesStepProps) {
   return (
     <StepLayout
-      eyebrow="내일 할 말 정리"
-      title="후배 앞에서 실제로 할 말 5줄"
-      description="AI가 항목별로 나눠 넣은 초안입니다. 그대로 읽지 말고, 김원중 과장이 내일 자리에서 실제로 말할 수 있게 고쳐 주세요."
+      eyebrow="내일 할 말"
+      title="후배에게 실제로 할 말 5줄"
+      description="AI 초안을 그대로 읽지 말고, 김원중 과장이 내일 자리에서 말할 수 있는 표현으로 짧게 고쳐 봅니다."
       canGoBack
       canGoNext={canGoNext}
       onBack={onBack}
@@ -40,7 +40,7 @@ export function FinalFiveLinesStep({
       nextLabel="정리한 내용 보기"
     >
       <article className="ai-artifact-card compact">
-        <h3>이 말을 통해 남길 약속</h3>
+        <h3>이 말로 남길 약속</h3>
         <p>{directionSummary || '아직 선택한 약속이 없습니다.'}</p>
       </article>
       {finalArtifact ? (
@@ -55,7 +55,7 @@ export function FinalFiveLinesStep({
           <TextInputPanel
             key={field.id}
             label={field.label}
-            helper={`${field.helper} AI 초안이 어색하면 우리 팀 말투로 짧게 고쳐 주세요.`}
+            helper={`${field.helper} 우리 팀 말투로 짧게 고쳐 주세요.`}
             value={finalLines[index] ?? ''}
             placeholder={personalizePlaceholder(field.placeholder, round)}
             minRows={3}
