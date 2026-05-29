@@ -1,0 +1,70 @@
+name: 콘텐츠 수정 요청
+description: 라운드 상황, 선택지, AI 프롬프트, 문구, 줄바꿈 수정을 기록합니다.
+title: "[Content] "
+labels: ["content", "pilot-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        라운드 내용, 화면 문구, 줄바꿈, 강사용 멘트 등 콘텐츠 수정이 필요한 사항을 기록해 주세요.
+  - type: dropdown
+    id: area
+    attributes:
+      label: 수정 영역
+      options:
+        - 라운드 상황문
+        - A/B 선택지
+        - 선택 결과 / 후배 반응
+        - 추가 상황
+        - 육성 방향
+        - AI 프롬프트
+        - AI 답변 검토 문구
+        - 2주 실행안
+        - 5줄 대화문
+        - 강사용 대시보드 문구
+        - 운영 문서 / 강사 멘트
+        - 기타
+    validations:
+      required: true
+  - type: input
+    id: round
+    attributes:
+      label: 관련 라운드
+      placeholder: "예: R1, R2, R3, R4, R5, BOSS, 전체"
+  - type: textarea
+    id: current
+    attributes:
+      label: 현재 내용
+      description: 현재 앱이나 문서에 표시되는 문구를 적어 주세요.
+      placeholder: "예: 현재 상황문 또는 선택지 문구"
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: 문제가 되는 이유
+      description: 현실성, 몰입도, 교육 효과, 표현 강도, 한국공항공사 맥락 등 관점에서 적어 주세요.
+      placeholder: "예: 표현이 너무 강해서 교육생이 후배를 문제 인물로 볼 가능성이 있습니다."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 수정 제안
+      description: 가능하면 수정 문구를 직접 적어 주세요.
+      placeholder: "예: '버릴 말' 대신 '조심할 말'로 수정"
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 우선순위
+      options:
+        - 높음 - 파일럿 전 수정 필요
+        - 중간 - 파일럿 후 v2.1 반영
+        - 낮음 - 추후 검토
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 추가 메모
+      placeholder: "교육생 반응, 강사 의견, 현장 맥락 등을 적어 주세요."
