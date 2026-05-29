@@ -31,6 +31,16 @@ function getInitialSavedDraft() {
   return loadLearnerDraft<LearnerDraft>();
 }
 
+function normalizeSavedStep(step: FlowStepId | undefined): FlowStepId {
+  if (step && stepOrder.includes(step)) return step;
+  return 'intro';
+}
+
+function getSafeStepIndex(step: FlowStepId) {
+  const index = stepOrder.indexOf(step);
+  return index >= 0 ? index : 0;
+}
+
 function findRoundById(roundId: string | undefined) {
   return rounds.find((round) => round.id === roundId) ?? rounds[0];
 }
@@ -114,13 +124,13 @@ export function LearnerShell() {
   const savedDraft = getInitialSavedDraft();
   const [selectedSession, setSelectedSession] = useState<LearningSession>(() => findSessionByRoundId(savedDraft?.selectedRoundId));
   const [selectedRound, setSelectedRound] = useState<Round>(() => findRoundById(savedDraft?.selectedRoundId));
-  const [currentStep, setCurrentStep] = useState<FlowStepId>(() => savedDraft?.currentStep ?? 'intro');
+  const [currentStep, setCurrentStep] = useState<FlowStepId>(() => normalizeSavedStep(savedDraft?.currentStep));
   const [draft, setDraft] = useState<LearnerDraft>(() => normalizeLearnerDraft(savedDraft?.draft));
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(() => savedDraft?.savedAt ?? null);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'fail'>('idle');
   const [completedRoundIds, setCompletedRoundIds] = useState<RoundId[]>(() => loadCompletedRoundIds());
 
-  const stepIndex = stepOrder.indexOf(currentStep);
+  const stepIndex = getSafeStepIndex(currentStep);
   const sessionRounds = useMemo(
     () => getRoundsForSession(rounds, selectedSession),
     [selectedSession],
