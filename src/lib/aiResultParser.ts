@@ -1,8 +1,20 @@
 export function extractBlock(text: string, tag: string) {
-  const pattern = new RegExp(`<${tag}>([\\s\\S]*?)<\/${tag}>`, 'i');
+  const pattern = new RegExp(`<${tag}>([\s\S]*?)<\/${tag}>`, 'i');
   const match = text.match(pattern);
   return match ? match[1].trim() : '';
 }
+
+const emptyValuePatterns = [
+  '아직 참여하지 않았습니다',
+  '아직 작성하지 않았습니다',
+  '아직 적지 않았습니다',
+  '아직 입력하지 않았습니다',
+  '아직 정하지 않았습니다',
+  '아직 없습니다',
+  '없음',
+  '미작성',
+  '미입력',
+];
 
 const fieldAliases = {
   growthGoal: [
@@ -105,14 +117,21 @@ function normalizeLine(line: string) {
     .trim();
 }
 
+function isEmptyLikeValue(value: string) {
+  const normalized = normalizeWhitespace(value).replace(/[.!?。]+$/, '');
+  return emptyValuePatterns.some((pattern) => normalized === pattern);
+}
+
 function cleanExtractedValue(value: string) {
-  return value
+  const cleaned = value
     .split('\n')
     .map((line) => line.replace(/^\s*[-*•·]\s*/, '').trimEnd())
     .join('\n')
     .replace(/^[:：\-–\s]+/, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+
+  return isEmptyLikeValue(cleaned) ? '' : cleaned;
 }
 
 function aliasMatchesLine(line: string, alias: string) {
@@ -171,6 +190,34 @@ function removeLabelFromLine(line: string, key: ParsedFieldKey) {
   return normalized;
 }
 
+function withFallbackCoachingLines(fields: {
+  growthGoal: string;
+  twoWeekTask: string;
+  leaderSupport: string;
+  checkTiming: string;
+  watchOut: string;
+  finalLines: string[];
+}) {
+  const finalLines = [...fields.finalLines];
+
+  if (!finalLines[2] && fields.twoWeekTask) {
+    finalLines[2] = fields.twoWeekTask;
+  }
+
+  if (!finalLines[3] && fields.leaderSupport) {
+    finalLines[3] = fields.leaderSupport;
+  }
+
+  if (!finalLines[4] && fields.watchOut) {
+    finalLines[4] = fields.watchOut;
+  }
+
+  return {
+    ...fields,
+    finalLines,
+  };
+}
+
 function parseFieldsFromText(text: string) {
   const buckets: Record<ParsedFieldKey, string[]> = {
     growthGoal: [],
@@ -208,7 +255,7 @@ function parseFieldsFromText(text: string) {
     }
   });
 
-  return {
+  return withFallbackCoachingLines({
     growthGoal: cleanExtractedValue(buckets.growthGoal.join('\n')),
     twoWeekTask: cleanExtractedValue(buckets.twoWeekTask.join('\n')),
     leaderSupport: cleanExtractedValue(buckets.leaderSupport.join('\n')),
@@ -221,7 +268,7 @@ function parseFieldsFromText(text: string) {
       cleanExtractedValue(buckets.line4.join('\n')),
       cleanExtractedValue(buckets.line5.join('\n')),
     ],
-  };
+  });
 }
 
 export function parseFinalArtifactFields(finalArtifact: string) {
