@@ -93,11 +93,17 @@ npm install
 npm run dev
 ```
 
-Build check:
+## Local checks
+
+Run these before pilot deployment or after content edits:
 
 ```bash
+npm run typecheck
+npm run audit:linebreaks
 npm run build
 ```
+
+`npm run audit:linebreaks` checks for awkward line breaks inside phrases that should stay together, such as `숫자 변경 여부`, `검증 기준`, and `작은 역할`.
 
 ## Operation documents
 
