@@ -8,6 +8,7 @@
     "build": "vite build",
     "typecheck": "tsc --noEmit",
     "audit:linebreaks": "node scripts/audit-content-line-breaks.mjs",
+    "smoke:parser": "node scripts/smoke-ai-result-parser.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
