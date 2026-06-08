@@ -10,6 +10,7 @@ export interface LearnerLocalDraft<TDraft> {
 
 const STORAGE_KEY = 'bridge-ai-leadership-journey-v2:learner-draft';
 const COMPLETED_ROUNDS_KEY = 'bridge-ai-leadership-journey-v2:completed-rounds';
+const ROUND_DRAFTS_KEY = 'bridge-ai-leadership-journey-v2:round-drafts';
 
 export function loadLearnerDraft<TDraft>(): LearnerLocalDraft<TDraft> | null {
   if (typeof window === 'undefined') return null;
@@ -37,6 +38,32 @@ export function saveLearnerDraft<TDraft>(payload: Omit<LearnerLocalDraft<TDraft>
   };
 
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  saveRoundDraft(payload.selectedRoundId, payload.draft);
+}
+
+export function loadRoundDrafts<TDraft>(): Partial<Record<RoundId, TDraft>> {
+  if (typeof window === 'undefined') return {};
+
+  try {
+    const raw = window.localStorage.getItem(ROUND_DRAFTS_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Partial<Record<RoundId, TDraft>>;
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveRoundDraft<TDraft>(roundId: RoundId, draft: TDraft) {
+  if (typeof window === 'undefined') return;
+
+  const current = loadRoundDrafts<TDraft>();
+  const next = {
+    ...current,
+    [roundId]: draft,
+  };
+
+  window.localStorage.setItem(ROUND_DRAFTS_KEY, JSON.stringify(next));
 }
 
 export function loadCompletedRoundIds(): RoundId[] {
@@ -63,6 +90,7 @@ export function markRoundCompleted(roundId: RoundId) {
 export function clearLearnerDraft() {
   if (typeof window === 'undefined') return;
   window.localStorage.removeItem(STORAGE_KEY);
+  window.localStorage.removeItem(ROUND_DRAFTS_KEY);
 }
 
 export function clearCompletedRoundIds() {
