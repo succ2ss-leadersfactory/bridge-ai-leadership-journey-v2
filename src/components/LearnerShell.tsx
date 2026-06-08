@@ -8,7 +8,7 @@ import { parseAiResult } from '../lib/aiResultParser';
 import { buildKacAiPrompt } from '../lib/promptBuilder';
 import { getRoundDisplayTitle } from '../lib/roundDisplay';
 import { getFirstRoundInSession, getRoundsForSession } from '../lib/roundSelectors';
-import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
+import { clearCompletedRoundIds, clearLearnerDraft, loadCompletedRoundIds, loadLearnerDraft, loadRoundDrafts, markRoundCompleted, saveLearnerDraft } from '../lib/localDraft';
 import { canMoveNext, createFreshRoundDraft, initialLearnerDraft, normalizeLearnerDraft, type LearnerDraft } from '../lib/learnerFlow';
 import type { ChoiceId, DevelopmentDirectionOption, DevelopmentPathKey, FlowStepId, LearningSession, Round, RoundId, SecondChoiceId } from '../types';
 import { ChoiceCard } from './ChoiceCard';
@@ -29,6 +29,11 @@ const stepOrder = flowSteps.map((step) => step.id);
 
 function getInitialSavedDraft() {
   return loadLearnerDraft<LearnerDraft>();
+}
+
+function getSavedRoundDraft(roundId: RoundId, fallback: LearnerDraft) {
+  const roundDrafts = loadRoundDrafts<LearnerDraft>();
+  return normalizeLearnerDraft(roundDrafts[roundId] ?? fallback);
 }
 
 function normalizeSavedStep(step: FlowStepId | undefined): FlowStepId {
@@ -284,15 +289,16 @@ export function LearnerShell() {
   }
 
   function selectSession(nextSession: LearningSession) {
+    const nextRound = getFirstRoundInSession(rounds, nextSession);
     setSelectedSession(nextSession);
-    setSelectedRound(getFirstRoundInSession(rounds, nextSession));
-    setDraft((prev) => createFreshRoundDraft(prev));
+    setSelectedRound(nextRound);
+    setDraft((prev) => getSavedRoundDraft(nextRound.id, createFreshRoundDraft(prev)));
     setCopyStatus('idle');
   }
 
   function selectRound(nextRound: Round) {
     setSelectedRound(nextRound);
-    setDraft((prev) => createFreshRoundDraft(prev));
+    setDraft((prev) => getSavedRoundDraft(nextRound.id, createFreshRoundDraft(prev)));
     setCopyStatus('idle');
   }
 
@@ -303,7 +309,6 @@ export function LearnerShell() {
 
   function returnToRoundMap() {
     const nextCompletedRoundIds = Array.from(new Set([...loadCompletedRoundIds(), selectedRound.id])) as RoundId[];
-    setDraft((prev) => createFreshRoundDraft(prev));
     setCopyStatus('idle');
     setCurrentStep(isCurrentSessionCompleted(nextCompletedRoundIds) ? 'sessionMap' : 'roundMap');
     window.scrollTo({ top: 0, behavior: 'smooth' });
