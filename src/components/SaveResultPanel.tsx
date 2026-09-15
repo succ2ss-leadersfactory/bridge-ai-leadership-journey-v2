@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { coachingDialogueFields, getCoachingDialogueLabel } from '../data/coachingDialogueConfig';
-import { saveLearnerResultToGoogleSheets, type SaveStatus } from '../lib/googleSheets';
-import { createId } from '../lib/ids';
-import { buildSavePayload, type ResultDraft } from '../lib/resultMapper';
+import { downloadLocalResultsBackup, saveLocalResult } from '../lib/localResults';
+import type { ResultDraft } from '../lib/resultMapper';
 import type { Round } from '../types';
+
+type LocalSaveStatus = 'idle' | 'saving' | 'success' | 'error';
 
 interface SaveResultPanelProps {
   round: Round;
@@ -15,43 +16,26 @@ interface SaveResultPanelProps {
 }
 
 export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onSaveSuccess, onStartOver }: SaveResultPanelProps) {
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [saveStatus, setSaveStatus] = useState<LocalSaveStatus>('idle');
   const [saveMessage, setSaveMessage] = useState('');
-
-  const ids = useMemo(
-    () => ({
-      participantId: createId('participant'),
-      responseId: createId('response'),
-    }),
-    [],
-  );
 
   const hasSaved = saveStatus === 'success';
   const finalLines = coachingDialogueFields
     .map((field, index) => ({ label: getCoachingDialogueLabel(index), line: draft.finalLines[index] ?? '' }))
     .filter((item) => item.line.trim().length > 0);
 
-  async function handleSave() {
+  function handleSave() {
     setSaveStatus('saving');
-    setSaveMessage('저장 중입니다. 잠시만 기다려 주세요.');
+    setSaveMessage('이 기기에 저장하는 중입니다.');
 
-    const now = new Date().toISOString();
-    const payload = buildSavePayload({
-      round,
-      draft,
-      generatedPrompt,
-      promptText,
-      participantId: ids.participantId,
-      responseId: ids.responseId,
-      now,
-    });
-
-    const result = await saveLearnerResultToGoogleSheets(payload);
-    setSaveStatus(result.status);
-    setSaveMessage(result.message);
-
-    if (result.status === 'success') {
+    try {
+      saveLocalResult({ round, draft, generatedPrompt, promptText });
+      setSaveStatus('success');
+      setSaveMessage('이 기기의 브라우저에 저장했습니다. 외부 서버로 전송되지 않습니다.');
       onSaveSuccess();
+    } catch (error) {
+      setSaveStatus('error');
+      setSaveMessage(error instanceof Error ? error.message : '로컬 저장 중 오류가 발생했습니다.');
     }
   }
 
@@ -74,11 +58,17 @@ export function SaveResultPanel({ round, draft, generatedPrompt, promptText, onS
       </ol>
 
       <div className="sheet-save-panel">
-        <p>저장하면 강사용 화면에서 팀별 판단 흐름과 최종 대화문을 함께 볼 수 있습니다.</p>
+        <p>
+          최종본은 현재 기기의 브라우저 저장소에만 보관됩니다. 네트워크가 끊겨도 저장할 수 있으며,
+          필요하면 JSON 백업 파일로 내려받을 수 있습니다.
+        </p>
         <button type="button" className="save-sheet-button" onClick={handleSave} disabled={saveStatus === 'saving' || hasSaved}>
-          {saveStatus === 'saving' ? '저장 중...' : hasSaved ? '저장 완료' : '최종본 저장하기'}
+          {saveStatus === 'saving' ? '저장 중...' : hasSaved ? '기기에 저장 완료' : '이 기기에 최종본 저장하기'}
         </button>
         {saveMessage ? <span className={`sheet-save-status ${saveStatus}`}>{saveMessage}</span> : null}
+        <button type="button" className="restart-button" onClick={downloadLocalResultsBackup}>
+          저장 결과 백업 파일 받기
+        </button>
       </div>
 
       <button type="button" className="restart-button" onClick={onStartOver} disabled={!hasSaved}>
