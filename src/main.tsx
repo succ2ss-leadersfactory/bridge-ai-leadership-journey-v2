@@ -4,6 +4,7 @@ import App from './App';
 import './v3/v3.css';
 import './v3/v3RedTeam.css';
 import './v4/v4Action.css';
+import './v4/v4InstructorPc.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
