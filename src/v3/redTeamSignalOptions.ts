@@ -1,4 +1,10 @@
+import { v3Cases } from './cases';
+import { applyGenericCaseOverrides } from './genericCaseOverrides';
 import type { V3CaseId } from './types';
+
+// v3.3: 화면이 cases.ts의 초기 원본이 아니라 현실화된 A~F 사례를 사용하도록
+// 런타임 시작 시 단일 현실 사례 레이어를 먼저 적용한다.
+applyGenericCaseOverrides(v3Cases);
 
 /**
  * 모든 보기는 실제로 고려할 가치가 있는 신호다.
