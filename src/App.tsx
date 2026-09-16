@@ -6,15 +6,18 @@ import { applyHonorificTerminology } from './v3/honorificTerminology';
 import { applyTheoryTerminology } from './v3/theoryTerminology';
 import { applyActionSimulationOverrides } from './v4/actionSimulationConfig';
 import { applyPlainLanguageEditorial } from './v4/plainLanguageEditorial';
+import { applySupportingHonorificTerminology } from './v4/supportingHonorifics';
 
 // Mobile and instructor PC share one case-content source.
-// Editorial copy is applied after all scenario/theory overrides, then the
-// strict full-name + job-title normalizer runs last in both modes.
+// Editorial copy is applied after all scenario/theory overrides.
+// Full-name + job-title normalization runs last for both case content and
+// all supporting instructor/experience copy.
 applyGenericCaseOverrides(v3Cases);
 applyTheoryTerminology(v3Cases);
 applyActionSimulationOverrides(v3Cases);
 applyPlainLanguageEditorial(v3Cases);
 applyHonorificTerminology(v3Cases);
+applySupportingHonorificTerminology();
 
 function isInstructorMode() {
   const params = new URLSearchParams(window.location.search);
