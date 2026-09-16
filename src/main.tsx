@@ -6,8 +6,10 @@ import './v3/v3RedTeam.css';
 import './v4/v4Action.css';
 import './v4/v4InstructorPc.css';
 import './v4/v4InstructorDiscussionReveal.css';
+import './v4/v4QuizCoverage.css';
 import './v4/instructorDiscussionReveal';
 import './v4/commonUiPolish';
+import './v4/quizCoverageUi';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
