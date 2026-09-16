@@ -225,7 +225,7 @@ export function V3LearnerShellRedTeam() {
       <main className="v3-screen v3-intro">
         <section className="v3-brand-card">
           <img src={kacCiLogoDataUrl} alt="한국공항공사 CI" />
-          <p>Bridge AI Leadership Journey · v3.1</p>
+          <p>Bridge AI Leadership Journey · v3.2</p>
           <h1>후배를 키우는 과장의<br />현실적인 선택을 연습합니다.</h1>
           <p className="v3-muted">사람을 평가하는 문제가 아닙니다. 실제 상황에서 무엇을 보고, 어떤 말을 하고, 어디까지 맡길지를 연습합니다.</p>
         </section>
@@ -309,10 +309,10 @@ export function V3LearnerShellRedTeam() {
     );
   }
 
-  if (state.currentStep === 'intro') return <Intro />;
-  if (state.currentStep === 'caseMap' || (!currentCase && state.currentStep !== 'playbook')) return <CaseMap />;
-  if (state.currentStep === 'playbook') return <Playbook />;
-  if (!currentCase || !currentDraft) return <CaseMap />;
+  if (state.currentStep === 'intro') return Intro();
+  if (state.currentStep === 'caseMap' || (!currentCase && state.currentStep !== 'playbook')) return CaseMap();
+  if (state.currentStep === 'playbook') return Playbook();
+  if (!currentCase || !currentDraft) return CaseMap();
 
   const selectedFirstChoice = currentCase.firstChoices.find((choice) => choice.id === currentDraft.firstChoice);
   const choiceResult = currentDraft.firstChoice ? currentCase.consequenceByChoice[currentDraft.firstChoice] : '';
