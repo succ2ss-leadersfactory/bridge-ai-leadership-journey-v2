@@ -20,6 +20,13 @@ function getStepHeader(eyebrow: string, title: ReactNode, description?: ReactNod
     };
   }
 
+  if (eyebrow === '나의 코칭 대화문') {
+    return {
+      title,
+      description: '저장하면 이 기기의 브라우저에만 보관됩니다. 서버나 강사용 화면으로 전송되지 않습니다.',
+    };
+  }
+
   return { title, description };
 }
 

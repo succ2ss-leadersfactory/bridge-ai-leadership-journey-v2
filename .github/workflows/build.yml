@@ -29,3 +29,10 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Upload standalone HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: bridge-ai-leadership-local-html
+          path: dist/index.html
+          if-no-files-found: error
