@@ -9,28 +9,28 @@ type ClosingGuide = {
 
 const closingByCase: Record<V3CaseId, ClosingGuide> = {
   A: {
-    example: '마감이 급할 때는 필요한 답을 줄 수 있지만, 같은 질문이 반복되면 윤동희 사원이 혼자 결정할 범위와 반드시 확인할 조건을 함께 정한다.',
-    close: '오늘 답을 줬느냐보다 중요한 것은, 다음에도 같은 질문을 반복하게 만드는 구조를 그대로 두었느냐입니다.',
+    example: '마감이 급하면 이번 답은 줄 수 있습니다. 다만 같은 질문이 반복되면 윤동희 사원이 혼자 결정할 일과 김원중 과장에게 꼭 확인할 일을 나눕니다.',
+    close: '핵심은 오늘 답을 줬는지가 아닙니다. 다음에는 윤동희 사원이 스스로 결정할 수 있는 기준이 남았는지가 중요합니다.',
   },
   B: {
-    example: '황성빈 대리의 빠른 실행은 강점으로 인정하되, 자료의 사용자가 바뀌면 출처·기준 시점·단위를 다시 확인하도록 자기점검 기준을 남긴다.',
-    close: '좋은 피드백은 빠른 사람을 느리게 만드는 것이 아니라, 중요한 순간에 확인 기준을 바꿀 수 있게 만드는 것입니다.',
+    example: '황성빈 대리의 빠른 실행은 강점으로 인정합니다. 대신 자료의 사용자가 바뀌면 기준 시점·단위·출처를 다시 확인하게 합니다.',
+    close: '좋은 피드백은 강점을 없애지 않습니다. 다음에 바꿀 행동을 분명히 남깁니다.',
   },
   C: {
-    example: '전민재 사원이 다시 시도할 수 있도록 작은 발표 역할을 주고, 김원중 과장은 예상 질문 점검과 필요한 보완만 지원한다.',
-    close: '실패 후 육성의 핵심은 다시 시킬지 말지가 아니라, 다음 시도의 크기와 리더 지원의 양을 어떻게 설계할지에 있습니다.',
+    example: '전민재 사원이 다시 시도할 수 있도록 발표 역할을 작게 나눕니다. 김원중 과장은 예상 질문을 함께 보고, 실전에서는 필요한 경우만 보완합니다.',
+    close: '실패 뒤에는 역할을 빼기보다 다시 해볼 수 있는 크기로 도전을 조절하는 것이 중요합니다.',
   },
   D: {
-    example: '고승민 대리의 AI 활용은 유지하되, 숫자·날짜·출처는 원자료와 대조하고 해석과 제안은 사람이 근거를 확인해 최종 결정한다.',
-    close: 'AI 사용 여부보다 누가 무엇을 검증하고, 누가 최종 결정과 결과에 책임지는지가 더 중요합니다.',
+    example: '고승민 대리의 AI 활용은 유지합니다. 숫자·날짜·출처는 원자료로 확인하고, 해석과 제안은 사람이 근거를 보고 최종 결정합니다.',
+    close: 'AI를 썼는지보다 누가 무엇을 확인하고 누가 최종 결정하는지가 더 중요합니다.',
   },
   E: {
-    example: '윤동희 사원이 스스로 결정할 범위, 반드시 공유할 예외, 다시 확인할 시점을 미리 정하고 그 사이에는 김원중 과장이 수시로 개입하지 않는다.',
-    close: '위임은 일을 넘기는 것이 아니라, 실제 결정할 공간과 다시 연결될 조건을 함께 설계하는 것입니다.',
+    example: '윤동희 사원이 혼자 결정할 일, 바로 알려야 할 일, 다시 확인할 시간을 미리 정합니다. 그 사이에는 김원중 과장이 수시로 확인하지 않습니다.',
+    close: '위임은 일을 넘기는 것이 아닙니다. 실제로 결정할 수 있는 범위와 다시 상의할 조건을 함께 정하는 것입니다.',
   },
   F: {
-    example: '긴급 공동지원은 필요할 수 있지만, 지원 시간과 범위를 먼저 정하고 최근 지원 부담이 적은 사람부터 순환해 같은 사람에게 반복되지 않게 한다.',
-    close: '팀워크를 개인 희생으로 설명하지 않고, 공동책임이 필요한 순간과 부담을 공정하게 나누는 기준을 함께 만들어야 합니다.',
+    example: '오늘은 필요한 만큼만 함께 돕습니다. 다음부터는 지원 시간과 순서를 정해 같은 사람에게 계속 일이 몰리지 않게 합니다.',
+    close: '팀워크는 한 사람의 희생이 아닙니다. 급할 때 서로 돕되 부담이 반복되지 않게 기준을 정해야 합니다.',
   },
 };
 
@@ -143,13 +143,13 @@ function enhanceDiscussionScene() {
 
   const preview = section.querySelector<HTMLElement>('.v4pc-input-preview');
   const previewBody = preview?.querySelector<HTMLElement>('div');
-  setTextIfDifferent(previewBody, '교육생들이 토의한 뒤, 각 조의 기준을 한 문장으로 정리합니다.');
+  setTextIfDifferent(previewBody, '교육생들이 토의한 뒤, 조의 기준을 한 문장으로 정리합니다.');
 
   let wrap = section.querySelector<HTMLElement>('.v41-discussion-reveal');
   if (!wrap) {
     const created = buildRevealWrap(
       'v41-discussion-reveal',
-      '교육생 토의와 한 줄 정리가 끝난 뒤 강사가 공개합니다.',
+      '교육생 토의와 한 줄 정리가 끝난 뒤 공개합니다.',
       '토의 마무리 예시',
     );
     wrap = created.wrap;
@@ -195,7 +195,7 @@ function enhancePracticeScene() {
   if (!wrap) {
     const created = buildRevealWrap(
       'v41-practice-reveal',
-      '교육생이 현장도구를 직접 작성한 뒤 강사가 비교 예시로 공개합니다.',
+      '교육생이 먼저 작성한 뒤 비교 예시로 공개합니다.',
       '현장도구 작성 예시',
     );
     wrap = created.wrap;
@@ -244,7 +244,7 @@ function enhancePlaybook() {
   if (!wrap) {
     const created = buildRevealWrap(
       'v41-playbook-reveal',
-      '교육생이 MORE / LESS / NEXT 2 WEEKS를 먼저 작성한 뒤 강사가 공개합니다.',
+      '교육생이 MORE / LESS / NEXT 2 WEEKS를 먼저 정한 뒤 공개합니다.',
       'Bridge Leader Playbook 작성 예시',
     );
     wrap = created.wrap;
@@ -271,7 +271,7 @@ function enhancePlaybook() {
       body.append(list);
       appendFacilitatorClose(
         body,
-        '좋은 계획은 “코칭을 잘하겠다”가 아니라 언제, 누구에게, 어떤 행동을 다르게 할지 관찰 가능한 문장으로 남기는 것입니다.',
+        '“코칭을 잘하겠다”보다 언제, 누구에게, 무엇을 다르게 할지 행동으로 적게 합니다.',
       );
     }
   }
