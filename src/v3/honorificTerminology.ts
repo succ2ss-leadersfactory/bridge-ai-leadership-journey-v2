@@ -30,11 +30,13 @@ const replacementRules: ReplacementRule[] = [
   { pattern: /나 대리(?:님)?/g, replacement: '나승엽 대리' },
   { pattern: /박지훈 대리(?:님)?/g, replacement: '나승엽 대리' },
   { pattern: /박 대리(?:님)?/g, replacement: '나승엽 대리' },
-  { pattern: /동희 사원(?:님)?/g, replacement: '윤동희 사원' },
-  { pattern: /성빈 대리(?:님)?/g, replacement: '황성빈 대리' },
-  { pattern: /민재 사원(?:님)?/g, replacement: '전민재 사원' },
-  { pattern: /승민 대리(?:님)?/g, replacement: '고승민 대리' },
-  { pattern: /승엽 대리(?:님)?/g, replacement: '나승엽 대리' },
+
+  // Short given-name + title forms, guarded so full names stay unchanged.
+  { pattern: /(^|[^윤])동희 사원(?:님)?/g, replacement: '$1윤동희 사원' },
+  { pattern: /(^|[^황])성빈 대리(?:님)?/g, replacement: '$1황성빈 대리' },
+  { pattern: /(^|[^전])민재 사원(?:님)?/g, replacement: '$1전민재 사원' },
+  { pattern: /(^|[^고])승민 대리(?:님)?/g, replacement: '$1고승민 대리' },
+  { pattern: /(^|[^나])승엽 대리(?:님)?/g, replacement: '$1나승엽 대리' },
 
   // Already-full forms with honorific suffixes
   { pattern: /윤동희 사원님/g, replacement: '윤동희 사원' },
