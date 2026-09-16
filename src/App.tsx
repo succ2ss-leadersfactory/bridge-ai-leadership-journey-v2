@@ -6,10 +6,13 @@ import { applyHonorificTerminology } from './v3/honorificTerminology';
 import { applyTheoryTerminology } from './v3/theoryTerminology';
 import { applyActionSimulationOverrides } from './v4/actionSimulationConfig';
 
+// Mobile and instructor PC share one case-content source.
+// Apply naming normalization last so every override is shown with the same
+// full-name + job-title rule in both modes.
 applyGenericCaseOverrides(v3Cases);
 applyTheoryTerminology(v3Cases);
-applyHonorificTerminology(v3Cases);
 applyActionSimulationOverrides(v3Cases);
+applyHonorificTerminology(v3Cases);
 
 function isInstructorMode() {
   const params = new URLSearchParams(window.location.search);
