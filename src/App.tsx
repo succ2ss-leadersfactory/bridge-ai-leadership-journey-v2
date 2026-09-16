@@ -1,7 +1,7 @@
-import { V3LearnerShell } from './components/V3LearnerShell';
+import { V3LearnerShellRedTeam } from './components/V3LearnerShellRedTeam';
 
 function App() {
-  return <V3LearnerShell />;
+  return <V3LearnerShellRedTeam />;
 }
 
 export default App;
