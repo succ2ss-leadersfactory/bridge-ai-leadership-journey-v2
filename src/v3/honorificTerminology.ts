@@ -55,25 +55,25 @@ const replacementRules: ReplacementRule[] = [
   { pattern: /김원중(?! 과장)/g, replacement: '김원중 과장' },
 ];
 
-function normalizeString(value: string) {
+export function normalizeHonorificString(value: string) {
   return replacementRules.reduce(
     (result, rule) => result.replace(rule.pattern, rule.replacement),
     value,
   );
 }
 
-function normalizeValue(value: unknown): unknown {
-  if (typeof value === 'string') return normalizeString(value);
-  if (Array.isArray(value)) return value.map(normalizeValue);
+export function normalizeHonorificValue<T>(value: T): T {
+  if (typeof value === 'string') return normalizeHonorificString(value) as T;
+  if (Array.isArray(value)) return value.map((entry) => normalizeHonorificValue(entry)) as T;
   if (value && typeof value === 'object') {
     return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([key, entry]) => [key, normalizeValue(entry)]),
-    );
+      Object.entries(value as Record<string, unknown>).map(([key, entry]) => [key, normalizeHonorificValue(entry)]),
+    ) as T;
   }
   return value;
 }
 
 export function applyHonorificTerminology(cases: V3Case[]) {
-  const normalized = normalizeValue(cases) as V3Case[];
+  const normalized = normalizeHonorificValue(cases);
   cases.splice(0, cases.length, ...normalized);
 }
