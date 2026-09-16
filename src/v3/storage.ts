@@ -1,6 +1,7 @@
 import type { V3CaseDraft, V3CaseId, V3LocalState, V3PlaybookDraft, V3Profile, V3StepId } from './types';
 
 const V3_STORAGE_KEY = 'bridge-ai-leadership-journey-v3:state';
+const caseResumeSteps: V3StepId[] = ['situation', 'signals', 'firstDecision', 'consequence', 'newInfo', 'secondDecision', 'theoryBridge', 'practice', 'discussion', 'result'];
 
 export const emptyCaseDraft = (): V3CaseDraft => ({
   selectedSignals: [],
@@ -9,6 +10,7 @@ export const emptyCaseDraft = (): V3CaseDraft => ({
   practiceAnswers: {},
   discussionNote: '',
   aiPromptUsed: false,
+  lastStep: 'situation',
 });
 
 export const emptyPlaybook = (): V3PlaybookDraft => ({
@@ -51,6 +53,7 @@ function normalizePlaybook(value: unknown): V3PlaybookDraft {
 
 function normalizeCaseDraft(value: unknown): V3CaseDraft {
   const draft = (value && typeof value === 'object' ? value : {}) as Partial<V3CaseDraft>;
+  const lastStep = caseResumeSteps.includes(draft.lastStep as V3StepId) ? draft.lastStep as V3StepId : 'situation';
   return {
     selectedSignals: Array.isArray(draft.selectedSignals) ? draft.selectedSignals.filter((item): item is string => typeof item === 'string').slice(0, 2) : [],
     firstChoice: draft.firstChoice === 'A' || draft.firstChoice === 'B' || draft.firstChoice === 'C' ? draft.firstChoice : '',
@@ -60,6 +63,7 @@ function normalizeCaseDraft(value: unknown): V3CaseDraft {
       : {},
     discussionNote: typeof draft.discussionNote === 'string' ? draft.discussionNote : '',
     aiPromptUsed: Boolean(draft.aiPromptUsed),
+    lastStep,
     completedAt: typeof draft.completedAt === 'string' ? draft.completedAt : undefined,
   };
 }
@@ -78,7 +82,7 @@ export function loadV3State(): V3LocalState {
       if (value) cases[caseId] = normalizeCaseDraft(value);
     });
 
-    const allowedSteps: V3StepId[] = ['intro', 'caseMap', 'situation', 'signals', 'firstDecision', 'consequence', 'newInfo', 'secondDecision', 'theoryBridge', 'practice', 'discussion', 'result', 'playbook'];
+    const allowedSteps: V3StepId[] = ['intro', 'caseMap', ...caseResumeSteps, 'playbook'];
     const currentStep = allowedSteps.includes(parsed.currentStep as V3StepId) ? parsed.currentStep as V3StepId : 'intro';
     const currentCaseId = caseIds.includes(parsed.currentCaseId as V3CaseId) ? parsed.currentCaseId as V3CaseId : null;
 
