@@ -25,7 +25,8 @@ const replacementRules: ReplacementRule[] = [
   { pattern: /전 사원/g, replacement: '전민재 사원' },
   { pattern: /고 대리/g, replacement: '고승민 대리' },
   { pattern: /김 과장/g, replacement: '김원중 과장' },
-  { pattern: /박 대리(?:님)?/g, replacement: '박지훈 대리' },
+  { pattern: /박지훈 대리/g, replacement: '나승엽 대리' },
+  { pattern: /박 대리(?:님)?/g, replacement: '나승엽 대리' },
   { pattern: /(^|[^윤])동희 사원/g, replacement: '$1윤동희 사원' },
   { pattern: /(^|[^황])성빈 대리/g, replacement: '$1황성빈 대리' },
   { pattern: /(^|[^전])민재 사원/g, replacement: '$1전민재 사원' },
@@ -53,7 +54,7 @@ function normalizeValue(value: unknown): unknown {
 /**
  * Examples after normalization:
  * 윤동희 사원, 황성빈 대리, 전민재 사원, 고승민 대리,
- * 김원중 과장, 박지훈 대리.
+ * 김원중 과장, 나승엽 대리.
  */
 export function applyHonorificTerminology(cases: V3Case[]) {
   const normalized = normalizeValue(cases) as V3Case[];
