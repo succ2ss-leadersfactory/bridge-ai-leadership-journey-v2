@@ -1,0 +1,525 @@
+:root {
+  --v4pc-slide-max: 1440px;
+  --v4pc-slide-shadow: 0 24px 60px rgba(31, 53, 77, .16);
+}
+
+/* Instructor lecture canvas: every visible page keeps a 16:9 slide ratio. */
+.v4pc-workspace {
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.v4pc-main {
+  min-height: calc(100vh - 78px);
+  padding: 18px 22px 22px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.v4pc-page {
+  position: relative;
+  width: min(
+    var(--v4pc-slide-max),
+    calc(100vw - var(--v4pc-sidebar) - 48px),
+    calc((100vh - 118px) * 16 / 9)
+  );
+  aspect-ratio: 16 / 9;
+  height: auto;
+  min-height: 0;
+  margin: 0 auto;
+  padding: clamp(16px, 1.5vw, 26px);
+  overflow: hidden;
+  border: 1px solid rgba(202, 216, 228, .95);
+  border-radius: 22px;
+  background: linear-gradient(180deg, #fbfdff 0%, #f5f9fc 100%);
+  box-shadow: var(--v4pc-slide-shadow);
+}
+
+.v4pc-case-page {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.v4pc-scene-rail {
+  position: static;
+  margin: 0;
+  padding: 7px;
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.v4pc-scene-rail button {
+  min-height: 42px;
+  grid-template-columns: 22px 1fr;
+  padding: 5px 7px;
+}
+
+.v4pc-scene-rail button span {
+  width: 20px;
+  height: 20px;
+  font-size: 9px;
+}
+
+.v4pc-scene-rail button strong {
+  font-size: clamp(9px, .72vw, 11px);
+}
+
+.v4pc-content-card,
+.v4pc-overview-hero {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.v4pc-content-card {
+  position: relative;
+  height: 100%;
+  padding: clamp(16px, 1.55vw, 26px);
+  border-radius: 18px;
+}
+
+.v4pc-content-card h1 {
+  margin: 4px 0 10px;
+  font-size: clamp(22px, 2vw, 31px);
+  line-height: 1.25;
+}
+
+.v4pc-content-card .v3-muted,
+.v4pc-content-card .v3-reflection,
+.v4pc-content-card p,
+.v4pc-content-card small {
+  line-height: 1.46;
+}
+
+.v4pc-content-card .v3-eyebrow {
+  margin-bottom: 5px;
+  font-size: clamp(9px, .7vw, 11px);
+}
+
+.v4pc-scene-footer {
+  margin-top: 0;
+  padding-top: 0;
+  min-height: 42px;
+}
+
+.v4pc-scene-footer .v3-btn {
+  padding: 9px 13px;
+  font-size: 12px;
+}
+
+/* Scene 1: put the long case narrative in a second column rather than scrolling. */
+.v4pc-case-page .v4-situation.v4pc-content-card {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  grid-template-rows: auto auto auto 1fr;
+  gap: 8px 18px;
+  align-content: stretch;
+}
+
+.v4pc-case-page .v4-situation > .v3-eyebrow,
+.v4pc-case-page .v4-situation > h1,
+.v4pc-case-page .v4-situation > .v3-dilemma,
+.v4pc-case-page .v4-situation > .v4-scene-tip {
+  grid-column: 1;
+}
+
+.v4pc-case-page .v4-situation > .v3-story {
+  grid-column: 2;
+  grid-row: 1 / 5;
+  min-height: 0;
+  margin: 0;
+  padding: 14px 16px;
+  overflow: hidden;
+  columns: 1;
+  font-size: clamp(11.5px, .87vw, 14px);
+  line-height: 1.43;
+}
+
+.v4pc-case-page .v4-situation > .v3-story p {
+  margin: 0 0 8px;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.v4pc-case-page .v4-situation > .v3-dilemma {
+  margin: 0;
+  padding: 12px 14px;
+  font-size: clamp(12px, .95vw, 15px);
+  line-height: 1.45;
+}
+
+.v4pc-case-page .v4-situation > .v4-scene-tip {
+  align-self: end;
+  margin: 0;
+  padding: 11px 13px;
+  font-size: 12px;
+}
+
+/* Choice pages fit on one slide. */
+.v4pc-choice-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.v4pc-choice-grid .v3-choice {
+  min-height: 66px;
+  padding: 10px 12px;
+  font-size: clamp(11px, .84vw, 13px);
+}
+
+.v4pc-decision-grid {
+  gap: 10px;
+}
+
+.v4pc-decision-grid .v3-decision-card,
+.v4pc-decision-grid .v3-choice {
+  min-height: 0;
+  height: clamp(210px, 29vh, 300px);
+  padding: 13px 14px;
+  overflow: hidden;
+}
+
+.v4pc-decision-grid .v3-decision-card strong,
+.v4pc-decision-grid .v3-choice strong {
+  font-size: clamp(12px, 1vw, 15px);
+  line-height: 1.42;
+}
+
+.v4pc-decision-grid .v3-decision-card p,
+.v4pc-decision-grid .v3-choice small {
+  font-size: clamp(10px, .82vw, 12.5px);
+  line-height: 1.45;
+}
+
+.v4pc-inline-guide {
+  max-height: 92px;
+  overflow: hidden;
+  padding: 8px 9px;
+  font-size: 10.5px;
+}
+
+.v3-choice-analysis {
+  gap: 9px;
+}
+
+.v3-choice-analysis article {
+  padding: 11px 13px;
+}
+
+.v4pc-content-card .v3-story.emphasis,
+.v4pc-content-card .v4-new-info {
+  padding: 11px 13px;
+  margin-top: 9px;
+  font-size: clamp(10.5px, .8vw, 12.5px);
+}
+
+/* Discussion, theory and field-tool pages. */
+.v4pc-content-card .v3-discussion-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.v4pc-content-card .v3-discussion-list article {
+  min-height: 108px;
+  padding: 11px 12px;
+}
+
+.v4pc-content-card .v3-discussion-list p {
+  font-size: clamp(10.5px, .8vw, 12.5px);
+}
+
+.v4pc-input-preview {
+  margin-top: 10px;
+  padding: 10px 12px;
+}
+
+.v4pc-content-card.v4-theory-practice {
+  display: grid;
+  grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+  grid-template-rows: auto auto auto 1fr;
+  gap: 9px 16px;
+}
+
+.v4pc-content-card.v4-theory-practice > .v3-eyebrow,
+.v4pc-content-card.v4-theory-practice > h1,
+.v4pc-content-card.v4-theory-practice > .v3-theory-one-line,
+.v4pc-content-card.v4-theory-practice > .v3-theory-grid {
+  grid-column: 1;
+}
+
+.v4pc-content-card.v4-theory-practice > .v4-tool-head,
+.v4pc-content-card.v4-theory-practice > .v4pc-practice-grid,
+.v4pc-content-card.v4-theory-practice > .v3-ai-card,
+.v4pc-content-card.v4-theory-practice > .v3-no-ai {
+  grid-column: 2;
+}
+
+.v4pc-content-card.v4-theory-practice > .v4-tool-head {
+  grid-row: 1;
+  margin: 0;
+  padding: 11px 13px;
+}
+
+.v4pc-content-card.v4-theory-practice > .v4pc-practice-grid {
+  grid-row: 2 / 4;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.v4pc-content-card.v4-theory-practice > .v3-ai-card,
+.v4pc-content-card.v4-theory-practice > .v3-no-ai {
+  grid-row: 4;
+  margin: 0;
+  padding: 10px 12px;
+}
+
+.v4pc-content-card.v4-theory-practice .v3-theory-one-line,
+.v4pc-content-card.v4-theory-practice .v3-theory-grid article,
+.v4pc-practice-field {
+  padding: 10px 11px;
+}
+
+.v4pc-content-card.v4-theory-practice .v3-theory-grid {
+  grid-template-columns: 1fr;
+  gap: 7px;
+}
+
+.v4pc-content-card.v4-theory-practice .v3-theory-grid article p,
+.v4pc-practice-field p,
+.v4pc-model-answer p {
+  font-size: clamp(10px, .76vw, 12px);
+  line-height: 1.4;
+}
+
+.v4pc-practice-field {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.v4pc-blank-answer,
+.v4pc-model-answer {
+  padding: 9px 10px;
+  font-size: 10.5px;
+}
+
+/* Action guide uses three horizontal cards, matching a presentation slide. */
+.v4pc-content-card.v4-action-guide .v4-condition-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin: 10px 0;
+}
+
+.v4pc-content-card.v4-action-guide .v4-condition-grid article {
+  grid-template-columns: 30px 1fr;
+  padding: 11px 12px;
+}
+
+.v4pc-content-card.v4-action-guide .v4-condition-grid p,
+.v4pc-content-card.v4-action-guide .v4-talk-box p,
+.v4pc-content-card.v4-action-guide .v4-avoid-box p {
+  font-size: clamp(10.5px, .8vw, 12.5px);
+  line-height: 1.43;
+}
+
+.v4pc-content-card.v4-action-guide .v4-talk-box,
+.v4pc-content-card.v4-action-guide .v4-avoid-box {
+  margin-top: 8px;
+  padding: 10px 12px;
+}
+
+/* Instructor guide becomes an overlay so opening it never changes the slide ratio or page height. */
+.v4pc-content-card > .v4pc-guide-panel,
+.v4pc-page > .v4pc-guide-panel,
+.v4pc-overview-hero > .v4pc-guide-panel {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  width: min(44%, 540px);
+  max-height: 48%;
+  margin: 0;
+  overflow: auto;
+  box-shadow: 0 20px 44px rgba(83, 59, 20, .22);
+}
+
+.v4pc-guide-title {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.v4pc-guide-body {
+  padding: 12px 14px;
+  font-size: clamp(10.5px, .8vw, 12.5px);
+  line-height: 1.5;
+}
+
+/* Overview and final Playbook also stay within one 16:9 page. */
+.v4pc-page:not(.v4pc-case-page) {
+  display: grid;
+  grid-template-rows: minmax(0, .9fr) minmax(0, 1.1fr) minmax(0, 1.35fr);
+  gap: 10px;
+}
+
+.v4pc-page:not(.v4pc-case-page) .v4pc-overview-hero {
+  padding: 18px 22px;
+  overflow: hidden;
+}
+
+.v4pc-page:not(.v4pc-case-page) .v4pc-overview-hero h1 {
+  margin: 3px 0 7px;
+  font-size: clamp(24px, 2vw, 31px);
+  line-height: 1.22;
+}
+
+.v4pc-page:not(.v4pc-case-page) .v4pc-overview-hero > p:last-of-type {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.v4pc-page:not(.v4pc-case-page) .v4-journey-strip {
+  margin-top: 10px;
+}
+
+.v4pc-page:not(.v4pc-case-page) .v4-journey-strip span {
+  min-height: 48px;
+  padding: 7px 9px;
+}
+
+.v4pc-overview-grid {
+  margin: 0;
+  gap: 9px;
+}
+
+.v4pc-overview-grid .v3-card {
+  min-height: 0;
+  padding: 13px 14px;
+}
+
+.v4pc-overview-grid h2 {
+  margin: 7px 0 4px;
+  font-size: 14px;
+}
+
+.v4pc-overview-grid p {
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+.v4pc-case-overview {
+  min-height: 0;
+  margin: 0;
+  padding: 14px 16px;
+  overflow: hidden;
+}
+
+.v4pc-case-overview h2 {
+  margin: 3px 0 7px;
+  font-size: 15px;
+}
+
+.v4pc-case-overview-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 7px;
+}
+
+.v4pc-overview-case {
+  min-height: 0;
+  padding: 9px 10px;
+  gap: 3px;
+}
+
+.v4pc-overview-case strong {
+  font-size: 11.5px;
+  line-height: 1.3;
+}
+
+.v4pc-overview-case p {
+  font-size: 9.5px;
+  line-height: 1.33;
+}
+
+.v4pc-playbook-grid {
+  min-height: 0;
+  margin: 0;
+  gap: 9px;
+}
+
+.v4pc-playbook-grid .v3-card {
+  min-height: 0;
+  padding: 14px;
+  overflow: hidden;
+}
+
+.v4pc-playbook-grid h2 {
+  font-size: 16px;
+}
+
+.v4pc-playbook-grid .v4pc-input-preview.large,
+.v4pc-playbook-grid .v4pc-model-answer {
+  padding: 10px;
+  font-size: 11px;
+}
+
+/* Beam projector / smaller laptop fallbacks. */
+@media (max-height: 780px), (max-width: 1280px) {
+  :root { --v4pc-sidebar: 260px; }
+
+  .v4pc-sidebar { padding: 16px 12px 20px; }
+  .v4pc-brand img { width: 118px; }
+  .v4pc-brand { padding-bottom: 12px; margin-bottom: 10px; }
+  .v4pc-case-nav { gap: 10px; }
+  .v4pc-case-nav-btn { padding: 7px 9px; }
+  .v4pc-case-nav-btn strong { font-size: 11px; }
+  .v4pc-topbar { min-height: 64px; padding: 9px 18px; }
+  .v4pc-main { min-height: calc(100vh - 64px); padding: 12px 14px 14px; }
+  .v4pc-page {
+    width: min(calc(100vw - var(--v4pc-sidebar) - 32px), calc((100vh - 90px) * 16 / 9));
+  }
+}
+
+@media (max-width: 1024px) {
+  .v4pc-shell { grid-template-columns: 210px minmax(0, 1fr); }
+  :root { --v4pc-sidebar: 210px; }
+  .v4pc-page {
+    width: min(calc(100vw - 238px), calc((100vh - 92px) * 16 / 9));
+    border-radius: 14px;
+  }
+  .v4pc-sidebar { padding: 12px 8px; }
+  .v4pc-session-label span { display: none; }
+  .v4pc-case-nav-btn strong { font-size: 10px; }
+}
+
+@media print {
+  .v4pc-sidebar,
+  .v4pc-topbar,
+  .v4pc-scene-footer {
+    display: none !important;
+  }
+  .v4pc-shell,
+  .v4pc-workspace,
+  .v4pc-main {
+    display: block;
+    min-height: 0;
+    padding: 0;
+    background: #fff;
+  }
+  .v4pc-page {
+    width: 13.333in;
+    height: 7.5in;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    page-break-after: always;
+  }
+}
