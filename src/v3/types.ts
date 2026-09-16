@@ -82,6 +82,7 @@ export interface V3CaseDraft {
   practiceAnswers: Record<string, string>;
   discussionNote: string;
   aiPromptUsed: boolean;
+  lastStep?: V3StepId;
   completedAt?: string;
 }
 
