@@ -9,28 +9,48 @@ type ReplacementRule = {
  * Participant-facing naming rule
  *
  * Every named person is shown as full Korean name + job title.
- * Mobile and instructor PC use the same normalized case content.
+ * Examples: 윤동희 사원, 황성빈 대리, 전민재 사원,
+ * 고승민 대리, 나승엽 대리, 김원중 과장.
  *
- * Important: rules must be idempotent. Already-correct names such as
- * 전민재 사원 / 고승민 대리 must not become 전전민재 사원 / 고고승민 대리
- * when the normalizer is applied again.
+ * The rules are idempotent: running them more than once must not create
+ * duplicated surnames or titles.
  */
 const replacementRules: ReplacementRule[] = [
+  // Legacy / shortened forms
   { pattern: /동희 씨/g, replacement: '윤동희 사원' },
   { pattern: /성빈 씨/g, replacement: '황성빈 대리' },
   { pattern: /민재 씨/g, replacement: '전민재 사원' },
   { pattern: /승민 씨/g, replacement: '고승민 대리' },
-  { pattern: /윤 사원/g, replacement: '윤동희 사원' },
-  { pattern: /황 대리/g, replacement: '황성빈 대리' },
-  { pattern: /전 사원/g, replacement: '전민재 사원' },
-  { pattern: /고 대리/g, replacement: '고승민 대리' },
-  { pattern: /김 과장/g, replacement: '김원중 과장' },
-  { pattern: /박지훈 대리/g, replacement: '나승엽 대리' },
+  { pattern: /승엽 씨/g, replacement: '나승엽 대리' },
+  { pattern: /윤 사원(?:님)?/g, replacement: '윤동희 사원' },
+  { pattern: /황 대리(?:님)?/g, replacement: '황성빈 대리' },
+  { pattern: /전 사원(?:님)?/g, replacement: '전민재 사원' },
+  { pattern: /고 대리(?:님)?/g, replacement: '고승민 대리' },
+  { pattern: /김 과장(?:님)?/g, replacement: '김원중 과장' },
+  { pattern: /나 대리(?:님)?/g, replacement: '나승엽 대리' },
+  { pattern: /박지훈 대리(?:님)?/g, replacement: '나승엽 대리' },
   { pattern: /박 대리(?:님)?/g, replacement: '나승엽 대리' },
-  { pattern: /(^|[^윤])동희 사원/g, replacement: '$1윤동희 사원' },
-  { pattern: /(^|[^황])성빈 대리/g, replacement: '$1황성빈 대리' },
-  { pattern: /(^|[^전])민재 사원/g, replacement: '$1전민재 사원' },
-  { pattern: /(^|[^고])승민 대리/g, replacement: '$1고승민 대리' },
+  { pattern: /동희 사원(?:님)?/g, replacement: '윤동희 사원' },
+  { pattern: /성빈 대리(?:님)?/g, replacement: '황성빈 대리' },
+  { pattern: /민재 사원(?:님)?/g, replacement: '전민재 사원' },
+  { pattern: /승민 대리(?:님)?/g, replacement: '고승민 대리' },
+  { pattern: /승엽 대리(?:님)?/g, replacement: '나승엽 대리' },
+
+  // Already-full forms with honorific suffixes
+  { pattern: /윤동희 사원님/g, replacement: '윤동희 사원' },
+  { pattern: /황성빈 대리님/g, replacement: '황성빈 대리' },
+  { pattern: /전민재 사원님/g, replacement: '전민재 사원' },
+  { pattern: /고승민 대리님/g, replacement: '고승민 대리' },
+  { pattern: /나승엽 대리님/g, replacement: '나승엽 대리' },
+  { pattern: /김원중 과장님/g, replacement: '김원중 과장' },
+
+  // Bare full names: add the job title if it is missing.
+  { pattern: /윤동희(?! 사원)/g, replacement: '윤동희 사원' },
+  { pattern: /황성빈(?! 대리)/g, replacement: '황성빈 대리' },
+  { pattern: /전민재(?! 사원)/g, replacement: '전민재 사원' },
+  { pattern: /고승민(?! 대리)/g, replacement: '고승민 대리' },
+  { pattern: /나승엽(?! 대리)/g, replacement: '나승엽 대리' },
+  { pattern: /김원중(?! 과장)/g, replacement: '김원중 과장' },
 ];
 
 function normalizeString(value: string) {
@@ -51,11 +71,6 @@ function normalizeValue(value: unknown): unknown {
   return value;
 }
 
-/**
- * Examples after normalization:
- * 윤동희 사원, 황성빈 대리, 전민재 사원, 고승민 대리,
- * 김원중 과장, 나승엽 대리.
- */
 export function applyHonorificTerminology(cases: V3Case[]) {
   const normalized = normalizeValue(cases) as V3Case[];
   cases.splice(0, cases.length, ...normalized);
