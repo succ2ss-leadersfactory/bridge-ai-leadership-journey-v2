@@ -17,7 +17,7 @@ export const extractionLabels = [
   { key: 'line2', label: '바로 답하기 전에 물어볼 말' },
   { key: 'line3', label: '이번 주에 같이 해볼 일' },
   { key: 'line4', label: '김원중 과장이 봐줄 선' },
-  { key: 'line5', label: '입 밖으로 내면 안 좋은 말' },
+  { key: 'line5', label: '조심할 말' },
 ] as const;
 
 export type ExtractionFieldKey = (typeof extractionLabels)[number]['key'];
@@ -40,7 +40,7 @@ export function getFieldValue(fields: ParsedAiFields, key: ExtractionFieldKey) {
 export function getPreviewText(value: string) {
   const normalized = value.replace(/\s+/g, ' ').trim();
   if (!normalized) return '아직 잡히지 않았습니다.';
-  return normalized.length > 74 ? `${normalized.slice(0, 74)}…` : normalized;
+  return normalized;
 }
 
 export function getExtractionStatus(fields: ParsedAiFields) {
