@@ -16,7 +16,9 @@ import { r3RecoveryOverrides } from './r3RecoveryOverrides';
 import { r3ToBossLineBreakOverrides } from './r3ToBossLineBreakOverrides';
 import { r4AiValidationOverrides } from './r4AiValidationOverrides';
 import { responseDifferentiationOverrides } from './responseDifferentiationOverrides';
+import { roundDepthConsistencyOverrides } from './roundDepthConsistencyOverrides';
 import { roundOverrides } from './roundOverrides';
+import { secondChoiceDepthOverrides } from './secondChoiceDepthOverrides';
 import { applyRoundStoryLineBreaks } from './storyLineBreaks';
 
 const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
@@ -37,6 +39,8 @@ const overrideLayers: Array<Partial<Record<Round['id'], Partial<Round>>>> = [
   r4AiValidationOverrides,
   bossDensityOverrides,
   editorialFlowOverrides,
+  secondChoiceDepthOverrides,
+  roundDepthConsistencyOverrides,
 ];
 
 function withCoachingViewpointsInPathIntro(round: Round): Round {
