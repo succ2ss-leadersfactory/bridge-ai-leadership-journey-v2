@@ -19,7 +19,7 @@ export function IntroStep({ draft, canGoNext, onBack, onNext, onTeamNameChange, 
     <StepLayout
       eyebrow="시작"
       title={<>먼저 팀을 선택하고,<br />사용할 이름/닉네임을 입력하세요.</>}
-      description={<>실제 직원 이름이나 민감한 정보는 쓰지 않습니다.<br />여기서는 가상의 후배 장면으로 연습합니다.</>}
+      description={<>입력한 내용과 실습 결과는 이 기기의 브라우저에만 저장됩니다.<br />실제 직원 이름이나 민감한 정보는 쓰지 않습니다.</>}
       canGoBack={false}
       canGoNext={canGoNext}
       onBack={onBack}
